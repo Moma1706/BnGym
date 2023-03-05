@@ -8,44 +8,44 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SendGrid.Extensions.DependencyInjection;
 
-namespace Infrastructure
+namespace Infrastructure;
+
+public static class ConfigureServices
 {
-    public static class ConfigureServices
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+        services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+        builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+
+        services.AddIdentity<User, IdentityRole<int>>(options =>
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-            builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+            options.Password.RequiredLength = 8;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireDigit = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.User.RequireUniqueEmail = true;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.Lockout.AllowedForNewUsers = false;
+        })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-            services.AddIdentity<User, IdentityRole<int>>(options =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireDigit = true;
-                options.Password.RequireNonAlphanumeric = false;
-                options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = false;
-                options.Lockout.AllowedForNewUsers = false;
-            })
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+        services.AddSendGrid(options =>
+        {
+            options.ApiKey = configuration["SendGrid:ApiKey"];
+        });
+        
+        services.AddTransient<IDateTimeService, DateTimeService>();
+        services.AddTransient<IIdentityService, IdentityService>();
+        services.AddTransient<IApplicationDbContext, ApplicationDbContext>();
+        services.AddTransient<IEmailService, SendEmailService>();
+        services.AddTransient<ICheckInService, CheckInService>();
+        services.AddScoped<DatabaseInitializer>();
 
-            services.AddSendGrid(options =>
-            {
-                options.ApiKey = configuration["SendGrid:ApiKey"];
-            });
-            
-            services.AddTransient<IDateTimeService, DateTimeService>();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IApplicationDbContext, ApplicationDbContext>();
-            services.AddTransient<IEmailService, SendEmailService>();
-            services.AddScoped<DatabaseInitializer>();
+        services.AddAuthentication();
 
-            services.AddAuthentication();
-
-            return services;
-        }
+        return services;
     }
 }
