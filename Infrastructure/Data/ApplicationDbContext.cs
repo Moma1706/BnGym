@@ -31,6 +31,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
         builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
         builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
+        builder.Entity<CheckInHistory>().ToTable("CheckInHistory");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
