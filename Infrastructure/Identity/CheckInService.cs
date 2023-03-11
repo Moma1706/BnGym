@@ -27,19 +27,50 @@ namespace Infrastructure.Identity
             _userManager = userManager;
             _dbContext = dbContext;
         }
-        public async Task<CheckInResult> CheckIn(int userId)
+        public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
 
-            if (user == null)
-                return CheckInResult.Failure($"User with Id = {userId}  doesn't exist");
+            if (gymUser == null)
+                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  doesn't exist");
 
-            var checkIn = new CheckInHistory { UserId = userId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
+            if (gymUser.IsFrozen)
+                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  is frozen");
 
-            _dbContext.Add(checkIn);
-            _dbContext.SaveChanges();
-                
-            return CheckInResult.Sucessfull(checkIn.Id, checkIn.UserId,checkIn.TimeStamp);
+            if (gymUser.IsInActive)
+                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  is inactive");
+
+            if(gymUser.LastCheckIn == DateTime.UtcNow)
+                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  can't access gym two times a day");
+
+            if (gymUser.ExpiresOn < DateTime.UtcNow)
+                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  has a membership that has expired");
+
+            var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
+
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            try
+            {
+                gymUser.NumberOfTrainingsLeft--;
+                gymUser.NumberOfArrivals++;
+                gymUser.LastCheckIn = checkIn.TimeStamp;
+                //update gymuser
+
+                _dbContext.Update(gymUser);
+                _dbContext.Add(checkIn);
+                _dbContext.SaveChanges();
+                //save checkin
+
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+
+            return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId,checkIn.TimeStamp);
         }
     }
 }

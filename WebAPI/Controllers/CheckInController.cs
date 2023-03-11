@@ -1,6 +1,4 @@
-﻿using Application.Auth.Register;
-using Application.CheckIn.CheckIn;
-using Microsoft.AspNetCore.Http;
+﻿using Application.CheckIn.CheckIn;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers

@@ -11,21 +11,21 @@ namespace Application.Common.Models.CheckIn
     {
         public bool Success { get; set; }
         public Guid Id { get; set; }
-        public int UsereId { get; set; }
+        public Guid GymUserId { get; set; }
         public DateTime TimeStamp { get; set; }
         public string Error { get; set; }
 
-        public CheckInResult(bool sucess, Guid id, int userId, DateTime timeStamp, string error) 
+        public CheckInResult(bool sucess, Guid id, Guid gymUserId, DateTime timeStamp, string error) 
         {
             Success = sucess;
             Id = id;
-            UsereId = userId;
+            GymUserId = gymUserId;
             TimeStamp = timeStamp;
             Error = error;
         }
 
-        public static CheckInResult Sucessfull() => new(true, Guid.Empty, 0, DateTime.UtcNow, string.Empty);
-        public static CheckInResult Sucessfull(Guid id, int userId, DateTime timeStamp) => new(true, id, userId, timeStamp, string.Empty);
-        public static CheckInResult Failure(string error) => new(false, Guid.Empty, 0, DateTime.UtcNow, error);
+        public static CheckInResult Sucessfull() => new(true, Guid.Empty, Guid.Empty, DateTime.UtcNow, string.Empty);
+        public static CheckInResult Sucessfull(Guid id, Guid gymUserId, DateTime timeStamp) => new(true, id, gymUserId, timeStamp, string.Empty);
+        public static CheckInResult Failure(string error) => new(false, Guid.Empty, Guid.Empty, DateTime.UtcNow, error);
     }
 }
