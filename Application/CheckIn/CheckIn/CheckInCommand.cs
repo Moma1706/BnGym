@@ -6,7 +6,7 @@ namespace Application.CheckIn.CheckIn
 {
     public record CheckInCommand : IRequest<CheckInResult>
     {
-        public int UsertId { get; set; }
+        public Guid GymUserId { get; set; }
     }
 
     public class CheckInCommandHandler : IRequestHandler<CheckInCommand, CheckInResult>
@@ -17,7 +17,7 @@ namespace Application.CheckIn.CheckIn
 
         public async Task<CheckInResult> Handle(CheckInCommand request, CancellationToken cancellationToken)
         {
-            var checkinResult = await _checkInService.CheckIn(request.UsertId);
+            var checkinResult = await _checkInService.CheckIn(request.GymUserId);
 
             return checkinResult;
         }

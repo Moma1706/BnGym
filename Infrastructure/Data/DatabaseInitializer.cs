@@ -47,7 +47,9 @@ public class DatabaseInitializer
         {
             Email = "test@test.com",
             UserName = "test@test.com",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            FirstName = "Ime",
+            LastName = "Prezime"
         };
 
         if (_userManager.Users.All(u => u.Email != user.Email))
