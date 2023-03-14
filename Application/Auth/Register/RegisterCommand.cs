@@ -27,7 +27,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
 
     public async Task<RegisterResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var registerResult = await _identityService.Register(request.Email, request.Password);
+        var registerResult = await _identityService.Register(request.Email, request.Password, "FirstName", "lastName", "Address");
 
         if (registerResult.Success)
         {

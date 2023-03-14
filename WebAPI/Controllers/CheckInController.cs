@@ -6,7 +6,6 @@ namespace WebApi.Controllers
     public class CheckInController : ApiBaseController
     {
         [HttpPost]
-        [Route("check-in")]
         public async Task<IActionResult> CheckIn([FromBody] CheckInCommand command)
         {
             var checkInResult = await Mediator.Send(command);

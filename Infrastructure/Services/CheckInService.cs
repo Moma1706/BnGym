@@ -17,14 +17,12 @@ namespace Infrastructure.Identity
     {
         private readonly IConfiguration _configuration;
         private readonly IDateTimeService _dateTimeService;
-        private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _dbContext;
 
         public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
-            _userManager = userManager;
             _dbContext = dbContext;
         }
         public async Task<CheckInResult> CheckIn(Guid gymUserId)

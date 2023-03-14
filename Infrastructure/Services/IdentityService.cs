@@ -45,15 +45,18 @@ namespace Infrastructure.Identity
             return Result.Successful(token);
         }
 
-        public async Task<RegisterResult> Register(string email, string password)
+        public async Task<RegisterResult> Register(string email, string password, string firstName, string lastName, string address)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
                 return RegisterResult.Failure("User with given E-mail already exist");
 
             var user = new User
             {
-                Email = email,
-                UserName = email
+                Email = email.ToLower(),
+                UserName = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Address = address
             };
 
             var registerResult = await _userManager.CreateAsync(user, password);

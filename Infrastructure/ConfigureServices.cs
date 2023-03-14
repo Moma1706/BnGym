@@ -42,6 +42,7 @@ public static class ConfigureServices
         services.AddTransient<IApplicationDbContext, ApplicationDbContext>();
         services.AddTransient<IEmailService, SendEmailService>();
         services.AddTransient<ICheckInService, CheckInService>();
+        services.AddTransient<IGymUserService, GymUserService>();
         services.AddScoped<DatabaseInitializer>();
 
         services.AddAuthentication();
