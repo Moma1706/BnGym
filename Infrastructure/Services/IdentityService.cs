@@ -64,7 +64,7 @@ namespace Infrastructure.Identity
             if (!registerResult.Succeeded)
                 throw IdentityException.RegisterException(registerResult.Errors.Select(e => e.Description));
 
-            return RegisterResult.Successful();
+            return RegisterResult.Successful(user.Id);
         }
 
         private static List<Claim> GetClaims(User user)

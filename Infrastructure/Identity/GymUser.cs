@@ -12,9 +12,6 @@ namespace Infrastructure.Identity
         public int UserId { get; set; }
 
         [Required]
-        public int NumberOfTrainingsLeft { get; set; }
-
-        [Required]
         public DateTime ExpiresOn { get; set; }
 
         [Required]
@@ -41,5 +38,7 @@ namespace Infrastructure.Identity
         [Required]
         [DefaultValue(0)]
         public int NumberOfArrivals { get; set; }
+
+        public DateTime FreezeDate { get; set; }
     }
 }

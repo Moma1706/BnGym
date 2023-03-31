@@ -4,7 +4,9 @@ using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
 using Application.Common.Models.CheckIn;
 using Application.Common.Models.GymUser;
+using Application.Common.Models.GymWorker;
 using Application.Enums;
+using Application.GymUser;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -30,6 +32,28 @@ namespace Infrastructure.Services
 
         public async Task<GymUserResult> Create(string firstName, string lastName, string email, string address, bool isStudent, GymUserType type)
         {
+            var currentDate = _dateTimeService.Now;
+            var expiresOn = _dateTimeService.Now;
+            switch (type)
+            {
+                case GymUserType.HalfMonth:
+                    expiresOn = currentDate.AddDays(15);
+                    break;
+                case GymUserType.Month:
+                    expiresOn = currentDate.AddMonths(1);
+                    break;
+                case GymUserType.ThreeMonts:
+                    expiresOn = currentDate.AddMonths(3);
+                    break;
+                case GymUserType.HalfYear:
+                    expiresOn = currentDate.AddMonths(6);
+                    break;
+                case GymUserType.Year:
+                    expiresOn = currentDate.AddYears(1);
+                    break;
+
+            }
+
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
@@ -40,28 +64,6 @@ namespace Infrastructure.Services
                     return GymUserResult.Failure("Error while adding new user");
 
                 // create gymUser
-                var currentDate = _dateTimeService.Now;
-                var expiresOn = _dateTimeService.Now;
-                switch (type)
-                {
-                    case GymUserType.HalfMonth:
-                        expiresOn = currentDate.AddDays(15);
-                        break;
-                    case GymUserType.Month:
-                        expiresOn = currentDate.AddMonths(1);
-                        break;
-                    case GymUserType.ThreeMonts:
-                        expiresOn = currentDate.AddMonths(3);
-                        break;
-                    case GymUserType.HalfYear:
-                        expiresOn = currentDate.AddMonths(6);
-                        break;
-                    case GymUserType.Year:
-                        expiresOn = currentDate.AddYears(1);
-                        break;
-
-                }
-
                 var gymUser = new GymUser
                 {
                     UserId = result.Id,
@@ -70,7 +72,15 @@ namespace Infrastructure.Services
                     ExpiresOn = expiresOn
                 };
                 _dbContext.Add(gymUser);
-                
+
+                // set role
+                var userRoles = new IdentityUserRole<int>
+                {
+                    UserId = result.Id,
+                    RoleId = (int)UserRole.RegularUser
+                };
+                _dbContext.Add(userRoles);
+
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
 
@@ -79,12 +89,13 @@ namespace Infrastructure.Services
             catch (Exception)
             {
                 transaction.Rollback();
-                throw;
+                return GymUserResult.Failure("Fail to save gym user");
             }
         }
 
         public Task<GymUserResult> ActivateMembership(Guid id)
         {
+            // postaviti NumberOfArrivals na 1
             throw new NotImplementedException();
         }
 
@@ -103,53 +114,48 @@ namespace Infrastructure.Services
             throw new NotImplementedException();
         }
 
-        public async Task<IList<GymUserGetResult>> GetAll()
+        public async Task<IList<GymUserGetResult>> GetAll() // dodati paginaciju, sortiranje i filtriranje
         {
-            // dodati paginaciju, sortiranje i filtriranje
-            var gymUsers = await _dbContext.GymUsers.ToListAsync();
+            var gymUserList = new List<GymUserGetResult>();
 
-            var userIds = gymUsers.Select(x => x.UserId);
-            var users = _dbContext.Users.Where(u => userIds.Contains(u.Id)).ToList();
+            var gymUsers = await _dbContext.GymUserView.ToListAsync();
+            if (gymUsers.Count == 0)
+                return gymUserList;
 
-            var userList = new List<GymUserGetResult>();
-            foreach (var gymUser in gymUsers)
+            gymUserList = gymUsers.Select(x => new GymUserGetResult()
             {
-                var user = users.Where(x => x.Id == gymUser.UserId).FirstOrDefault();
-                var gu = new GymUserGetResult
-                {
-                    Id = gymUser.Id,
-                    ExpiresOn = gymUser.ExpiresOn,
-                    IsStudent = gymUser.IsStudent,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email
-                };
-                userList.Add(gu);
-            }
+                Success = true,
+                Error = string.Empty,
+                Id = x.Id,
+                UserId = x.UserId,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                IsStudent = x.IsStudent,
+                ExpiresOn = x.ExpiresOn,
+                IsBlocked = x.IsBlocked,
+                IsFrozen = x.IsFrozen,
+                FreezeDate = x.FreezeDate,
+                IsInactive = x.IsInactive,
+                LastCheckIn = x.LastCheckIn,
+                Type = x.Type,
+                NumberOfArrivals = x.NumberOfArrivals
+            }).ToList();
 
-            return userList;
+            return gymUserList;
         }
 
         public async Task<GymUserGetResult> GetOne(Guid id)
         {
-            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
-            var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
+            var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymUser == null)
+                throw new KeyNotFoundException("Gym worker with provided id does not exist");
 
-            var gu = new GymUserGetResult
-            {
-                Id = gymUser.Id,
-                ExpiresOn = gymUser.ExpiresOn,
-                IsStudent = gymUser.IsStudent,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            };
-
-            return gu;
+            return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.IsStudent, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen, gymUser.FreezeDate, gymUser.IsInactive, gymUser.LastCheckIn, gymUser.Type, gymUser.NumberOfArrivals);
 
         }
 
-        public Task<GymUserResult> Update(Guid id)
+        public Task<GymUserResult> Update(Guid id, UpdateCommand data)
         {
             throw new NotImplementedException();
         }

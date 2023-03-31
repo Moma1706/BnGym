@@ -1,12 +1,13 @@
 ﻿using Application.GymUser;
+using Application.GymWorker;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
-    public class GymUserController: ApiBaseController
+    public class GymWorkerController : ApiBaseController
     {
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GymUserCreateCommand command)
+        public async Task<IActionResult> Create([FromBody] GymWorkerCreateCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
 
@@ -19,13 +20,13 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var gymUserResult = await Mediator.Send(new GymUserGetAllCommand());
+            var gymUserResult = await Mediator.Send(new GymWorkerGetAllCommand());
             return Ok(gymUserResult);
         }
 
         [HttpGet]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> GetOne([FromRoute] GymUserGetOneCommand command)
+        public async Task<IActionResult> GetOne([FromRoute] GymWorkerGetOneCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
             if (gymUserResult.Success)
@@ -36,7 +37,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] GymUserGetOneCommand uuid, [FromBody] UpdateCommand data)
+        public async Task<IActionResult> Update([FromRoute] GymWorkerGetOneCommand data)
         {
             var gymUserResult = await Mediator.Send(data);
 

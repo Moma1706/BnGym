@@ -2,6 +2,7 @@
 using Application.Common.Models.Auth;
 using Application.Common.Models.GymUser;
 using Application.Enums;
+using Application.GymUser;
 
 namespace Application.Common.Interfaces
 {
@@ -15,7 +16,7 @@ namespace Application.Common.Interfaces
 
         Task<GymUserResult> Delete(Guid id);
 
-        Task<GymUserResult> Update(Guid id);
+        Task<GymUserResult> Update(Guid id, UpdateCommand data);
 
         Task<GymUserResult> ExtendMembership(Guid id, GymUserType type);
 

@@ -31,42 +31,42 @@ namespace Infrastructure.Identity
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
 
             if (gymUser == null)
-                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  doesn't exist");
+                return CheckInResult.Failure("GymUser with provided id doesn't exist");
 
             if (gymUser.IsFrozen)
-                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  is frozen");
+                return CheckInResult.Failure("GymUser with provided id is frozen");
 
             if (gymUser.IsInActive)
-                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  is inactive");
+                return CheckInResult.Failure("GymUser with provided id is inactive");
 
             if(gymUser.LastCheckIn == DateTime.UtcNow)
-                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  can't access gym two times a day");
+                return CheckInResult.Failure("GymUser with provided id can't access gym two times a day");
 
             if (gymUser.ExpiresOn < DateTime.UtcNow)
-                return CheckInResult.Failure($" GymUser with UserId = {gymUserId}  has a membership that has expired");
+                return CheckInResult.Failure("GymUser with provided id has a membership that has expired");
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
+
+            gymUser.NumberOfArrivals++;
+            gymUser.LastCheckIn = checkIn.TimeStamp;
 
             using var transaction = _dbContext.Database.BeginTransaction();
 
             try
             {
-                gymUser.NumberOfTrainingsLeft--;
-                gymUser.NumberOfArrivals++;
-                gymUser.LastCheckIn = checkIn.TimeStamp;
                 //update gymuser
-
                 _dbContext.Update(gymUser);
+
+                //save checkin
                 _dbContext.Add(checkIn);
                 _dbContext.SaveChanges();
-                //save checkin
 
                 transaction.Commit();
             }
             catch (Exception)
             {
                 transaction.Rollback();
-                throw;
+                return CheckInResult.Failure("Unable to add chek in");
             }
 
             return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId,checkIn.TimeStamp);
@@ -78,9 +78,7 @@ namespace Infrastructure.Identity
 
             var checkIns = await _dbContext.CheckIns.Where(x => x.TimeStamp.Date == date.Date).ToListAsync();
             if (checkIns.Count == 0)
-            {
                 return checkInsReturn;
-            }
 
             var gymUserIds = checkIns.Select(x => x.GymUserId);
             var gymUsers = _dbContext.GymUsers.Where(u => gymUserIds.Contains(u.Id)).ToList();

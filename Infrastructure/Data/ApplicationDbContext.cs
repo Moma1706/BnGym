@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Common;
 using Infrastructure.Identity;
+using Infrastructure.Identity.Views;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
 {
     private readonly IDateTimeService _dateTimeService;
     public DbSet<GymUser> GymUsers { get; set; }
+    public DbSet<GymUserView> GymUserView { get; set; }
     public DbSet<CheckInHistory> CheckIns { get; set; }
+    public DbSet<GymWorkerView> GymWorkers { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeService dateTimeService)
         : base(options) => _dateTimeService = dateTimeService;
@@ -35,6 +38,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
         builder.Entity<CheckInHistory>().ToTable("CheckInHistory");
         builder.Entity<GymUser>().ToTable("GymUser");
+        builder.Entity<GymWorker>().ToTable("GymWorker");
+        builder.Entity<GymWorkerView>().ToView("GymWorkerView");
+        builder.Entity<GymUserView>().ToView("GymUserView");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
