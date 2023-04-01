@@ -162,7 +162,7 @@ AutoTest.Net/
 
 # Web workbench (sass)
 .sass-cache/
-
+/.angular/cache
 # Installshield output folder
 [Ee]xpress/
 
