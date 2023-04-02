@@ -23,7 +23,7 @@ export class AllGymWorkersComponent implements OnInit {
   DataSource: any[] = [];
   visible: boolean = true;
 
-  displayedColumns: string[] = ['Id', 'FirstName','LastName', 'Buttons'];
+  displayedColumns: string[] = ['FirstName','LastName','Email', 'Buttons'];
   dataSource: MatTableDataSource<gymWorker> = new MatTableDataSource(this.DataSource);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -48,7 +48,7 @@ export class AllGymWorkersComponent implements OnInit {
 
       this.allGymWorkers = response;
       console.log(response);
-      this.allGymWorkers.forEach((element:{id:string, firstName:string, lastName:string}) => {
+      this.allGymWorkers.forEach((element:{firstName:string, lastName:string, Email:string}) => {
         this.DataSource.push(element);
       });
       this.dataSource = new MatTableDataSource(this.DataSource);

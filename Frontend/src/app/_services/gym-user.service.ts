@@ -15,4 +15,14 @@ constructor(private http: HttpClient) { }
     return this.http.post(this.baseUrl, model);
   }
 
+  getAllUsers()
+  {
+    return this.http.get(this.baseUrl);
+  }
+
+  getUser(id:string)
+  {
+    return this.http.get(this.baseUrl + '/' + id);
+  }
+
 }
