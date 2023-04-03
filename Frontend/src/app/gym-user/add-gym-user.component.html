@@ -1,0 +1,110 @@
+<h2 style="text-align: center">New Gym User</h2>
+<hr />
+<br />
+
+<div style="margin-left: 25%">
+  <form [formGroup]="form" (ngSubmit)="add()" ngNativeValidate>
+    <!--Label Name and input Enter name-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >First Name</span
+        >
+      </div>
+      <input
+        formControlName="firstname"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter First Name..."
+        [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label Lastname and input Enter Lastname-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Last Name</span
+        >
+      </div>
+      <input
+      formControlName="lastname"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter Last Name..."
+        [ngClass]="{ 'is-invalid': submitted && f['lastname'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label email and input Enter Email-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Email</span
+        >
+      </div>
+      <input
+        formControlName="email"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter Email..."
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+        required
+      />
+    </div>
+
+     <!--Label address and input Enter Address-->
+     <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Address</span
+        >
+      </div>
+      <input
+        formControlName="address"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter Address..."
+        [ngClass]="{ 'is-invalid': submitted && f['address'].errors }"
+        required
+      />
+    </div>
+
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01">Type</label>
+      </div>
+      <select
+        formControlName="type"
+        class="custom-select"
+        placeholder="Select type..."
+        [ngClass]="{ 'is-invalid': submitted && f['type'].errors }"
+        required
+      >
+        <option value="HalfMonth">HalfMonth</option>
+        <option value="Month">Month</option>
+        <option value="ThreeMonts">ThreeMonts</option>
+        <option value="HalfYear">HalfYear</option>
+        <option value="Year">Year</option>
+      </select>
+    </div>
+
+    <!--Button Reposrt-->
+    <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Add Gym User
+      </button>
+    </div>
+  </form>
+</div>

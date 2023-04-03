@@ -20,7 +20,7 @@ public class GymUserCreateCommandValidator : AbstractValidator<GymUserCreateComm
            .NotEmpty().WithMessage("Last name is required");
 
         RuleFor(x => x.Type)
-            .NotEmpty().WithMessage("User type is required")
+            .NotNull().WithMessage("User type is required")
             .IsInEnum().WithMessage("User type must have correct value");
     }
 }

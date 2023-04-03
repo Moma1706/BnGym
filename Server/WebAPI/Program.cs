@@ -15,7 +15,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAngularOrigins",
+        builder =>
+        {
+            builder.WithOrigins(
+                                "http://localhost:4200"
+                                )
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+    });
+
+// UseCors
+
 var app = builder.Build();
+app.UseCors("AllowAngularOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

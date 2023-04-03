@@ -1,0 +1,15 @@
+<!-- nav -->
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="navbar-nav">
+      <a class="nav-item nav-link" routerLink="/account/login" routerLinkActive="active">Login</a>
+      <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a class="nav-item nav-link" routerLink="/gym-worker/all-gym-workers" routerLinkActive="active">All Gym Workers</a>
+      <a class="nav-item nav-link" routerLink="/gym-user/add-gym-user" routerLinkActive="active">Add Gym User</a>
+  </div>
+</nav>
+
+<!-- main app container -->
+<div class="app-container">
+  <alert></alert>
+  <router-outlet></router-outlet>
+</div>
