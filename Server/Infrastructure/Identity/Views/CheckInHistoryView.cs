@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Application.Enums;
 
-namespace Application.Common.Models.CheckIn
+namespace Infrastructure.Identity.Views
 {
-    public class CheckInGetResult
+    public class CheckInHistoryView
     {
         public Guid Id { get; set; }
+        public int UserId { get; set; }
         public Guid GymUserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime TimeStamp { get; set; }
-        public int UserId { get; set; }
         public string Email { get; set; }
+        public DateTime TimeStamp { get; set; }
         public DateTime LastCheckIn { get; set; }
         public int NumberOfArrivals { get; set; }
-
-        public CheckInGetResult() {}
     }
 }
+

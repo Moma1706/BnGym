@@ -19,8 +19,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("{DateTime:DateTime}")]
-        public async Task<IActionResult> GetCheckinByDate([FromRoute] CheckInGetByDateCommand command)
+        public async Task<IActionResult> GetCheckinByDate([FromQuery] CheckInGetByDateCommand command)
         {
             return Ok(await Mediator.Send(command));
         }

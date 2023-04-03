@@ -16,7 +16,6 @@ namespace Application.Common.Models.GymUser
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public bool IsStudent { get; set; }
         public DateTime ExpiresOn { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsFrozen { get; set; }
@@ -29,7 +28,7 @@ namespace Application.Common.Models.GymUser
         public bool Success { get; set; }
         public string Error { get; set; }
 
-        public GymUserGetResult(bool successful, string error, Guid id, int userId, string firstName, string lastName, string email, bool isStudent, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals)
+        public GymUserGetResult(bool successful, string error, Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals)
         {
             Success = successful;
             Error = error;
@@ -38,7 +37,6 @@ namespace Application.Common.Models.GymUser
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            IsStudent = isStudent;
             ExpiresOn = expiresOn;
             IsBlocked = isBlocked;
             IsFrozen = isFrozen;
@@ -52,6 +50,6 @@ namespace Application.Common.Models.GymUser
         public GymUserGetResult() {}
 
 
-        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, bool isStudent, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals) => new(true, string.Empty, id, userId, firstName, lastName, email, isStudent, expiresOn, isBlocked, isFrozen, freezeDate, isInactive, lastCheckIn, type, numberOfArrivals);
+        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals) => new(true, string.Empty, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInactive, lastCheckIn, type, numberOfArrivals);
     }
 }

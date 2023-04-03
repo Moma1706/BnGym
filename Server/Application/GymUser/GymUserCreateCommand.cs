@@ -22,7 +22,7 @@ namespace Application.GymUser
 
         public async Task<GymUserResult> Handle(GymUserCreateCommand request, CancellationToken cancellationToken)
         {
-            var gymUserResult = await _gymUserService.Create(request.FirstName, request.LastName, request.Email, request.Address, false, request.Type);
+            var gymUserResult = await _gymUserService.Create(request.FirstName, request.LastName, request.Email, request.Address, request.Type);
 
             return gymUserResult;
         }
