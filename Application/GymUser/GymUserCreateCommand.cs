@@ -11,7 +11,6 @@ namespace Application.GymUser
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        public bool IsStudent { get; set; }
         public GymUserType Type { get; set; }
     }
 
@@ -23,7 +22,7 @@ namespace Application.GymUser
 
         public async Task<GymUserResult> Handle(GymUserCreateCommand request, CancellationToken cancellationToken)
         {
-            var gymUserResult = await _gymUserService.Create(request.FirstName, request.LastName, request.Email, request.Address, request.IsStudent, request.Type);
+            var gymUserResult = await _gymUserService.Create(request.FirstName, request.LastName, request.Email, request.Address, request.Type);
 
             return gymUserResult;
         }

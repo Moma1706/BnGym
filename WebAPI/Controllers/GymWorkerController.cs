@@ -18,9 +18,9 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GymWorkerGetAllCommand command)
         {
-            var gymUserResult = await Mediator.Send(new GymWorkerGetAllCommand());
+            var gymUserResult = await Mediator.Send(command);
             return Ok(gymUserResult);
         }
 

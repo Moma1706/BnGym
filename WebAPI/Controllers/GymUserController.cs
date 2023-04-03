@@ -1,4 +1,6 @@
-﻿using Application.GymUser;
+﻿using Application.Enums;
+using Application.GymUser;
+using Application.GymWorker;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -17,7 +19,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GymUserGetAllCommand command)
         {
             var gymUserResult = await Mediator.Send(new GymUserGetAllCommand());
             return Ok(gymUserResult);
@@ -34,16 +36,65 @@ namespace WebApi.Controllers
             return BadRequest(new { gymUserResult.Error });
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] GymUserGetOneCommand uuid, [FromBody] UpdateCommand data)
+        public async Task<IActionResult> Update([FromRoute] Guid dataId, [FromBody] UpdateCommand command)
         {
-            var gymUserResult = await Mediator.Send(data);
+            //var command = new UpdateCommand
+            //{
+            //    Id = id,
+            //    Type = type
+            //};
+            var gymUserResult = await Mediator.Send(command);
 
             if (gymUserResult.Success)
                 return Ok();
 
             return Conflict(new { gymUserResult.Error });
         }
+
+        [HttpPut]
+        [Route("freez/{Id:Guid}")]
+        public async Task<IActionResult> FreezMembership([FromRoute] GymUserFreezCommand command)
+        {
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
+
+        [HttpPut]
+        [Route("activate/{Id:Guid}")]
+        public async Task<IActionResult> ActivateMembership([FromRoute] GymUserActivateCommand command)
+        {
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
+
+        [HttpPut]
+        [Route("extend/{Id:Guid}")]
+        public async Task<IActionResult> ExtendMembership([FromRoute] Guid id, [FromBody] GymUserType type)
+        {
+            var command = new GymUserExtendCommand
+            {
+                Id = id,
+                Type = type
+            };
+
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
+        
+
     }
 }

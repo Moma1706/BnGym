@@ -12,7 +12,6 @@ namespace Application.GymUser
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        public bool IsStudent { get; set; }
         public GymUserType Type { get; set; }
 
         public class UpdateCommandHandler : IRequestHandler<UpdateCommand, GymUserResult>

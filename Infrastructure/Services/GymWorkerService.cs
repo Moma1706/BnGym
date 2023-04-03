@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Net;
 using Application.Common.Interfaces;
+using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Services
 {
@@ -33,7 +35,7 @@ namespace Infrastructure.Services
                 var result = await _identityService.Register(email, password, firstName, lastName, null);
 
                 if (!result.Success)
-                    return GymWorkerResult.Failure("Error while adding new user");
+                    return GymWorkerResult.Failure("Error while adding new user ${result.Errors}");
 
                 // create gymWorker
                 var gymWorker = new GymWorker
@@ -83,18 +85,34 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IList<GymWorkerGetResult>> GetAll()// dodati paginaciju, sortiranje i filtriranje
+        public async Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize)
         {
             var gymWorkerList = new List<GymWorkerGetResult>();
 
-            var gymWorkers = await _dbContext.GymWorkers.ToListAsync();
+            // prepare result
+            var countDetails = _dbContext.GymWorkers.Count();
+            var result = new PageResult<GymWorkerGetResult>
+            {
+                Count = countDetails,
+                PageIndex = page,
+                PageSize = pageSize,
+                Items = gymWorkerList
+            };
+
+            if (page - 1 <= 0)
+                page = 0;
+
+            var query = _dbContext.GymWorkers.Skip(page * pageSize).Take(pageSize);
+            // applay searching string
+            if (!String.IsNullOrEmpty(searchString))
+                query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
+
+            var gymWorkers = await query.OrderBy(x => x.FirstName).ToListAsync();
             if (gymWorkers.Count == 0)
-                return gymWorkerList;
+                return result;
 
             gymWorkerList = gymWorkers.Select(x => new GymWorkerGetResult()
             {
-                Success = true,
-                Error = string.Empty,
                 Id = x.Id,
                 UserId = x.UserId,
                 FirstName = x.FirstName,
@@ -103,7 +121,8 @@ namespace Infrastructure.Services
                 RoleId = x.RoleId,
             }).ToList();
 
-            return gymWorkerList;
+            result.Items = gymWorkerList;
+            return result;
         }
 
         public async Task<GymWorkerGetResult> GetOne(Guid id)

@@ -18,9 +18,6 @@ namespace Infrastructure.Identity
         [DefaultValue("1")]
         public GymUserType Type { get; set; }
 
-        [DefaultValue("false")]
-        public bool IsStudent { get; set; }
-
         public DateTime LastCheckIn { get; set; }
 
         [Required]

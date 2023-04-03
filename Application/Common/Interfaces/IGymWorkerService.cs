@@ -1,4 +1,5 @@
 ﻿using System;
+using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 
 namespace Application.Common.Interfaces
@@ -7,7 +8,7 @@ namespace Application.Common.Interfaces
 	{
         Task<GymWorkerResult> Create(string firstName, string lastName, string email);
 
-        Task<IList<GymWorkerGetResult>> GetAll();
+        Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize);
 
         Task<GymWorkerGetResult> GetOne(Guid id);
 

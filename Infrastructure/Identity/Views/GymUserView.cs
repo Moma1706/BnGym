@@ -10,7 +10,6 @@ namespace Infrastructure.Identity.Views
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public bool IsStudent { get; set; }
         public DateTime ExpiresOn { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsFrozen { get; set; }

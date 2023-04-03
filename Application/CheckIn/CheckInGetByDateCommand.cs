@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models.BaseResult;
 using Application.Common.Models.CheckIn;
 using Application.Common.Models.GymUser;
 using MediatR;
@@ -11,19 +12,23 @@ using System.Threading.Tasks;
 namespace Application.CheckIn
 {
     
-    public record CheckInGetByDateCommand : IRequest<IList<CheckInGetResult>> {
+    public record CheckInGetByDateCommand : IRequest<PageResult<CheckInGetResult>> {
         public DateTime DateTime { get; set; }
+
+        public string SearchString { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
         
-    public class GymUserGetAllCommandHandler : IRequestHandler<CheckInGetByDateCommand, IList<CheckInGetResult>>
+    public class GymUserGetAllCommandHandler : IRequestHandler<CheckInGetByDateCommand, PageResult<CheckInGetResult>>
     {
         private readonly ICheckInService _checkInService;
 
         public GymUserGetAllCommandHandler(ICheckInService checkInService) => _checkInService = checkInService;
 
-        public async Task<IList<CheckInGetResult>> Handle(CheckInGetByDateCommand request, CancellationToken cancellationToken)
+        public async Task<PageResult<CheckInGetResult>> Handle(CheckInGetByDateCommand request, CancellationToken cancellationToken)
         {
-            var checkIns = await _checkInService.GetCheckInsByDate(request.DateTime);
+            var checkIns = await _checkInService.GetCheckInsByDate(request.DateTime, request.SearchString, request.Page, request.PageSize);
             return checkIns;
         }
 
