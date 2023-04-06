@@ -46,5 +46,17 @@ namespace WebApi.Controllers
 
             return Conflict(new { gymUserResult.Error });
         }
+
+        [HttpDelete]
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] GymWorkerDeleteCommand data)
+        {
+            var gymUserResult = await Mediator.Send(data);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
     }
 }

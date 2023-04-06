@@ -26,6 +26,5 @@ namespace Application.GymUser
 
             return gymUserResult;
         }
-
     }
 }

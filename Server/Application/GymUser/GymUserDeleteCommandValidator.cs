@@ -1,11 +1,11 @@
-﻿using Application.GymUser;
+﻿using System;
 using FluentValidation;
 
-namespace Application.Auth.Login
+namespace Application.GymUser
 {
-    public class GymUserGetOneCommandValidator : AbstractValidator<GymUserGetOneCommand>
+	public class GymUserDeleteCommandValidator : AbstractValidator<GymUserDeleteCommand>
     {
-        public GymUserGetOneCommandValidator()
+        public GymUserDeleteCommandValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required")
@@ -18,3 +18,4 @@ namespace Application.Auth.Login
         }
     }
 }
+

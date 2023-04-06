@@ -1,6 +1,7 @@
 ﻿using System;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
+using Application.GymWorker.Dtos;
 
 namespace Application.Common.Interfaces
 {
@@ -14,7 +15,7 @@ namespace Application.Common.Interfaces
 
         Task<GymWorkerResult> Delete(Guid id);
 
-        Task<GymWorkerResult> Update(Guid id);
+        Task<GymWorkerResult> Update(Guid id, UpdateGymWorkerDto data);
     }
 }
 

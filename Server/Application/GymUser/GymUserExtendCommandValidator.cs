@@ -3,13 +3,16 @@ using FluentValidation;
 
 namespace Application.Auth.Login
 {
-    public class GymUserGetOneCommandValidator : AbstractValidator<GymUserGetOneCommand>
+    public class GymUserExtendCommandValidator : AbstractValidator<GymUserExtendCommand>
     {
-        public GymUserGetOneCommandValidator()
+        public GymUserExtendCommandValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required")
                 .Must(BeAValidGuid).WithMessage("Invalid UUID");
+            RuleFor(x => x.Data)
+                .NotEmpty().WithMessage("Type is required")
+                .NotNull();
         }
 
         private bool BeAValidGuid(Guid guid)

@@ -4,6 +4,7 @@ using Application.Common.Interfaces;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
+using Application.GymWorker.Dtos;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -134,9 +135,23 @@ namespace Infrastructure.Services
             return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, gymWorker.FirstName, gymWorker.LastName, gymWorker.Email, gymWorker.RoleId);
         }
 
-        public Task<GymWorkerResult> Update(Guid id)
+        public async Task<GymWorkerResult> Update(Guid id, UpdateGymWorkerDto data)
         {
-            throw new NotImplementedException();
+            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymWorker == null)
+                GymWorkerResult.Failure("Gym worker with provided id does not exist");
+
+            var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
+            if (user == null)
+                return GymWorkerResult.Failure("User does not exist");
+
+            user.Email = data.Email ?? user.Email;
+            user.FirstName = data.FirstName ?? user.FirstName;
+            user.LastName = data.LastName ?? user.LastName;
+
+            _dbContext.Update(user);
+            _dbContext.SaveChanges();
+            return GymWorkerResult.Sucessfull();
         }
     }
 }

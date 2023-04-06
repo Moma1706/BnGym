@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.Auth.Login
 {
-    public class GymUserGetOneCommandValidator : AbstractValidator<GymUserGetOneCommand>
+    public class GymUserFreezCommandValidator : AbstractValidator<GymUserFreezCommand>
     {
-        public GymUserGetOneCommandValidator()
+        public GymUserFreezCommandValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required")

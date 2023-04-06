@@ -18,6 +18,7 @@ namespace Infrastructure.Identity.Views
         public DateTime LastCheckIn { get; set; }
         public GymUserType Type { get; set; }
         public int NumberOfArrivals { get; set; }
+        public string Address { get; set; }
     }
 }
 

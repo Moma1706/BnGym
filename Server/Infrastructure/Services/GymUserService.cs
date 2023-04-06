@@ -8,6 +8,7 @@ using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Application.GymUser;
+using Application.GymUser.Dtos;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,6 @@ namespace Infrastructure.Services
             _dbContext = applicationDbContext;
             _identityService = identityService;
 		}
-
 
         public async Task<GymUserResult> Create(string firstName, string lastName, string email, string address, GymUserType type)
         {
@@ -114,17 +114,42 @@ namespace Infrastructure.Services
             gymUser.IsInActive = false;
 
             _dbContext.Update(gymUser);
-            await _dbContext.SaveChangesAsync(); // TODO: Projeriti da li se azurira i view i tabela
+            await _dbContext.SaveChangesAsync();
 
             return GymUserResult.Sucessfull();
         }
 
-        public Task<GymUserResult> Delete(Guid id)
+        public async Task<GymUserResult> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymUser == null)
+                return GymUserResult.Failure("Gym user with provided id does not exist");
+
+            var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
+            if (gymUser == null)
+                return GymUserResult.Failure("User does not exist");
+
+            gymUser.IsInActive = true;
+            gymUser.ExpiresOn = _dateTimeService.Now;
+            user.IsBlocked = true;
+
+            using var transaction = _dbContext.Database.BeginTransaction();
+            try
+            {
+                _dbContext.Update(gymUser);
+                _dbContext.Update(user);
+                await _dbContext.SaveChangesAsync();
+
+                transaction.Commit();
+                return GymUserResult.Sucessfull();
+            } catch (Exception)
+            {
+                transaction.Rollback();
+                return GymUserResult.Failure("Fail to save gym user");
+            }
         }
 
-        public async Task<GymUserResult> ExtendMembership(Guid id, GymUserType type)
+        public async Task<GymUserResult> ExtendMembership(Guid id, ExtendMembershipDto data)
         {
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
 
@@ -144,7 +169,7 @@ namespace Infrastructure.Services
             if (gymUser.ExpiresOn > _dateTimeService.Now)
                 expiresOn = gymUser.ExpiresOn;
 
-            switch (type)
+            switch (data.Type)
             {
                 case GymUserType.HalfMonth:
                     expiresOn = expiresOn.AddDays(15);
@@ -163,9 +188,9 @@ namespace Infrastructure.Services
                     break;
             }
 
-            gymUser.Type = type;
+            gymUser.Type = data.Type;
             _dbContext.Update(gymUser);
-            await _dbContext.SaveChangesAsync(); // TODO: Projeriti da li se azurira i view i tabela
+            await _dbContext.SaveChangesAsync();
             return GymUserResult.Sucessfull();
         }
 
@@ -234,7 +259,8 @@ namespace Infrastructure.Services
                 IsInactive = x.IsInactive,
                 LastCheckIn = x.LastCheckIn,
                 Type = x.Type,
-                NumberOfArrivals = x.NumberOfArrivals
+                NumberOfArrivals = x.NumberOfArrivals,
+                Address = x.Address,
             }).ToList();
 
             result.Items = gymUserList;
@@ -247,13 +273,41 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 throw new KeyNotFoundException("Gym user with provided id does not exist");
 
-            return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen, gymUser.FreezeDate, gymUser.IsInactive, gymUser.LastCheckIn, gymUser.Type, gymUser.NumberOfArrivals);
+            return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen, gymUser.FreezeDate, gymUser.IsInactive, gymUser.LastCheckIn, gymUser.Type, gymUser.NumberOfArrivals, gymUser.Address);
 
         }
 
-        public Task<GymUserResult> Update(Guid id, UpdateCommand data)
+        public async Task<GymUserResult> Update(Guid id, UpdateGymUserDto data)
         {
-            throw new NotImplementedException();
+            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymUser == null)
+                GymUserResult.Failure("Gym user with provided id does not exist");
+
+            var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
+            if (user == null)
+                return GymUserResult.Failure("User does not exist");
+
+            user.Email = data.Email ?? user.Email;
+            user.FirstName = data.FirstName ?? user.FirstName;
+            user.LastName = data.LastName ?? user.LastName;
+            user.Address = data.Address ?? user.Address;
+
+            //gymUser.Type = data.Type ?? ;
+            using var transaction = _dbContext.Database.BeginTransaction();
+            try
+            {
+                _dbContext.Update(gymUser);
+                _dbContext.Update(user);
+                await _dbContext.SaveChangesAsync();
+
+                transaction.Commit();
+                return GymUserResult.Sucessfull();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                return GymUserResult.Failure("Fail to update gym user");
+            }
         }
     }
 }
