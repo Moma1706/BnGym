@@ -20,12 +20,14 @@ namespace Infrastructure.Identity
         private readonly IConfiguration _configuration;
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMaintenanceService _maintenanceService;
 
-        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager)
+        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager, IMaintenanceService maintenanceService)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
+            _maintenanceService = maintenanceService;
         }
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
@@ -49,7 +51,7 @@ namespace Infrastructure.Identity
             if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
                 return CheckInResult.Failure("GymUser with provided id can't access gym two times a day");
 
-            if (gymUser.ExpiresOn <= _dateTimeService.Now)
+            if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
                 return CheckInResult.Failure("GymUser with provided id has a membership that has expired");
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };

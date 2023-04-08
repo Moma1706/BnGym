@@ -22,14 +22,16 @@ namespace Infrastructure.Services
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly IMaintenanceService _maintenanceService;
         private readonly string password = "BnGym2010";
 
-        public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService)
+        public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IMaintenanceService maintenanceService)
 		{
             _dateTimeService = dateTimeService;
             _dbContext = applicationDbContext;
             _identityService = identityService;
-		}
+            _maintenanceService = maintenanceService;
+        }
 
         public async Task<GymUserResult> Create(string firstName, string lastName, string email, string address, GymUserType type)
         {
@@ -76,7 +78,7 @@ namespace Infrastructure.Services
                 var userRoles = new IdentityUserRole<int>
                 {
                     UserId = result.Id,
-                    RoleId = (int)UserRole.RegularUser
+                    RoleId = Convert.ToInt32(UserRole.RegularUser)
                 };
                 _dbContext.Add(userRoles);
 
@@ -162,9 +164,6 @@ namespace Infrastructure.Services
             if (gymUser.IsInActive)
                 return GymUserResult.Failure("Gym user is inactive");
 
-            if (gymUser.ExpiresOn <= _dateTimeService.Now)
-                return GymUserResult.Failure("Gym user's membership has expired");
-
             var expiresOn = _dateTimeService.Now;
             if (gymUser.ExpiresOn > _dateTimeService.Now)
                 expiresOn = gymUser.ExpiresOn;
@@ -189,6 +188,7 @@ namespace Infrastructure.Services
             }
 
             gymUser.Type = data.Type;
+            gymUser.NumberOfArrivals = 0;
             _dbContext.Update(gymUser);
             await _dbContext.SaveChangesAsync();
             return GymUserResult.Sucessfull();
@@ -220,6 +220,10 @@ namespace Infrastructure.Services
 
         public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize)
         {
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            if (!maintenanceResult.Success)
+                throw new Exception("Unable to read data because maintenace service return an exception.");
+
             var gymUserList = new List<GymUserGetResult>();
 
             // prepare result
@@ -269,12 +273,15 @@ namespace Infrastructure.Services
 
         public async Task<GymUserGetResult> GetOne(Guid id)
         {
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            if (!maintenanceResult.Success)
+                throw new Exception("Unable to read data because maintenace service return an exception.");
+
             var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 throw new KeyNotFoundException("Gym user with provided id does not exist");
 
             return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen, gymUser.FreezeDate, gymUser.IsInactive, gymUser.LastCheckIn, gymUser.Type, gymUser.NumberOfArrivals, gymUser.Address);
-
         }
 
         public async Task<GymUserResult> Update(Guid id, UpdateGymUserDto data)

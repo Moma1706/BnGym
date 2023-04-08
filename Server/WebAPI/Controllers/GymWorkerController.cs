@@ -1,9 +1,12 @@
-﻿using Application.GymUser;
+﻿using System.Data;
+using Application.GymUser;
 using Application.GymWorker;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class GymWorkerController : ApiBaseController
     {
         [HttpPost]
