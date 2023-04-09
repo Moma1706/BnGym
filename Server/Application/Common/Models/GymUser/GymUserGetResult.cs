@@ -24,7 +24,7 @@ namespace Application.Common.Models.GymUser
         public DateTime LastCheckIn { get; set; }
         public GymUserType Type { get; set; }
         public int NumberOfArrivals { get; set; }
-        public string Address { get; set; } // todo: dodati u view
+        public string Address { get; set; } 
         
         public bool Success { get; set; }
         public string Error { get; set; }

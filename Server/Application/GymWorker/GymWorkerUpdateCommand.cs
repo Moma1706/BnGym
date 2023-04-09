@@ -1,6 +1,5 @@
 ﻿using System;
 using Application.Common.Interfaces;
-using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
 using Application.GymWorker.Dtos;
 using MediatR;
@@ -20,9 +19,9 @@ namespace Application.GymWorker
 
             public async Task<GymWorkerResult> Handle(GymWorkerUpdateCommand data, CancellationToken cancellationToken)
             {
-                var gymUserResult = await _gymWorkerService.Update(data.Id, data.Data);
+                var gymWorkerResult = await _gymWorkerService.Update(data.Id, data.Data);
 
-                return gymUserResult;
+                return gymWorkerResult;
             }
         }
     }

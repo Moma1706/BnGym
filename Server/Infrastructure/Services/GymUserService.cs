@@ -21,16 +21,21 @@ namespace Infrastructure.Services
 	{
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
         private readonly IMaintenanceService _maintenanceService;
+        private readonly IEmailService _emailService;
+
         private readonly string password = "BnGym2010";
 
-        public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IMaintenanceService maintenanceService)
+        public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IMaintenanceService maintenanceService, IEmailService emailService, UserManager<User> userManager)
 		{
             _dateTimeService = dateTimeService;
             _dbContext = applicationDbContext;
             _identityService = identityService;
             _maintenanceService = maintenanceService;
+            _emailService = emailService;
+            _userManager = userManager;
         }
 
         public async Task<GymUserResult> Create(string firstName, string lastName, string email, string address, GymUserType type)
@@ -63,7 +68,7 @@ namespace Infrastructure.Services
                 var result = await _identityService.Register(email, password, firstName, lastName, address);
 
                 if (!result.Success)
-                    return GymUserResult.Failure("Error while adding new user");
+                    return GymUserResult.Failure(result.Errors);
 
                 // create gymUser
                 var gymUser = new GymUser
@@ -131,15 +136,11 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 return GymUserResult.Failure("User does not exist");
 
-            gymUser.IsInActive = true;
-            gymUser.ExpiresOn = _dateTimeService.Now;
-            user.IsBlocked = true;
-
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
-                _dbContext.Update(gymUser);
-                _dbContext.Update(user);
+                _dbContext.Remove(gymUser);
+                _dbContext.Remove(user);
                 await _dbContext.SaveChangesAsync();
 
                 transaction.Commit();
@@ -159,7 +160,7 @@ namespace Infrastructure.Services
                 return GymUserResult.Failure("Gym user with provided id does not exist");
 
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure("Gym user already has a frozen membership");
+                return GymUserResult.Failure("Gym user has a frozen membership");
 
             if (gymUser.IsInActive)
                 return GymUserResult.Failure("Gym user is inactive");
@@ -187,6 +188,7 @@ namespace Infrastructure.Services
                     break;
             }
 
+            gymUser.ExpiresOn = expiresOn;
             gymUser.Type = data.Type;
             gymUser.NumberOfArrivals = 0;
             _dbContext.Update(gymUser);
@@ -220,9 +222,9 @@ namespace Infrastructure.Services
 
         public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize)
         {
-            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-            if (!maintenanceResult.Success)
-                throw new Exception("Unable to read data because maintenace service return an exception.");
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            //if (!maintenanceResult.Success)
+            //    throw new Exception("Unable to read data because maintenace service return an exception.");
 
             var gymUserList = new List<GymUserGetResult>();
 
@@ -273,9 +275,9 @@ namespace Infrastructure.Services
 
         public async Task<GymUserGetResult> GetOne(Guid id)
         {
-            var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
-            if (!maintenanceResult.Success)
-                throw new Exception("Unable to read data because maintenace service return an exception.");
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            //if (!maintenanceResult.Success)
+            //    throw new Exception("Unable to read data because maintenace service return an exception.");
 
             var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
@@ -294,12 +296,52 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymUserResult.Failure("User does not exist");
 
-            user.Email = data.Email ?? user.Email;
+            if (data.Email is string && data.Email != user.Email)
+            {
+                if (await _userManager.FindByEmailAsync(data.Email) != null)
+                    return GymUserResult.Failure("User with given E-mail already exist");
+
+                await _emailService.SendConfirmationEmailAsync(user.Email, "token");
+
+                user.Email = data.Email;
+                user.EmailConfirmed = false;
+            }
+
+            // TODO: Provjeriti ??
             user.FirstName = data.FirstName ?? user.FirstName;
             user.LastName = data.LastName ?? user.LastName;
             user.Address = data.Address ?? user.Address;
 
-            //gymUser.Type = data.Type ?? ;
+            var currentDate = _dateTimeService.Now;
+            var expiresOn = _dateTimeService.Now;
+            switch (data.Type)
+            {
+                case GymUserType.HalfMonth:
+                    gymUser.Type = GymUserType.HalfMonth;
+                    expiresOn = currentDate.AddDays(15);
+                    break;
+                case GymUserType.Month:
+                    gymUser.Type = GymUserType.Month;
+                    expiresOn = currentDate.AddMonths(1);
+                    break;
+                case GymUserType.ThreeMonts:
+                    gymUser.Type = GymUserType.ThreeMonts;
+                    expiresOn = currentDate.AddMonths(3);
+                    break;
+                case GymUserType.HalfYear:
+                    gymUser.Type = GymUserType.HalfYear;
+                    expiresOn = currentDate.AddMonths(6);
+                    break;
+                case GymUserType.Year:
+                    gymUser.Type = GymUserType.Year;
+                    expiresOn = currentDate.AddYears(1);
+                    break;
+                default:
+                    expiresOn = gymUser.ExpiresOn;
+                    break;
+            }
+
+            gymUser.ExpiresOn = expiresOn;
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {

@@ -23,10 +23,6 @@ namespace Infrastructure.Identity
 
         [Required]
         [DefaultValue("false")]
-        public bool IsEmailConfirmed { get; set; }
-
-        [Required]
-        [DefaultValue("false")]
         public bool IsFrozen { get; set; }
 
         [Required]

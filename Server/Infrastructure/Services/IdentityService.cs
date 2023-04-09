@@ -56,13 +56,13 @@ namespace Infrastructure.Identity
             var claims = GetClaims(user);
             var token = GenerateJwtForUser(user, claims);
 
-            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-            if (!maintenanceResult.Success)
-                throw new Exception("Unable to login because maintenace service return an exception.");
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            //if (!maintenanceResult.Success)
+            //    throw new Exception("Unable to login because maintenace service return an exception.");
 
-            var clearResult = await _maintenanceService.ClearCheckIns();
-            if (!clearResult.Success)
-                throw new Exception("Unable to login because maintenace service return an exception.");
+            //var clearResult = await _maintenanceService.ClearCheckIns();
+            //if (!clearResult.Success)
+            //    throw new Exception("Unable to login because maintenace service return an exception.");
 
             return Result.Successful(token);
         }

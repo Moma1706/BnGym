@@ -20,14 +20,12 @@ namespace Infrastructure.Identity
         private readonly IConfiguration _configuration;
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
-        private readonly IMaintenanceService _maintenanceService;
 
-        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager, IMaintenanceService maintenanceService)
+        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
-            _maintenanceService = maintenanceService;
         }
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Application.Common.Interfaces;
 using Application.Common.Models.GymUser;
-using Application.Enums;
 using Application.GymUser.Dtos;
 using MediatR;
 

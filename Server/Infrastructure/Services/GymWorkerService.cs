@@ -2,6 +2,7 @@
 using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models.BaseResult;
+using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Application.GymWorker.Dtos;
@@ -18,13 +19,17 @@ namespace Infrastructure.Services
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly UserManager<User> _userManager;
+        private readonly IEmailService _emailService;
         private readonly string password = "BnGym2010";
 
-        public GymWorkerService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService)
+        public GymWorkerService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IEmailService emailService, UserManager<User> userManager)
         {
             _dateTimeService = dateTimeService;
             _dbContext = applicationDbContext;
             _identityService = identityService;
+            _emailService = emailService;
+            _userManager = userManager;
         }
 
         public async Task<GymWorkerResult> Create(string firstName, string lastName, string email)
@@ -75,13 +80,16 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymWorkerResult.Failure("User with provided id does not exist");
 
-            user.IsBlocked = true;
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
-                _dbContext.Update(user);
+                _dbContext.Remove(gymWorker);
+                _dbContext.Remove(user);
+                transaction.Commit();
                 return GymWorkerResult.Sucessfull();
             } catch (Exception)
             {
+                transaction.Rollback();
                 return GymWorkerResult.Failure("Unable to delete gym worker");
             }
         }
@@ -145,7 +153,18 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymWorkerResult.Failure("User does not exist");
 
-            user.Email = data.Email ?? user.Email;
+            if (data.Email is string && data.Email != user.Email)
+            {
+                if (await _userManager.FindByEmailAsync(data.Email) != null)
+                    return GymWorkerResult.Failure("User with given E-mail already exist");
+
+                await _emailService.SendConfirmationEmailAsync(user.Email, "token");
+
+                user.Email = data.Email;
+                user.EmailConfirmed = false;
+            }
+
+            // TODO: Provjeriti ??
             user.FirstName = data.FirstName ?? user.FirstName;
             user.LastName = data.LastName ?? user.LastName;
 
