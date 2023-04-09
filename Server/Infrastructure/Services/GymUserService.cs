@@ -168,6 +168,8 @@ namespace Infrastructure.Services
             var expiresOn = _dateTimeService.Now;
             if (gymUser.ExpiresOn > _dateTimeService.Now)
                 expiresOn = gymUser.ExpiresOn;
+            else
+                gymUser.NumberOfArrivals = 0; // TODO: Smisliti sta raditi sa brojem dolazaka. Kada azurirati i gdje cuvati za stare mjesece???
 
             switch (data.Type)
             {
@@ -190,7 +192,7 @@ namespace Infrastructure.Services
 
             gymUser.ExpiresOn = expiresOn;
             gymUser.Type = data.Type;
-            gymUser.NumberOfArrivals = 0;
+
             _dbContext.Update(gymUser);
             await _dbContext.SaveChangesAsync();
             return GymUserResult.Sucessfull();

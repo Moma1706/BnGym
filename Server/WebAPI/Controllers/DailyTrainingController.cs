@@ -30,6 +30,14 @@ namespace WebApi.Controllers
             return Ok(await Mediator.Send(command));
         }
 
+        [HttpGet]
+        [Route("{Id:Guid}")]
+        //[Authorize(Roles = "admin, worker")]
+        public async Task<IActionResult> GetOne([FromQuery] DailyTrainingGetOneCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
+
         [HttpPut]
         [Route("{Id:Guid}")]
         //[Authorize(Roles = "admin, worker")]
@@ -49,12 +57,25 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("/users")]
+        [Route("users")]
         //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetUsers([FromQuery] DailyTrainingGetAllCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
             return Ok(gymUserResult);
+        }
+
+        [HttpPost]
+        [Route("arrival/{Id:Guid}")]
+        //[Authorize(Roles = "admin, worker")]
+        public async Task<IActionResult> AddArrival([FromRoute] DailyTrainingAddArrivalCommand command)
+        {
+            var dailyTrainingResult = await Mediator.Send(command);
+
+            if (dailyTrainingResult.Success)
+                return Ok();
+
+            return Conflict(new { dailyTrainingResult.Error });
         }
     }
 }

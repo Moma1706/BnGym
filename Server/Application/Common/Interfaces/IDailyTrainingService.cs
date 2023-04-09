@@ -11,5 +11,6 @@ namespace Application.Common.Interfaces
         Task<DailyTrainingResult> Update(Guid id, UpdateDailyTrainingDto data);
         Task<DailyTrainingResult> AddArrival(Guid id);
         Task<PageResult<DailyUsersGetResult>> GetDailyUsers(string searchString, int page, int pageSize);
+        Task<DailyTrainingGetResult> GetOne(Guid id);
     }
 }

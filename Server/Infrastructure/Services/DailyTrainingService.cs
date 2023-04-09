@@ -4,6 +4,7 @@ using Application.Common.Models.BaseResult;
 using Application.Common.Models.DailyTraining;
 using Application.DailyTraining.Dtos;
 using Infrastructure.Data;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +49,7 @@ namespace Infrastructure.Identity
                     NumberOfArrivals = 1
                 };
 
-                _dbContext.Add(dailyUser);
+                _dbContext.Add(dailyTraining);
                 _dbContext.SaveChanges();
                 return DailyTrainingResult.Sucessfull();
             }
@@ -155,9 +156,21 @@ namespace Infrastructure.Identity
                 if (dailyUser == null)
                     return DailyTrainingResult.Failure("Daily user does not exist");
 
+                // TODO: Provjeriti ??
                 dailyUser.FirstName = data.FirstName ?? dailyUser.FirstName;
                 dailyUser.LastName = data.LastName ?? dailyUser.LastName;
-                //dailyUser.DateOfBirth = data.DateOfBirth ?? dailyUser.DateOfBirth;
+                if (data.DateOfBirth is string)
+                {
+                    try
+                    {
+                        var date = Convert.ToDateTime(data.DateOfBirth);
+                        dailyUser.DateOfBirth = date;
+                    }
+                    catch (Exception)
+                    {
+                        DailyTrainingResult.Failure("Unable to convert date string to DateTime");
+                    }
+                }
 
                 //update daily user
                 _dbContext.Update(dailyUser);
@@ -178,20 +191,26 @@ namespace Infrastructure.Identity
             if (dailyUser == null)
                 return DailyTrainingResult.Failure("Daily user does not exist");
 
-            if (dailyUser.CheckInDate == _dateTimeService.Now.Date)
+            if (dailyUser.CheckInDate.Date == _dateTimeService.Now.Date)
                 return DailyTrainingResult.Failure("Daily user can't access gym two times a day");
 
             if (dailyUser.CheckInDate.Month == _dateTimeService.Now.Date.Month &&
                 dailyUser.CheckInDate.Year == _dateTimeService.Now.Date.Year)
                 dailyUser.NumberOfArrivals++;
+            else
+                dailyUser.NumberOfArrivals = 1;
 
-            dailyUser.NumberOfArrivals = 1;
             dailyUser.CheckInDate = _dateTimeService.Now;
 
             //update daily user
             _dbContext.Update(dailyUser);
             _dbContext.SaveChanges();
             return DailyTrainingResult.Sucessfull();
+        }
+
+        public Task<DailyTrainingGetResult> GetOne(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

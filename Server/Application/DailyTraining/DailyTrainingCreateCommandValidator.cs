@@ -14,8 +14,7 @@ public class DailyTrainingCommandValidator : AbstractValidator<DailyTrainingCrea
            .NotEmpty().WithMessage("Last name is required");
 
         RuleFor(x => x.DateOfBirth)
-                    .NotEmpty().WithMessage("Date is required")
-                    .Must(BeAValidDate).WithMessage("Date is required");
+                    .NotEmpty().WithMessage("Date is required");
     }
 
     private bool BeAValidDate(DateTime date)
