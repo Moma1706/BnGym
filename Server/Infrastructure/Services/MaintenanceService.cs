@@ -25,7 +25,7 @@ namespace Infrastructure.Identity
 
         public async Task<MaintenanceResult> CheckExpirationDate()
         {
-            var usersForUpdate = await _dbContext.GymUsers.Where(x => x.ExpiresOn.Date < _dateTimeService.Now.Date).ToListAsync();
+            var usersForUpdate = await _dbContext.GymUsers.Where(x => x.ExpiresOn.Date < _dateTimeService.Now.Date && x.IsInActive == false).ToListAsync();
             if (usersForUpdate.Count() == 0)
                 return MaintenanceResult.Sucessfull();
 
@@ -51,7 +51,7 @@ namespace Infrastructure.Identity
             if (gymUser == null)
                 return MaintenanceResult.Failure("Gym user does not exist");
 
-            if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
+            if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date && gymUser.IsInActive == false)
             {
                 gymUser.IsInActive = true;
                 _dbContext.Update(gymUser);
