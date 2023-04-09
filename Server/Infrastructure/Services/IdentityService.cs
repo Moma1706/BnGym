@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
 using Application.Enums;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,16 +18,25 @@ namespace Infrastructure.Identity
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IDateTimeService _dateTimeService;
+        private readonly IEmailService _emailService;
+        private readonly IMaintenanceService _maintenanceService;
+        private readonly ApplicationDbContext _dbContext;
 
         public IdentityService(SignInManager<User> signInManager,
                                UserManager<User> userManager,
                                IConfiguration configuration,
-                               IDateTimeService dateTimeService)
+                               IDateTimeService dateTimeService,
+                               ApplicationDbContext applicationDbContext,
+                               IEmailService emailService,
+                               IMaintenanceService maintenanceService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _configuration = configuration;
             _dateTimeService = dateTimeService;
+            _dbContext = applicationDbContext;
+            _emailService = emailService;
+            _maintenanceService = maintenanceService;
         }
 
         public async Task<Result> Login(string email, string password)
@@ -38,6 +48,38 @@ namespace Infrastructure.Identity
 
             if (!user.EmailConfirmed)
                 return Result.Failure("E-mail not confirmed");
+
+            var role = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
+            if (role.RoleId == Convert.ToInt32(UserRole.RegularUser))
+                return Result.Failure("Invalid user role");
+
+            var claims = GetClaims(user);
+            var token = GenerateJwtForUser(user, claims);
+
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            //if (!maintenanceResult.Success)
+            //    throw new Exception("Unable to login because maintenace service return an exception.");
+
+            //var clearResult = await _maintenanceService.ClearCheckIns();
+            //if (!clearResult.Success)
+            //    throw new Exception("Unable to login because maintenace service return an exception.");
+
+            return Result.Successful(token);
+        }
+
+        public async Task<Result> LoginApp(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+                return Result.Failure("Invalid username or password");
+
+            if (!user.EmailConfirmed)
+                return Result.Failure("E-mail not confirmed");
+
+            var role = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
+            if (role.RoleId != Convert.ToInt32(UserRole.RegularUser))
+                return Result.Failure("Invalid user role");
 
             var claims = GetClaims(user);
             var token = GenerateJwtForUser(user, claims);
@@ -64,6 +106,8 @@ namespace Infrastructure.Identity
             if (!registerResult.Succeeded)
                 throw IdentityException.RegisterException(registerResult.Errors.Select(e => e.Description));
 
+            await _emailService.SendConfirmationEmailAsync(user.Email, "token");
+
             return RegisterResult.Successful(user.Id);
         }
 
@@ -84,7 +128,7 @@ namespace Infrastructure.Identity
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expireDate = _dateTimeService.Now.AddDays(Convert.ToInt32(_configuration["JWT:ExpireInDays"]));
+            var expireDate = _dateTimeService.Now.AddHours(Convert.ToInt32(_configuration["JWT:ExpireInHours"]));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],

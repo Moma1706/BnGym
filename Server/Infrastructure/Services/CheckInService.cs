@@ -30,9 +30,12 @@ namespace Infrastructure.Identity
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
-
             if (gymUser == null)
                 return CheckInResult.Failure("GymUser with provided id doesn't exist");
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == gymUser.UserId);
+            if (user == null)
+                return CheckInResult.Failure("User doesn't exist");
 
             if (gymUser.IsFrozen)
                 return CheckInResult.Failure("GymUser with provided id is frozen");
@@ -40,13 +43,13 @@ namespace Infrastructure.Identity
             if (gymUser.IsInActive)
                 return CheckInResult.Failure("GymUser with provided id is inactive");
 
-            //if (gymUser.IsBlocked)
-            //    return CheckInResult.Failure("GymUser with provided id is blocked");
+            if (user.IsBlocked)
+                return CheckInResult.Failure("GymUser with provided id is blocked");
 
-            //if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
-            //    return CheckInResult.Failure("GymUser with provided id can't access gym two times a day");
+            if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
+                return CheckInResult.Failure("GymUser with provided id can't access gym two times a day");
 
-            if (gymUser.ExpiresOn <= _dateTimeService.Now)
+            if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
                 return CheckInResult.Failure("GymUser with provided id has a membership that has expired");
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
@@ -55,11 +58,10 @@ namespace Infrastructure.Identity
             gymUser.LastCheckIn = checkIn.TimeStamp;
 
             using var transaction = _dbContext.Database.BeginTransaction();
-
             try
             {
-                //update gymuser
-                _dbContext.Update(gymUser); // TODO: Projeriti da li se azurira i view i tabela
+                //update gymUser
+                _dbContext.Update(gymUser);
 
                 //save checkin
                 _dbContext.Add(checkIn);
@@ -70,10 +72,10 @@ namespace Infrastructure.Identity
             catch (Exception)
             {
                 transaction.Rollback();
-                return CheckInResult.Failure("Unable to add chek in");
+                return CheckInResult.Failure("Unable to add check in value");
             }
 
-            return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId,checkIn.TimeStamp);
+            return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId, checkIn.TimeStamp);
         }
 
         public async Task<PageResult<CheckInGetResult>> GetCheckInsByDate(DateTime date, string searchString, int page, int pageSize)
@@ -89,6 +91,9 @@ namespace Infrastructure.Identity
                 PageSize = pageSize,
                 Items = checkInList
             };
+
+            if (countDetails == 0)
+                return result;
 
             if (page - 1 <= 0)
                 page = 0;

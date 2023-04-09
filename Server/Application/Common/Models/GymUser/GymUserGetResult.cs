@@ -24,11 +24,12 @@ namespace Application.Common.Models.GymUser
         public DateTime LastCheckIn { get; set; }
         public GymUserType Type { get; set; }
         public int NumberOfArrivals { get; set; }
+        public string Address { get; set; } 
         
         public bool Success { get; set; }
         public string Error { get; set; }
 
-        public GymUserGetResult(bool successful, string error, Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals)
+        public GymUserGetResult(bool successful, string error, Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals, string address)
         {
             Success = successful;
             Error = error;
@@ -45,11 +46,12 @@ namespace Application.Common.Models.GymUser
             LastCheckIn = lastCheckIn;
             Type = type;
             NumberOfArrivals = numberOfArrivals;
+            Address = address;
         }
 
         public GymUserGetResult() {}
 
 
-        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals) => new(true, string.Empty, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInactive, lastCheckIn, type, numberOfArrivals);
+        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals, string address) => new(true, string.Empty, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInactive, lastCheckIn, type, numberOfArrivals, address);
     }
 }

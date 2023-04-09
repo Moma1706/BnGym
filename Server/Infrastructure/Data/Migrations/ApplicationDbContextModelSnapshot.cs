@@ -39,6 +39,34 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("CheckInHistory", (string)null);
                 });
 
+            modelBuilder.Entity("Infrastructure.Identity.DailyTraining", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfArrivals")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DailyTraining", (string)null);
+                });
+
             modelBuilder.Entity("Infrastructure.Identity.GymUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -50,9 +78,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("FreezeDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsEmailConfirmed")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsFrozen")
                         .HasColumnType("bit");
@@ -173,11 +198,49 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("Infrastructure.Identity.Views.CheckInHistoryView", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GymUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastCheckIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfArrivals")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToView("CheckInHistoryView");
+                });
+
             modelBuilder.Entity("Infrastructure.Identity.Views.GymUserView", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");

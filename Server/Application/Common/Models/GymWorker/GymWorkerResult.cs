@@ -1,5 +1,8 @@
-﻿using System;
-using Application.Common.Models.GymUser;
+﻿using Application.Common.Models.Auth;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Application.Common.Models.GymWorker
 {
@@ -18,4 +21,3 @@ namespace Application.Common.Models.GymWorker
         public static GymWorkerResult Failure(string error) => new(false, error);
     }
 }
-

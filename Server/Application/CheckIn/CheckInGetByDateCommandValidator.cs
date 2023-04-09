@@ -13,7 +13,13 @@ namespace Application.CheckIn
         public CheckInGetByDateCommandValidator()
         {
             RuleFor(x => x.DateTime)
-                .NotEmpty().WithMessage("Date is required");
+                .NotEmpty().WithMessage("Date is required")
+                .Must(BeAValidDate).WithMessage("Date is required");
+        }
+
+        private bool BeAValidDate(DateTime date)
+        {
+            return !date.Equals(default(DateTime));
         }
     }
 }

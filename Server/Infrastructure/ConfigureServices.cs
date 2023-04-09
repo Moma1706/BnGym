@@ -44,6 +44,8 @@ public static class ConfigureServices
         services.AddTransient<ICheckInService, CheckInService>();
         services.AddTransient<IGymUserService, GymUserService>();
         services.AddTransient<IGymWorkerService, GymWorkerService>();
+        services.AddTransient<IDailyTrainingService, DailyTrainingService>();
+        services.AddTransient<IMaintenanceService, MaintenanceService>();
         services.AddScoped<DatabaseInitializer>();
 
         services.AddAuthentication();

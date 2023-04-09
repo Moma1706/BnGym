@@ -32,6 +32,17 @@ public class AuthController : ApiBaseController
     }
 
     [HttpPost]
+    [Route("login-app")]
+    public async Task<IActionResult> LoginApp([FromBody] LoginAppCommand command)
+    {
+        var loginResult = await Mediator.Send(command);
+        if (loginResult.Success)
+            return Ok(loginResult);
+
+        return Unauthorized(new { loginResult.Error });
+    }
+
+    [HttpPost]
     [Route("confirm-email")]
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailCommand command)
     {
