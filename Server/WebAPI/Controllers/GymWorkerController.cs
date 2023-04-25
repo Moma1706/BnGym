@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class GymWorkerController : ApiBaseController
     {
         [HttpPost]
@@ -15,7 +15,7 @@ namespace WebApi.Controllers
             var gymWorkerResult = await Mediator.Send(command);
 
             if (gymWorkerResult.Success)
-                return Ok();
+                return Ok(gymWorkerResult);
 
             return Conflict(new { gymWorkerResult.Error });
         }

@@ -15,13 +15,9 @@ namespace Infrastructure.Identity
         public string LastName { get; set; }
 
         [Required]
-        public DateTime CheckInDate { get; set; }
-
-        [Required]
         public DateTime DateOfBirth { get; set; }
 
-        [Required]
-        [DefaultValue(0)]
-        public int NumberOfArrivals { get; set; }
+        [DefaultValue(typeof(DateTime), "0001-01-01")]
+        public DateTime LastCheckIn { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace Infrastructure.Services
             _userManager = userManager;
         }
 
-        public async Task<GymWorkerResult> Create(string firstName, string lastName, string email)
+        public async Task<GymWorkerGetResult> Create(string firstName, string lastName, string email)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -41,7 +41,7 @@ namespace Infrastructure.Services
                 var result = await _identityService.Register(email, password, firstName, lastName, null);
 
                 if (!result.Success)
-                    return GymWorkerResult.Failure("Error while adding new user ${result.Errors}");
+                    return GymWorkerGetResult.Failure(new Error { Code = ExceptionType.UnableToRegister, Message = result.Errors });
 
                 // create gymWorker
                 var gymWorker = new GymWorker
@@ -61,12 +61,12 @@ namespace Infrastructure.Services
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
 
-                return GymWorkerResult.Sucessfull();
+                return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, firstName, lastName, email, userRoles.RoleId);
             }
             catch (Exception)
             {
                 transaction.Rollback();
-                return GymWorkerResult.Failure("Fail to save gym worker");
+                return GymWorkerGetResult.Failure(new Error { Code = ExceptionType.UnableToCreate, Message = "Fail to save gym worker" });
             }
         }
 
@@ -74,24 +74,15 @@ namespace Infrastructure.Services
         {
             var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymWorker == null)
-                throw new KeyNotFoundException("Gym worker with provided id does not exist");
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
 
             var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
             if (user == null)
-                return GymWorkerResult.Failure("User with provided id does not exist");
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User with provided id does not exist" });
 
-            using var transaction = _dbContext.Database.BeginTransaction();
-            try
-            {
-                _dbContext.Remove(gymWorker);
-                _dbContext.Remove(user);
-                transaction.Commit();
-                return GymWorkerResult.Sucessfull();
-            } catch (Exception)
-            {
-                transaction.Rollback();
-                return GymWorkerResult.Failure("Unable to delete gym worker");
-            }
+            user.IsBlocked = true;
+            _dbContext.Update(user);
+            return GymWorkerResult.Sucessfull();
         }
 
         public async Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize)
@@ -108,7 +99,8 @@ namespace Infrastructure.Services
                 Items = gymWorkerList
             };
 
-            if (page - 1 <= 0)
+            page -= 1;
+            if (page <= 0)
                 page = 0;
 
             var query = _dbContext.GymWorkers.Skip(page * pageSize).Take(pageSize);
@@ -116,7 +108,7 @@ namespace Infrastructure.Services
             if (!String.IsNullOrEmpty(searchString))
                 query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
 
-            var gymWorkers = await query.OrderBy(x => x.FirstName).ToListAsync();
+            var gymWorkers = await query.Where(x => x.IsBlocked == false).OrderBy(x => x.FirstName).ToListAsync();
             if (gymWorkers.Count == 0)
                 return result;
 
@@ -136,7 +128,7 @@ namespace Infrastructure.Services
 
         public async Task<GymWorkerGetResult> GetOne(Guid id)
         {
-            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id && x.IsBlocked == false).FirstOrDefaultAsync();
             if (gymWorker == null)
                 throw new KeyNotFoundException("Gym worker with provided id does not exist");
 
@@ -147,24 +139,21 @@ namespace Infrastructure.Services
         {
             var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymWorker == null)
-                GymWorkerResult.Failure("Gym worker with provided id does not exist");
+                GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
 
             var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
             if (user == null)
-                return GymWorkerResult.Failure("User does not exist");
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
 
             if (data.Email is string && data.Email != user.Email)
             {
                 if (await _userManager.FindByEmailAsync(data.Email) != null)
-                    return GymWorkerResult.Failure("User with given E-mail already exist");
-
-                await _emailService.SendConfirmationEmailAsync(user.Email, "token");
+                    return GymWorkerResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
 
                 user.Email = data.Email;
                 user.EmailConfirmed = false;
             }
 
-            // TODO: Provjeriti ??
             user.FirstName = data.FirstName ?? user.FirstName;
             user.LastName = data.LastName ?? user.LastName;
 

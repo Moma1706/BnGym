@@ -18,7 +18,8 @@ namespace Application.DailyTraining
                 .Must(BeAValidGuid).WithMessage("Invalid UUID");
 
             RuleFor(x => x.Data.DateOfBirth)
-                .NotEmpty().WithMessage("Date is required");
+                .NotEmpty().WithMessage("Date is required")
+                .Must(BeAValidDate).WithMessage("Invalid date format");
         }
 
         private bool BeAValidDate(DateTime date)

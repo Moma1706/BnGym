@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin, Worker")]
     public class DailyTrainingController : ApiBaseController
     {
         [HttpPost]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> Create([FromBody] DailyTrainingCreateCommand command)
         {
             var checkInResult = await Mediator.Send(command);
@@ -24,7 +24,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetByDate([FromQuery] DailyTrainingGetByDateCommand command)
         {
             return Ok(await Mediator.Send(command));
@@ -32,7 +31,6 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetOne([FromQuery] DailyTrainingGetOneCommand command)
         {
             return Ok(await Mediator.Send(command));
@@ -40,7 +38,6 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateDailyTrainingDto data)
         {
             var command = new DailyTrainingUpdateCommand
@@ -58,7 +55,6 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("users")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetUsers([FromQuery] DailyTrainingGetAllCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
@@ -67,7 +63,6 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("arrival/{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> AddArrival([FromRoute] DailyTrainingAddArrivalCommand command)
         {
             var dailyTrainingResult = await Mediator.Send(command);

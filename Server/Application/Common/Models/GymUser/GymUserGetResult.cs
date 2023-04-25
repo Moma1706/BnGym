@@ -1,9 +1,11 @@
 ﻿using Application.Common.Models.Auth;
+using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,17 +21,18 @@ namespace Application.Common.Models.GymUser
         public DateTime ExpiresOn { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsFrozen { get; set; }
-        public DateTime FreezeDate { get; set; }
-        public bool IsInactive { get; set; }
-        public DateTime LastCheckIn { get; set; }
+        public string FreezeDate { get; set; }
+        public bool IsInActive { get; set; }
+        public string LastCheckIn { get; set; }
         public GymUserType Type { get; set; }
-        public int NumberOfArrivals { get; set; }
-        public string Address { get; set; } 
-        
-        public bool Success { get; set; }
-        public string Error { get; set; }
+        public string Address { get; set; }
+        public int NumberOfArrivalsLastMonth { get; set; }
+        public int NumberOfArrivalsCurrentMonth { get; set; }
 
-        public GymUserGetResult(bool successful, string error, Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals, string address)
+        public bool Success { get; set; }
+        public Error Error { get; set; }
+
+        public GymUserGetResult(bool successful, Error error, Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, string freezeDate, bool isInActive, string lastCheckIn, GymUserType type, string address, int numberOfArrivalsLastMonth, int numberOfArrivalsCurrentMonth)
         {
             Success = successful;
             Error = error;
@@ -42,16 +45,21 @@ namespace Application.Common.Models.GymUser
             IsBlocked = isBlocked;
             IsFrozen = isFrozen;
             FreezeDate = freezeDate;
-            IsInactive = isInactive;
+            IsInActive = isInActive;
             LastCheckIn = lastCheckIn;
             Type = type;
-            NumberOfArrivals = numberOfArrivals;
             Address = address;
+            NumberOfArrivalsCurrentMonth = numberOfArrivalsCurrentMonth;
+            NumberOfArrivalsLastMonth = numberOfArrivalsLastMonth;
         }
 
         public GymUserGetResult() {}
+        public GymUserGetResult(Error error) {
+            Error = error;
+        }
 
 
-        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, DateTime freezeDate, bool isInactive, DateTime lastCheckIn, GymUserType type, int numberOfArrivals, string address) => new(true, string.Empty, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInactive, lastCheckIn, type, numberOfArrivals, address);
+        public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, string freezeDate, bool isInActive, string lastCheckIn, GymUserType type, string address, int numberOfArrivalsLastMonth, int numberOfArrivalsCurrentMonth) => new(true, new Error { Code = 0, Message = string.Empty }, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInActive, lastCheckIn, type, address, numberOfArrivalsLastMonth, numberOfArrivalsCurrentMonth);
+        public static GymUserGetResult Failure(Error error) => new(false, error, Guid.Empty, 0, string.Empty, string.Empty, string.Empty, DateTime.MinValue, false, false, string.Empty, false, string.Empty, 0, string.Empty, 0, 0);
     }
 }

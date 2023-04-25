@@ -1,6 +1,7 @@
 ﻿using System;
 using Application.Common.Interfaces;
 using Application.Common.Models.GymWorker;
+using Application.Enums;
 using Application.GymWorker.Dtos;
 using MediatR;
 
@@ -14,12 +15,23 @@ namespace Application.GymWorker
         public class GymWorkerUpdateCommandHandler : IRequestHandler<GymWorkerUpdateCommand, GymWorkerResult>
         {
             private readonly IGymWorkerService _gymWorkerService;
+            private readonly IIdentityService _identityService;
+            private readonly IEmailService _emailService;
 
-            public GymWorkerUpdateCommandHandler(IGymWorkerService gymWorkerService) => _gymWorkerService = gymWorkerService;
-
-            public async Task<GymWorkerResult> Handle(GymWorkerUpdateCommand data, CancellationToken cancellationToken)
+            public GymWorkerUpdateCommandHandler(IGymWorkerService gymWorkerService, IIdentityService identityService, IEmailService emailService)
             {
-                var gymWorkerResult = await _gymWorkerService.Update(data.Id, data.Data);
+                _gymWorkerService = gymWorkerService;
+                _identityService = identityService;
+                _emailService = emailService;
+            }
+
+            public async Task<GymWorkerResult> Handle(GymWorkerUpdateCommand request, CancellationToken cancellationToken)
+            {
+                var gymWorkerResult = await _gymWorkerService.Update(request.Id, request.Data);
+
+                var tokenResult = await _identityService.GenerateTokenForIdentityPurpose(request.Data.Email, TokenPurpose.ConfirmEmail);
+                if (tokenResult.Success)
+                    await _emailService.SendConfirmationEmailAsync(request.Data.Email, tokenResult.Token);
 
                 return gymWorkerResult;
             }

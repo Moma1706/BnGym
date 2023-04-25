@@ -1,5 +1,6 @@
 ﻿using System;
 using Application.Common.Interfaces;
+using Application.Common.Models.BaseResult;
 using Application.Common.Models.DailyTraining;
 using Application.Enums;
 using MediatR;
@@ -10,7 +11,7 @@ namespace Application.DailyTraining
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 
     public class DailyTrainingCreateCommandHandler : IRequestHandler<DailyTrainingCreateCommand, DailyTrainingResult>
@@ -21,17 +22,9 @@ namespace Application.DailyTraining
 
         public async Task<DailyTrainingResult> Handle(DailyTrainingCreateCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var date = Convert.ToDateTime(request.DateOfBirth);
-                var dailyTrainingResult = await _dailyTrainingService.Create(request.FirstName, request.LastName, date);
+            var dailyTrainingResult = await _dailyTrainingService.Create(request.FirstName, request.LastName, request.DateOfBirth);
 
-                return dailyTrainingResult;
-            }
-            catch (Exception)
-            {
-                return DailyTrainingResult.Failure("Unable to convert date string to DateTime");
-            }
+            return dailyTrainingResult;
         }
     }
 }

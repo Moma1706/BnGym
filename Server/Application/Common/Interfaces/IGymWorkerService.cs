@@ -7,7 +7,7 @@ namespace Application.Common.Interfaces
 {
 	public interface IGymWorkerService
 	{
-        Task<GymWorkerResult> Create(string firstName, string lastName, string email);
+        Task<GymWorkerGetResult> Create(string firstName, string lastName, string email);
 
         Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize);
 

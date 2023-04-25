@@ -8,22 +8,21 @@ using System.Data;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin, Worker")]
     public class GymUserController: ApiBaseController
     {
         [HttpPost]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> Create([FromBody] GymUserCreateCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
 
             if (gymUserResult.Success)
-                return Ok();
+                return Ok(gymUserResult);
 
             return Conflict(new { gymUserResult.Error });
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetAll([FromQuery] GymUserGetAllCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
@@ -32,7 +31,6 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> GetOne([FromRoute] GymUserGetOneCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
@@ -44,7 +42,6 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateGymUserDto data)
         {
             var command = new GymUserUpdateCommand
@@ -62,7 +59,6 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("freez/{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> FreezMembership([FromRoute] GymUserFreezCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
@@ -75,7 +71,6 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("activate/{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> ActivateMembership([FromRoute] GymUserActivateCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
@@ -88,7 +83,6 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("extend/{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> ExtendMembership([FromRoute] Guid id, [FromBody] ExtendMembershipDto data)
         {
             var command = new GymUserExtendCommand
@@ -107,7 +101,6 @@ namespace WebApi.Controllers
 
         [HttpDelete]
         [Route("{Id:Guid}")]
-        //[Authorize(Roles = "admin, worker")]
         public async Task<IActionResult> Delete([FromRoute] GymUserDeleteCommand command)
         {
             var gymUserResult = await Mediator.Send(command);
