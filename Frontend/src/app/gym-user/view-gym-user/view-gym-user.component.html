@@ -185,4 +185,19 @@
       />
     </div>
 
+    <div>
+      <button *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Freez()">
+        Zamrzni
+      </button>
+
+      <button *ngIf="model.isFrozen == 'Da'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Activate()">
+        Aktiviraj
+      </button>
+
+      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
+        Produzi Clanarinu
+      </button>
+
+    </div>
+
 </div>

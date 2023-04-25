@@ -2,6 +2,7 @@
 using Application.GymUser;
 using Application.GymWorker;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Any;
 
 namespace WebApi.Controllers
 {
@@ -21,7 +22,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GymUserGetAllCommand command)
         {
-            var gymUserResult = await Mediator.Send(new GymUserGetAllCommand());
+            var gymUserResult = await Mediator.Send(command);
             return Ok(gymUserResult);
         }
 

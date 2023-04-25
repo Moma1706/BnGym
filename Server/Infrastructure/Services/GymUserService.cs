@@ -207,7 +207,8 @@ namespace Infrastructure.Services
                 Items = gymUserList
             };
 
-            if (page - 1 <= 0)
+            page -= 1;
+            if (page <= 0)
                 page = 0;
 
             var query = _dbContext.GymUserView.Skip(page * pageSize).Take(pageSize);

@@ -12,6 +12,8 @@ export class ViewGymUserComponent implements OnInit {
   model:any = {};
   id: string | null = '' ;
   splited: string[] = [];
+  numberOfMonths: number = 0;
+  Meseci: number[] = [0.5,1,3,6,12];
 
 
   constructor(private route: ActivatedRoute, private gymUserService: GymUserService) {}
@@ -69,10 +71,29 @@ export class ViewGymUserComponent implements OnInit {
       }else {
         this.model.type = 'Godinu Dana'
       }
-      
-      console.log(response);
 
+      console.log(this.model);
     })
   }
 
+  Freez(){
+      this.gymUserService.freeze(this.id ?? '').subscribe((response:any) =>{
+        console.log(response);
+        window.location.reload();
+      });
+  }
+
+  Activate(){
+    this.gymUserService.Activate(this.id ?? '').subscribe((response:any) =>{
+      console.log(response);
+      window.location.reload();
+    });;
+  }
+
+  Extend(){
+    this.gymUserService.Extend(this.id ?? '', 1).subscribe((response:any) =>{
+      console.log(response);
+      window.location.reload();
+    });;
+  }
 }

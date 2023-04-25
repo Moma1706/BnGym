@@ -1,5 +1,5 @@
 import { GymWorkerService } from './../../_services/gym-worker.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, resolveForwardRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -22,6 +22,9 @@ export class AllGymWorkersComponent implements OnInit {
   allGymWorkers: any = [];
   DataSource: any[] = [];
   visible: boolean = true;
+  totalWorkers: number = 0;
+  pageSize: number = 5;
+  pageNumber: number = 1;
 
   displayedColumns: string[] = ['FirstName','LastName','Email', 'Buttons'];
   dataSource: MatTableDataSource<gymWorker> = new MatTableDataSource(this.DataSource);
@@ -45,13 +48,9 @@ export class AllGymWorkersComponent implements OnInit {
   getAllWorkers()
   {
     this.gymWorkerService.getAllWorkers().subscribe((response:any) =>{
-
-      this.allGymWorkers = response;
-      console.log(response);
-      this.allGymWorkers.forEach((element:{firstName:string, lastName:string, Email:string}) => {
-        this.DataSource.push(element);
-      });
-      this.dataSource = new MatTableDataSource(this.DataSource);
+      this.dataSource = new MatTableDataSource(response.items)
+      this.totalWorkers = response.count;
+      this.dataSource.paginator = this.paginator;
     })
   }
 
