@@ -49,11 +49,14 @@ namespace Infrastructure.Identity
             if (!user.EmailConfirmed)
                 return Result.Failure("E-mail not confirmed");
 
-            var role = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
-            if (role.RoleId == Convert.ToInt32(UserRole.RegularUser))
+            var userRole = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
+            if (userRole.RoleId == Convert.ToInt32(UserRole.RegularUser))
                 return Result.Failure("Invalid user role");
 
+            var role = _dbContext.Roles.Where(x => x.Id == userRole.RoleId).FirstOrDefault();
+
             var claims = GetClaims(user);
+            claims.Add(new Claim(ClaimTypes.Role, role.Name));
             var token = GenerateJwtForUser(user, claims);
 
             //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
@@ -81,7 +84,11 @@ namespace Infrastructure.Identity
             if (role.RoleId != Convert.ToInt32(UserRole.RegularUser))
                 return Result.Failure("Invalid user role");
 
+            var role1 = _dbContext.Roles.Where(x => x.Id == role.RoleId).FirstOrDefault();
+
             var claims = GetClaims(user);
+            claims.Add(new Claim(ClaimTypes.Role, role1.Name));
+
             var token = GenerateJwtForUser(user, claims);
 
             return Result.Successful(token);
@@ -105,8 +112,6 @@ namespace Infrastructure.Identity
 
             if (!registerResult.Succeeded)
                 throw IdentityException.RegisterException(registerResult.Errors.Select(e => e.Description));
-
-            await _emailService.SendConfirmationEmailAsync(user.Email, "token");
 
             return RegisterResult.Successful(user.Id);
         }

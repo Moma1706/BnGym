@@ -64,7 +64,7 @@ namespace Infrastructure.Identity
         public async Task<MaintenanceResult> ClearCheckIns()
         {
             var currentDate = _dateTimeService.Now.Date;
-            var dateForDelete = currentDate.AddMonths(-1);
+            var dateForDelete = currentDate.AddMonths(-2);
 
             try {
                 var data = await _dbContext.CheckIns.Where(x => x.TimeStamp.Date < dateForDelete.Date).ToListAsync();

@@ -9,7 +9,7 @@ namespace WebApi.Controllers
     public class CheckInController : ApiBaseController
     {
         [HttpPost]
-        //[Authorize(Roles = "admin, worker, user")]
+        [Authorize(Roles = "Admin, Worker, Regular User")]
         public async Task<IActionResult> CheckIn([FromBody] CheckInCommand command)
         {
             var checkInResult = await Mediator.Send(command);
@@ -21,7 +21,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "admin, worker")]
+        [Authorize(Roles = "Admin, Worker")]
         public async Task<IActionResult> GetCheckinByDate([FromQuery] CheckInGetByDateCommand command)
         {
             return Ok(await Mediator.Send(command));

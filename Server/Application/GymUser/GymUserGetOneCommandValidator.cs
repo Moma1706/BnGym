@@ -1,7 +1,7 @@
 ﻿using Application.GymUser;
 using FluentValidation;
 
-namespace Application.Auth.Login
+namespace Application.GymUser
 {
     public class GymUserGetOneCommandValidator : AbstractValidator<GymUserGetOneCommand>
     {

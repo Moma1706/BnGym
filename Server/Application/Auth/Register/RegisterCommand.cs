@@ -12,6 +12,10 @@ public record RegisterCommand() : IRequest<RegisterResult>
     public string Password { get; set; }
 
     public string ConfirmPassword { get; set; }
+
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Address { get; set; }
 }
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
@@ -27,7 +31,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
 
     public async Task<RegisterResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var registerResult = await _identityService.Register(request.Email, request.Password, "FirstName", "lastName", "Address");
+        var registerResult = await _identityService.Register(request.Email, request.Password, request.FirstName, request.LastName, request.Address);
 
         if (registerResult.Success)
         {

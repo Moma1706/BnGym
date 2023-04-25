@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230417075651_UpdateTypoErrorGymUserView")]
+    partial class UpdateTypoErrorGymUserView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("CheckInHistory", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.DailyHistory", b =>
+            modelBuilder.Entity("Infrastructure.Identity.DailyTraining", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,20 +50,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("CheckInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DailyUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DailyHistory", (string)null);
-                });
-
-            modelBuilder.Entity("Infrastructure.Identity.DailyTraining", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -69,12 +57,12 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastCheckIn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfArrivals")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -101,6 +89,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("LastCheckIn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberOfArrivals")
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -244,35 +235,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToView("CheckInHistoryView");
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.Views.DailyHistoryView", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastCheckIn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfArrivalsCurrentMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfArrivalsLastMonth")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToView("DailyHistoryView");
-                });
-
             modelBuilder.Entity("Infrastructure.Identity.Views.GymUserView", b =>
                 {
                     b.Property<Guid>("Id")
@@ -309,10 +271,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfArrivalsCurrentMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfArrivalsLastMonth")
+                    b.Property<int>("NumberOfArrivals")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")

@@ -10,7 +10,7 @@ namespace Application.Common.Interfaces
 {
 	public interface IGymUserService
 	{
-        Task<GymUserResult> Create(string firstName, string lastName, string email, string address, GymUserType type);
+        Task<GymUserGetResult> Create(string firstName, string lastName, string email, string address, GymUserType type);
 
         Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize);
 

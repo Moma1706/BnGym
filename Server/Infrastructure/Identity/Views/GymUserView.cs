@@ -14,10 +14,11 @@ namespace Infrastructure.Identity.Views
         public bool IsBlocked { get; set; }
         public bool IsFrozen { get; set; }
         public DateTime FreezeDate { get; set; }
-        public bool IsInactive { get; set; }
+        public bool IsInActive { get; set; }
         public DateTime LastCheckIn { get; set; }
         public GymUserType Type { get; set; }
-        public int NumberOfArrivals { get; set; }
+        public int NumberOfArrivalsLastMonth { get; set; }
+        public int NumberOfArrivalsCurrentMonth { get; set; }
         public string Address { get; set; }
     }
 }

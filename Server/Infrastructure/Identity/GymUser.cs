@@ -18,7 +18,7 @@ namespace Infrastructure.Identity
         [DefaultValue("1")]
         public GymUserType Type { get; set; }
 
-        //[DefaultValue(typeof(DateTime), "01/01/0001")] // TODO
+        [DefaultValue(typeof(DateTime), "0001-01-01")]
         public DateTime LastCheckIn { get; set; }
 
         [Required]
@@ -29,11 +29,7 @@ namespace Infrastructure.Identity
         [DefaultValue("false")]
         public bool IsInActive { get; set; }
 
-        [Required]
-        [DefaultValue(0)]
-        public int NumberOfArrivals { get; set; }
-
-        //[DefaultValue(typeof(DateTime), "01/01/0001")] // TODO
+        [DefaultValue(typeof(DateTime), "0001-01-01")]
         public DateTime FreezeDate { get; set; }
     }
 }
