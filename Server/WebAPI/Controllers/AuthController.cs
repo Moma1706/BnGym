@@ -9,20 +9,31 @@ namespace WebApi.Controllers;
 
 public class AuthController : ApiBaseController
 {
-    [HttpPost]
-    [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
-    {
-        var registerResult = await Mediator.Send(command);
-        if (registerResult.Success)
-            return Ok();
+    //[HttpPost]
+    //[Route("register")]
+    //public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+    //{
+    //    var registerResult = await Mediator.Send(command);
+    //    if (registerResult.Success)
+    //        return Ok();
 
-        return Conflict(new { registerResult.Errors });
-    }
+    //    return Conflict(new { registerResult.Errors });
+    //}
 
     [HttpPost]
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
+    {
+        var loginResult = await Mediator.Send(command);
+        if (loginResult.Success)
+            return Ok(loginResult);
+
+        return Unauthorized(new { loginResult.Error });
+    }
+
+    [HttpPost]
+    [Route("login-app")]
+    public async Task<IActionResult> LoginApp([FromBody] LoginAppCommand command)
     {
         var loginResult = await Mediator.Send(command);
         if (loginResult.Success)

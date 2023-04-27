@@ -3,6 +3,7 @@ using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.CheckIn;
 using Application.Common.Models.GymUser;
+using Application.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,36 +31,37 @@ namespace Infrastructure.Identity
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
-
             if (gymUser == null)
-                return CheckInResult.Failure("GymUser with provided id doesn't exist");
+                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == gymUser.UserId);
+            if (user == null)
+                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User doesn't exist" });
 
             if (gymUser.IsFrozen)
-                return CheckInResult.Failure("GymUser with provided id is frozen");
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
 
             if (gymUser.IsInActive)
-                return CheckInResult.Failure("GymUser with provided id is inactive");
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });
 
-            //if (gymUser.IsBlocked)
-            //    return CheckInResult.Failure("GymUser with provided id is blocked");
+            if (user.IsBlocked)
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "GymUser with provided id is blocked" });
 
-            //if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
-            //    return CheckInResult.Failure("GymUser with provided id can't access gym two times a day");
+            if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
+                return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "GymUser with provided id can't access gym two times a day" });
 
-            if (gymUser.ExpiresOn <= _dateTimeService.Now)
-                return CheckInResult.Failure("GymUser with provided id has a membership that has expired");
+            if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
+                return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "GymUser with provided id has a membership that has expired" });
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
 
-            gymUser.NumberOfArrivals++;
             gymUser.LastCheckIn = checkIn.TimeStamp;
 
             using var transaction = _dbContext.Database.BeginTransaction();
-
             try
             {
-                //update gymuser
-                _dbContext.Update(gymUser); // TODO: Projeriti da li se azurira i view i tabela
+                //update gymUser
+                _dbContext.Update(gymUser);
 
                 //save checkin
                 _dbContext.Add(checkIn);
@@ -70,10 +72,10 @@ namespace Infrastructure.Identity
             catch (Exception)
             {
                 transaction.Rollback();
-                return CheckInResult.Failure("Unable to add chek in");
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Unable to add check in value" });
             }
 
-            return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId,checkIn.TimeStamp);
+            return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId, checkIn.TimeStamp);
         }
 
         public async Task<PageResult<CheckInGetResult>> GetCheckInsByDate(DateTime date, string searchString, int page, int pageSize)
@@ -90,7 +92,11 @@ namespace Infrastructure.Identity
                 Items = checkInList
             };
 
-            if (page - 1 <= 0)
+            if (countDetails == 0)
+                return result;
+
+            page -= 1;
+            if (page <= 0)
                 page = 0;
 
             var query = _dbContext.CheckInHistoryView.Skip(page * pageSize).Take(pageSize);

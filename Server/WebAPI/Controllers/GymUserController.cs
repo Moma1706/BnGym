@@ -1,11 +1,15 @@
-﻿using Application.Enums;
+using Application.Enums;
 using Application.GymUser;
 using Application.GymWorker;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Any;
+using Application.GymUser.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin, Worker")]
     public class GymUserController: ApiBaseController
     {
         [HttpPost]
@@ -14,7 +18,7 @@ namespace WebApi.Controllers
             var gymUserResult = await Mediator.Send(command);
 
             if (gymUserResult.Success)
-                return Ok();
+                return Ok(gymUserResult);
 
             return Conflict(new { gymUserResult.Error });
         }
@@ -39,13 +43,13 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid dataId, [FromBody] UpdateCommand command)
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateGymUserDto data)
         {
-            //var command = new UpdateCommand
-            //{
-            //    Id = id,
-            //    Type = type
-            //};
+            var command = new GymUserUpdateCommand
+            {
+                Id = Id,
+                Data = data
+            };
             var gymUserResult = await Mediator.Send(command);
 
             if (gymUserResult.Success)
@@ -80,12 +84,12 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("extend/{Id:Guid}")]
-        public async Task<IActionResult> ExtendMembership([FromRoute] Guid id, [FromBody] GymUserType type)
+        public async Task<IActionResult> ExtendMembership([FromRoute] Guid id, [FromBody] ExtendMembershipDto data)
         {
             var command = new GymUserExtendCommand
             {
                 Id = id,
-                Type = type
+                Data = data
             };
 
             var gymUserResult = await Mediator.Send(command);
@@ -95,7 +99,17 @@ namespace WebApi.Controllers
 
             return Conflict(new { gymUserResult.Error });
         }
-        
 
+        [HttpDelete]
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] GymUserDeleteCommand command)
+        {
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
     }
 }

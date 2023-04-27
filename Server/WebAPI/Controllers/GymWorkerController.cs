@@ -1,43 +1,63 @@
-﻿using Application.GymUser;
+﻿using System.Data;
 using Application.GymWorker;
+using Application.GymWorker.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class GymWorkerController : ApiBaseController
     {
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GymWorkerCreateCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            var gymWorkerResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+            if (gymWorkerResult.Success)
+                return Ok(gymWorkerResult);
 
-            return Conflict(new { gymUserResult.Error });
+            return Conflict(new { gymWorkerResult.Error });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GymWorkerGetAllCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
-            return Ok(gymUserResult);
+            var gymWorkerResult = await Mediator.Send(command);
+            return Ok(gymWorkerResult);
         }
 
         [HttpGet]
         [Route("{Id:Guid}")]
         public async Task<IActionResult> GetOne([FromRoute] GymWorkerGetOneCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
-            if (gymUserResult.Success)
-                return Ok(gymUserResult);
+            var gymWorkerResult = await Mediator.Send(command);
+            if (gymWorkerResult.Success)
+                return Ok(gymWorkerResult);
 
-            return BadRequest(new { gymUserResult.Error });
+            return BadRequest(new { gymWorkerResult.Error });
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] GymWorkerGetOneCommand data)
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateGymWorkerDto data)
+        {
+            var command = new GymWorkerUpdateCommand
+            {
+                Id = Id,
+                Data = data
+            };
+            var gymWorkerResult = await Mediator.Send(command);
+
+            if (gymWorkerResult.Success)
+                return Ok();
+
+            return Conflict(new { gymWorkerResult.Error });
+        }
+
+        [HttpDelete]
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] GymWorkerDeleteCommand data)
         {
             var gymUserResult = await Mediator.Send(data);
 
