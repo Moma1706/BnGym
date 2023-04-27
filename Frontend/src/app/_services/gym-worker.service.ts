@@ -24,9 +24,9 @@ constructor(private http: HttpClient) { }
     return this.http.post(this.baseUrl, gymWorkerModel);
   }
 
-  getAllWorkers()
-  {
-    return this.http.get(this.baseUrl);
+  getAllWorkers(PageSize: number, Page: number, SearchString: string)  {
+    const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}`;
+    return this.http.get(this.baseUrl + queryParams);
   }
 
 }

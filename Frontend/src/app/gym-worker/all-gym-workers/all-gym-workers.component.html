@@ -35,7 +35,7 @@
     <ng-container matColumnDef="Buttons" >
       <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
       <td mat-cell *matCellDef="let element; let i" class="mat-cell">
-        <button *ngIf="visible" mat-stroked-button color="warn">
+        <button *ngIf="visible" mat-stroked-button color="warn" class="btn btn-secondary">
           Remove
         </button>
       </td>
@@ -52,4 +52,9 @@
     </tr> -->
   </table>
 </div>
-<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+<mat-paginator
+#paginator
+[length]="totalWorkers"
+[pageSizeOptions]="[5,10,15,50,100]"
+showFirstLastButtons
+></mat-paginator>

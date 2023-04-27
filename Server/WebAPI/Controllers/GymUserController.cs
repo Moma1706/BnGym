@@ -1,10 +1,11 @@
-﻿using Application.Enums;
+using Application.Enums;
 using Application.GymUser;
 using Application.GymWorker;
 using Microsoft.AspNetCore.Mvc;
 using Application.GymUser.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+
 
 namespace WebApi.Controllers
 {

@@ -3,7 +3,7 @@
 <br />
 
 <div style="margin-left: 25%">
-  
+  <form [formGroup]="form" (ngSubmit)="Update()" ngNativeValidate>
     <!--Label Name and input Enter name-->
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
@@ -12,12 +12,14 @@
         >
       </div>
       <input
+        formControlName="firstname"
         type="text"
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder= {{model.firstName}}
-        readonly = true
+        value={{model.firstName}}
+        [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+        required
       />
     </div>
 
@@ -29,12 +31,14 @@
         >
       </div>
       <input
+        formControlName="lastname"
         type="text"
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder= {{model.lastName}}
-        readonly = true
+        value= {{model.lastName}}
+        [ngClass]="{ 'is-invalid': submitted && f['lastname'].errors }"
+        required
       />
     </div>
 
@@ -46,32 +50,23 @@
         >
       </div>
       <input
+        formControlName="email"
         type="text"
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.email}}
-        readonly = true
+        value={{model.email}}
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+        required
       />
     </div>
-
-    <!--Label address and input Enter Address-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
-          >Address</span
-        >
-      </div>
-      <input
-        type="text"
-        class="form-control"
-        aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.address}}
-        readonly = true
-      />
+    <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Promeni
+      </button>
     </div>
-
+  </form>
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
@@ -116,7 +111,7 @@
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.freezOn}}
+        placeholder={{model.freezeDate}}
         readonly = true
       />
     </div>
@@ -183,6 +178,20 @@
         placeholder={{model.numberOfArrivals}}
         readonly = true
       />
+    </div>
+
+    <div>
+      <button *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Freez()">
+        Zamrzni
+      </button>
+
+      <button *ngIf="model.isFrozen == 'Da'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Activate()">
+        Aktiviraj
+      </button>
+
+      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
+        Produzi Clanarinu
+      </button>
     </div>
 
 </div>
