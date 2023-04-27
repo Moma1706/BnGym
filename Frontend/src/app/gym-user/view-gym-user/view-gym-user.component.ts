@@ -1,6 +1,7 @@
 import { GymUserService } from './../../_services/gym-user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-view-gym-user',
@@ -14,15 +15,31 @@ export class ViewGymUserComponent implements OnInit {
   splited: string[] = [];
   numberOfMonths: number = 0;
   Meseci: number[] = [0.5,1,3,6,12];
+  form: FormGroup;
+  submitted: boolean = false;
+  loading: boolean = false;
 
 
-  constructor(private route: ActivatedRoute, private gymUserService: GymUserService) {}
+  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder) {
+    this.form = this.formBuilder.group({
+      title: this.formBuilder.control('initial value', Validators.required)
+    });
+  }
 
   ngOnInit() 
   {
     this.id = this.route.snapshot.paramMap.get('id');
     this.getUser(this.id ?? '');
+
+    this.form = this.formBuilder.group({
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
+      email: ['', Validators.required],
+    });
+
   }
+
+  get f() { return this.form.controls; }
 
   getUser(id : string)
   {
@@ -48,9 +65,9 @@ export class ViewGymUserComponent implements OnInit {
       }
       else{
         this.model.isFrozen = 'Da';
-        let freezDate: string = this.model.freezDate.toString();
+        let freezDate: string = this.model.freezeDate.toString();
         this.splited = freezDate.split("T",2);
-        this.model.freezDate = this.splited[0];
+        this.model.freezeDate = this.splited[0];
       }
       
       if(this.model.isInactive){
@@ -95,5 +112,22 @@ export class ViewGymUserComponent implements OnInit {
       console.log(response);
       window.location.reload();
     });;
+  }
+
+  Update(){
+    if(this.f['firstname'].value != ''){
+      this.model.firstName = this.f['firstname'].value;
+    }
+    if(this.f['lastname'].value != ''){
+    this.model.lastName=this.f['lastname'].value;
+    }
+    if(this.f['email'].value != ''){
+    this.model.email=this.f['email'].value;
+    }
+
+    this.gymUserService.Update(this.id?? '', this.model).subscribe((response:any)=>{
+      console.log(response);
+      window.location.reload();
+    });
   }
 }

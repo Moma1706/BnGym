@@ -34,4 +34,8 @@ constructor(private http: HttpClient) { }
   Extend(id: string, numberOfMonths: number){
     return this.http.put(this.baseUrl + '/extend/' + id, numberOfMonths);
   }
+
+  Update(id: string, model:any){
+    return this.http.put(this.baseUrl + '/update/' +id, model);
+  }
 }
