@@ -200,13 +200,13 @@ namespace Infrastructure.Identity
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
-                dailyUser.LastCheckIn = DateTime.Now;
+                dailyUser.LastCheckIn = _dateTimeService.Now;
                 _dbContext.Update(dailyUser);
 
                 var dailyHistory = new DailyHistory
                 {
                     DailyUserId = id,
-                    CheckInDate = DateTime.Now
+                    CheckInDate = _dateTimeService.Now
                 };
                 _dbContext.Add(dailyHistory);
                 _dbContext.SaveChanges();

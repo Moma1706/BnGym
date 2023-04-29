@@ -32,7 +32,7 @@ namespace Application.Common.Models.DailyTraining
         public DailyHistoryGetResult() { }
 
         public static DailyHistoryGetResult Sucessfull(Guid id, string firstName, string lastName, DateTime dateOfBirth, int numberOfArrivalsCurrentMonth, int numberOfArrivalsLastMonth, DateTime checkInDate) => new(true, new Error { Code = 0, Message = string.Empty}, id, firstName, lastName, dateOfBirth, numberOfArrivalsCurrentMonth, numberOfArrivalsLastMonth, checkInDate);
-        public static DailyHistoryGetResult Failure(Error error) => new(false, error, Guid.Empty, string.Empty, string.Empty, DateTime.Now, 0, 0, DateTime.Now);
+        public static DailyHistoryGetResult Failure(Error error) => new(false, error, Guid.Empty, string.Empty, string.Empty, DateTime.UtcNow, 0, 0, DateTime.UtcNow);
 
     }
 }
