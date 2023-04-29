@@ -61,7 +61,7 @@ namespace Infrastructure.Services
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
 
-                return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, firstName, lastName, email, userRoles.RoleId);
+                return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, firstName, lastName, email, userRoles.RoleId, false);
             }
             catch (Exception)
             {
@@ -80,8 +80,15 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User with provided id does not exist" });
 
+            if (user.IsBlocked)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "User with provided id is blocked" });
+
             user.IsBlocked = true;
-            _dbContext.Update(user);
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToDelete, Message = "Unable to delete gym worker" });
+
             return GymWorkerResult.Sucessfull();
         }
 
@@ -108,7 +115,7 @@ namespace Infrastructure.Services
             if (!String.IsNullOrEmpty(searchString))
                 query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
 
-            var gymWorkers = await query.Where(x => x.IsBlocked == false).OrderBy(x => x.FirstName).ToListAsync();
+            var gymWorkers = await query.OrderBy(x => x.FirstName).ToListAsync();
             if (gymWorkers.Count == 0)
                 return result;
 
@@ -120,6 +127,7 @@ namespace Infrastructure.Services
                 LastName = x.LastName,
                 Email = x.Email,
                 RoleId = x.RoleId,
+                IsBlocked = x.IsBlocked
             }).ToList();
 
             result.Items = gymWorkerList;
@@ -130,9 +138,9 @@ namespace Infrastructure.Services
         {
             var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id && x.IsBlocked == false).FirstOrDefaultAsync();
             if (gymWorker == null)
-                throw new KeyNotFoundException("Gym worker with provided id does not exist");
+                return GymWorkerGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
 
-            return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, gymWorker.FirstName, gymWorker.LastName, gymWorker.Email, gymWorker.RoleId);
+            return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, gymWorker.FirstName, gymWorker.LastName, gymWorker.Email, gymWorker.RoleId, gymWorker.IsBlocked);
         }
 
         public async Task<GymWorkerResult> Update(Guid id, UpdateGymWorkerDto data)
@@ -165,6 +173,27 @@ namespace Infrastructure.Services
 
             return GymWorkerResult.Sucessfull();
         }
+
+        public async Task<GymWorkerResult> Activate(Guid id)
+        {
+            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymWorker == null)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
+
+            var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
+            if (user == null)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
+
+            if (!user.IsBlocked)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.WorkerIsActive, Message = "Gym worker is active" });
+
+            user.IsBlocked = false;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToDelete, Message = "Unable to delete gym worker" });
+
+            return GymWorkerResult.Sucessfull();
+        }
     }
 }
-

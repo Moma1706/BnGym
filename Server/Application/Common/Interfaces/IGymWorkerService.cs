@@ -16,6 +16,8 @@ namespace Application.Common.Interfaces
         Task<GymWorkerResult> Delete(Guid id);
 
         Task<GymWorkerResult> Update(Guid id, UpdateGymWorkerDto data);
+
+        Task<GymWorkerResult> Activate(Guid id);
     }
 }
 

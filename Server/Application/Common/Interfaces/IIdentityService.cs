@@ -15,4 +15,6 @@ public interface IIdentityService
     Task<Result> GenerateTokenForIdentityPurpose(string email, TokenPurpose purpose);
 
     Task<Result> ResetPassword(string email, string token, string password);
+
+    Task<Result> ChangePassword(int id, string currentPassword, string newPassword);
 }

@@ -66,5 +66,17 @@ namespace WebApi.Controllers
 
             return Conflict(new { gymUserResult.Error });
         }
+
+        [HttpPut]
+        [Route("activate/{Id:Guid}")]
+        public async Task<IActionResult> Activate([FromRoute] GymWorkerActivateCommand data)
+        {
+            var gymUserResult = await Mediator.Send(data);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
     }
 }

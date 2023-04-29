@@ -1,6 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
+using Application.Common.Models.BaseResult;
+using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +54,9 @@ namespace Infrastructure.Identity
             var userRole = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             if (userRole.RoleId == Convert.ToInt32(UserRole.RegularUser))
                 return Result.Failure("Invalid user role");
+
+            if (user.IsBlocked)
+                return Result.Failure("User is blocked");
 
             var role = _dbContext.Roles.Where(x => x.Id == userRole.RoleId).FirstOrDefault();
 
@@ -196,6 +201,19 @@ namespace Infrastructure.Identity
             }
 
             return Result.Successful(token);
+        }
+
+        public async Task<Result> ChangePassword(int id, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return Result.Failure("User does not exist");
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!result.Succeeded)
+                return Result.Failure("Unable to change password.");
+
+            return Result.Successful();
         }
     }
 }

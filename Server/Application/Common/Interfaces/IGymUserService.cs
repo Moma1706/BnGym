@@ -16,8 +16,6 @@ namespace Application.Common.Interfaces
 
         Task<GymUserGetResult> GetOne(Guid id);
 
-        Task<GymUserResult> Delete(Guid id);
-
         Task<GymUserResult> Update(Guid id, UpdateGymUserDto data);
 
         Task<GymUserResult> ExtendMembership(Guid id, ExtendMembershipDto data);
