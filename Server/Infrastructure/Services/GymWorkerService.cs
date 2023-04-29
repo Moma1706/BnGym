@@ -139,7 +139,7 @@ namespace Infrastructure.Services
         {
             var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymWorker == null)
-                GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
 
             var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
             if (user == null)
@@ -151,14 +151,18 @@ namespace Infrastructure.Services
                     return GymWorkerResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
 
                 user.Email = data.Email;
+                user.UserName = data.Email;
                 user.EmailConfirmed = false;
             }
 
             user.FirstName = data.FirstName ?? user.FirstName;
             user.LastName = data.LastName ?? user.LastName;
 
-            _dbContext.Update(user);
-            _dbContext.SaveChanges();
+            var registerResult = await _userManager.UpdateAsync(user);
+
+            if (!registerResult.Succeeded)
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym worker" });
+
             return GymWorkerResult.Sucessfull();
         }
     }

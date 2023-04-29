@@ -194,9 +194,7 @@ namespace Infrastructure.Identity
             if (dailyUser == null)
                 return DailyTrainingResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Daily user does not exist" });
 
-            var dailyHistory = await _dbContext.DailyHistory.FirstOrDefaultAsync((x) => x.Id == id);
-
-            if (dailyHistory.CheckInDate.Date == _dateTimeService.Now.Date)
+            if (dailyUser.LastCheckIn.Date == _dateTimeService.Now.Date)
                 return DailyTrainingResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Daily user can't access gym two times a day" });
 
             using var transaction = _dbContext.Database.BeginTransaction();
@@ -205,13 +203,15 @@ namespace Infrastructure.Identity
                 dailyUser.LastCheckIn = DateTime.Now;
                 _dbContext.Update(dailyUser);
 
-                dailyHistory = new DailyHistory
+                var dailyHistory = new DailyHistory
                 {
                     DailyUserId = id,
                     CheckInDate = DateTime.Now
                 };
                 _dbContext.Add(dailyHistory);
                 _dbContext.SaveChanges();
+
+                transaction.Commit();
                 return DailyTrainingResult.Sucessfull();
 
             } catch (Exception)

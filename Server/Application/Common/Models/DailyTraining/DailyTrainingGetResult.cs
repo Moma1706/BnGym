@@ -27,8 +27,12 @@ namespace Application.Common.Models.DailyTraining
         }
 
         public DailyTrainingGetResult() { }
+        public DailyTrainingGetResult(Error error)
+        {
+            Error = error;
+        }
 
         public static DailyTrainingGetResult Sucessfull(Guid id, string firstName, string lastName, DateTime dateOfBirth, DateTime lastCheckIn) => new(true, new Error { Code = 0, Message = string.Empty}, id, firstName, lastName, dateOfBirth, lastCheckIn);
-        public static DailyTrainingGetResult Failure(Error error) => new(false, error, Guid.Empty, string.Empty, string.Empty, DateTime.Now, DateTime.Now);
+        public static DailyTrainingGetResult Failure(Error error) => new(error);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Application.Common.Exceptions;
+using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
@@ -121,19 +123,20 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
-            if (gymUser.IsInActive)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });
+            //if (gymUser.IsInActive)
+            //    return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });
 
             if (!gymUser.IsFrozen)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
 
             gymUser.IsFrozen = false;
-            gymUser.FreezeDate = DateTime.MinValue;
 
             // izracunati koliko dana mu je ostalo
-            var days = (gymUser.ExpiresOn.Date - gymUser.FreezeDate.Date).Days;
+            var currentDate = _dateTimeService.Now.Date;
+            var days = (currentDate - gymUser.FreezeDate.Date).Days;
             gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
             gymUser.IsInActive = false;
+            gymUser.FreezeDate = DateTime.MinValue;
 
             _dbContext.Update(gymUser);
             await _dbContext.SaveChangesAsync();
@@ -326,6 +329,7 @@ namespace Infrastructure.Services
                     return GymUserResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
 
                 user.Email = data.Email;
+                user.UserName = data.Email;
                 user.EmailConfirmed = false;
             }
 
@@ -333,29 +337,49 @@ namespace Infrastructure.Services
             user.LastName = data.LastName ?? user.LastName;
             user.Address = data.Address ?? user.Address;
 
-            var currentDate = _dateTimeService.Now;
+            var dateOfPayment = _dateTimeService.Now;
+            var gymUserExpiresOn = gymUser.ExpiresOn;
+            switch (gymUser.Type)
+            {
+                case GymUserType.HalfMonth:
+                    dateOfPayment = gymUserExpiresOn.AddDays(-15);
+                    break;
+                case GymUserType.Month:
+                    dateOfPayment = gymUserExpiresOn.AddMonths(-1);
+                    break;
+                case GymUserType.ThreeMonts:
+                    dateOfPayment = gymUserExpiresOn.AddMonths(-3);
+                    break;
+                case GymUserType.HalfYear:
+                    dateOfPayment = gymUserExpiresOn.AddMonths(-6);
+                    break;
+                case GymUserType.Year:
+                    dateOfPayment = gymUserExpiresOn.AddYears(-1);
+                    break;
+            }
+
             var expiresOn = _dateTimeService.Now;
             switch (data.Type)
             {
                 case GymUserType.HalfMonth:
                     gymUser.Type = GymUserType.HalfMonth;
-                    expiresOn = currentDate.AddDays(15);
+                    expiresOn = dateOfPayment.AddDays(15);
                     break;
                 case GymUserType.Month:
                     gymUser.Type = GymUserType.Month;
-                    expiresOn = currentDate.AddMonths(1);
+                    expiresOn = dateOfPayment.AddMonths(1);
                     break;
                 case GymUserType.ThreeMonts:
                     gymUser.Type = GymUserType.ThreeMonts;
-                    expiresOn = currentDate.AddMonths(3);
+                    expiresOn = dateOfPayment.AddMonths(3);
                     break;
                 case GymUserType.HalfYear:
                     gymUser.Type = GymUserType.HalfYear;
-                    expiresOn = currentDate.AddMonths(6);
+                    expiresOn = dateOfPayment.AddMonths(6);
                     break;
                 case GymUserType.Year:
                     gymUser.Type = GymUserType.Year;
-                    expiresOn = currentDate.AddYears(1);
+                    expiresOn = dateOfPayment.AddYears(1);
                     break;
                 default:
                     expiresOn = gymUser.ExpiresOn;
@@ -366,8 +390,13 @@ namespace Infrastructure.Services
             using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
+                var registerResult = await _userManager.UpdateAsync(user);
+
+                if (!registerResult.Succeeded)
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym user" });
+
+                // TODO: Throw exceptioin here and test
                 _dbContext.Update(gymUser);
-                _dbContext.Update(user);
                 await _dbContext.SaveChangesAsync();
 
                 transaction.Commit();

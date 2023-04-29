@@ -117,8 +117,7 @@ namespace Infrastructure.Identity
                 LastName = x.LastName,
                 Email = x.Email,
                 LastCheckIn = x.LastCheckIn,
-                TimeStamp = x.TimeStamp,
-                NumberOfArrivals = x.NumberOfArrivals
+                TimeStamp = x.TimeStamp
             }).ToList();
 
             result.Items = checkInList;
