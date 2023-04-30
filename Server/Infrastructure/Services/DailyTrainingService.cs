@@ -175,9 +175,8 @@ namespace Infrastructure.Identity
                 dailyUser.LastName = data.LastName ?? dailyUser.LastName;
                 if (data.DateOfBirth.Date != dailyUser.DateOfBirth.Date)
                 {
-                    // todo
                     var uniqueUser = _dbContext.DailyTraining.Count((x) =>
-                        x.FirstName.ToLower() == dailyUser.FirstName.ToLower() && x.LastName.ToLower() == dailyUser.LastName.ToLower() && x.DateOfBirth.Date == data.DateOfBirth.Date && x.Id != id);
+                        x.FirstName.ToLower() == dailyUser.FirstName.ToLower() && x.LastName.ToLower() == dailyUser.LastName.ToLower() && x.DateOfBirth.Date == data.DateOfBirth.Date);
                     if (uniqueUser > 0)
                         return DailyTrainingResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "User already exists" });
 
