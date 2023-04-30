@@ -23,6 +23,7 @@ namespace Infrastructure.Identity
         private readonly IEmailService _emailService;
         private readonly IMaintenanceService _maintenanceService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly string password = "Bngym2023";
 
         public IdentityService(SignInManager<User> signInManager,
                                UserManager<User> userManager,
@@ -65,12 +66,7 @@ namespace Infrastructure.Identity
             var token = GenerateJwtForUser(user, claims);
 
             //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-            //if (!maintenanceResult.Success)
-            //    throw new Exception("Unable to login because maintenace service return an exception.");
-
             //var clearResult = await _maintenanceService.ClearCheckIns();
-            //if (!clearResult.Success)
-            //    throw new Exception("Unable to login because maintenace service return an exception.");
 
             return Result.Successful(token);
         }
@@ -96,10 +92,11 @@ namespace Infrastructure.Identity
 
             var token = GenerateJwtForUser(user, claims);
 
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
             return Result.Successful(token);
         }
 
-        public async Task<RegisterResult> Register(string email, string password, string firstName, string lastName, string address)
+        public async Task<RegisterResult> Register(string email, string firstName, string lastName, string address)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
                 return RegisterResult.Failure("User with given E-mail already exist");
@@ -107,10 +104,11 @@ namespace Infrastructure.Identity
             var user = new User
             {
                 Email = email.ToLower(),
-                UserName = email,
+                UserName = email.ToLower(),
                 FirstName = firstName,
                 LastName = lastName,
-                Address = address
+                Address = address,
+                EmailConfirmed = true
             };
 
             var registerResult = await _userManager.CreateAsync(user, password);

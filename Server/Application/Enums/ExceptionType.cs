@@ -16,6 +16,7 @@ namespace Application.Enums
         WorkerIsActive,
         ExpiredMembership,
         CanNotAccesTwice,
+        InvalidGymUserType,
 
         UnableToDelete,
         UnableToUpdate,

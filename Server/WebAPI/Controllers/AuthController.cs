@@ -79,7 +79,10 @@ public class AuthController : ApiBaseController
     [Authorize(Roles = "Admin, Worker, Regular User")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
     {
-        await Mediator.Send(command);
-        return Ok();
+        var result = await Mediator.Send(command);
+        if (result.Success)
+            return Ok();
+
+        return Conflict(new { result.Error });
     }
 }

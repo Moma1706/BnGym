@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
+using Application.Common.Models.User;
 using Application.Enums;
 using Application.GymWorker.Dtos;
 using Infrastructure.Data;
@@ -21,7 +23,6 @@ namespace Infrastructure.Services
         private readonly IIdentityService _identityService;
         private readonly UserManager<User> _userManager;
         private readonly IEmailService _emailService;
-        private readonly string password = "BnGym2010";
 
         public GymWorkerService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IEmailService emailService, UserManager<User> userManager)
         {
@@ -38,7 +39,7 @@ namespace Infrastructure.Services
             try
             {
                 // crete user
-                var result = await _identityService.Register(email, password, firstName, lastName, null);
+                var result = await _identityService.Register(email, firstName, lastName, null);
 
                 if (!result.Success)
                     return GymWorkerGetResult.Failure(new Error { Code = ExceptionType.UnableToRegister, Message = result.Errors });
@@ -143,24 +144,23 @@ namespace Infrastructure.Services
             return GymWorkerGetResult.Sucessfull(gymWorker.Id, gymWorker.UserId, gymWorker.FirstName, gymWorker.LastName, gymWorker.Email, gymWorker.RoleId, gymWorker.IsBlocked);
         }
 
-        public async Task<GymWorkerResult> Update(Guid id, UpdateGymWorkerDto data)
+        public async Task<GymWorkerResult> Update(int id, UpdateGymWorkerDto data)
         {
-            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if (gymWorker == null)
-                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
-
-            var user = await _dbContext.Users.Where(x => x.Id == gymWorker.UserId).FirstOrDefaultAsync();
+            var sendMail = false;
+            var user = await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (user == null)
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
 
-            if (data.Email is string && data.Email != user.Email)
+            if (data.Email is string && data.Email.ToLower() != user.Email)
             {
-                if (await _userManager.FindByEmailAsync(data.Email) != null)
+                var email = data.Email.ToLower();
+                if (await _userManager.FindByEmailAsync(email) != null)
                     return GymWorkerResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
 
-                user.Email = data.Email;
-                user.UserName = data.Email;
-                user.EmailConfirmed = false;
+                user.Email = email;
+                user.UserName = email;
+                user.EmailConfirmed = true;
+                sendMail = true;
             }
 
             user.FirstName = data.FirstName ?? user.FirstName;
@@ -171,6 +171,8 @@ namespace Infrastructure.Services
             if (!registerResult.Succeeded)
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym worker" });
 
+            if (sendMail)
+                _emailService.SendConfirmationEmailAsync(user.Email);
             return GymWorkerResult.Sucessfull();
         }
 
@@ -194,6 +196,15 @@ namespace Infrastructure.Services
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToDelete, Message = "Unable to delete gym worker" });
 
             return GymWorkerResult.Sucessfull();
+        }
+
+        public async Task<UserGetResult> GetUser(int Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null)
+                return UserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User with provided id does not exist" });
+
+            return UserGetResult.Sucessfull(user.Id, user.FirstName, user.LastName, user.Email);
         }
     }
 }

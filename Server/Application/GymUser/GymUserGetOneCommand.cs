@@ -7,7 +7,7 @@ namespace Application.GymUser
 {
     public record GymUserGetOneCommand : IRequest<GymUserGetResult>
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
     }
 
     public class GymUserGetOneCommandHandler : IRequestHandler<GymUserGetOneCommand, GymUserGetResult>

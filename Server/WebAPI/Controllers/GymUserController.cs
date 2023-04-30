@@ -30,7 +30,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("{Id:Guid}")]
+        [Route("{Id:Int}")]
         public async Task<IActionResult> GetOne([FromRoute] GymUserGetOneCommand command)
         {
             var gymUserResult = await Mediator.Send(command);

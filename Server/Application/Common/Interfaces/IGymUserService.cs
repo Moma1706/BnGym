@@ -1,4 +1,5 @@
 ﻿using System;
+using Application.App.Dtos;
 using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymUser;
@@ -14,7 +15,7 @@ namespace Application.Common.Interfaces
 
         Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize);
 
-        Task<GymUserGetResult> GetOne(Guid id);
+        Task<GymUserGetResult> GetOne(int id);
 
         Task<GymUserResult> Update(Guid id, UpdateGymUserDto data);
 
@@ -23,6 +24,7 @@ namespace Application.Common.Interfaces
         Task<GymUserResult> FreezMembership(Guid id);
 
         Task<GymUserResult> ActivateMembership(Guid id);
+
+        Task<GymUserResult> UpdateRegularUser(int id, UpdateRegularUserDto data);
     }
 }
-

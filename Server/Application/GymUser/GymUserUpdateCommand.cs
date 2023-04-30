@@ -16,12 +16,10 @@ namespace Application.GymUser
         {
             private readonly IGymUserService _gymUserService;
             private readonly IIdentityService _identityService;
-            private readonly IEmailService _emailService;
 
-            public UpdateCommandHandler(IIdentityService identityService, IEmailService emailService, IGymUserService gymUserService)
+            public UpdateCommandHandler(IIdentityService identityService, IGymUserService gymUserService)
             {
                 _identityService = identityService;
-                _emailService = emailService;
                 _gymUserService = gymUserService;
             }
 
@@ -30,14 +28,9 @@ namespace Application.GymUser
                 var gymUserResult = await _gymUserService.Update(request.Id, request.Data);
                 if (gymUserResult.Error.Code != 0)
                     return gymUserResult;
-                
-                var tokenResult = await _identityService.GenerateTokenForIdentityPurpose(request.Data.Email, TokenPurpose.ConfirmEmail);
-                if (tokenResult.Success)
-                    await _emailService.SendConfirmationEmailAsync(request.Data.Email, tokenResult.Token);
 
                 return gymUserResult;
             }
         }
     }
 }
-

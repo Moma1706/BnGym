@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Security.Claims;
+using Application.Enums;
 using Application.GymWorker;
 using Application.GymWorker.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -6,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class GymWorkerController : ApiBaseController
     {
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] GymWorkerCreateCommand command)
         {
             var gymWorkerResult = await Mediator.Send(command);
@@ -21,6 +23,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] GymWorkerGetAllCommand command)
         {
             var gymWorkerResult = await Mediator.Send(command);
@@ -29,6 +32,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("{Id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOne([FromRoute] GymWorkerGetOneCommand command)
         {
             var gymWorkerResult = await Mediator.Send(command);
@@ -39,9 +43,15 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
-        [Route("{Id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateGymWorkerDto data)
+        [Route("{Id:Int}")]
+        [Authorize(Roles = "Admin, Worker")]
+        public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateGymWorkerDto data)
         {
+            var userId = GetUserId();
+            var role = GetUserRole();
+            if (userId != Id && role != "Admin")
+                return BadRequest("Invalid id provided");
+
             var command = new GymWorkerUpdateCommand
             {
                 Id = Id,
@@ -57,6 +67,7 @@ namespace WebApi.Controllers
 
         [HttpDelete]
         [Route("{Id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] GymWorkerDeleteCommand data)
         {
             var gymUserResult = await Mediator.Send(data);
@@ -69,6 +80,7 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("activate/{Id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Activate([FromRoute] GymWorkerActivateCommand data)
         {
             var gymUserResult = await Mediator.Send(data);
@@ -77,6 +89,16 @@ namespace WebApi.Controllers
                 return Ok();
 
             return Conflict(new { gymUserResult.Error });
+        }
+
+        protected int GetUserId()
+        {
+            return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
+        }
+
+        protected string GetUserRole()
+        {
+            return this.User.Claims.First(i => i.Type == ClaimTypes.Role).Value;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Application.Common.Interfaces
 	public interface IMaintenanceService
 	{
         Task<MaintenanceResult> CheckExpirationDate();
-        Task<MaintenanceResult> CheckExpirationDate(Guid id);
+        Task<MaintenanceResult> CheckExpirationDate(int id);
         Task<MaintenanceResult> ClearCheckIns();
     }
 }

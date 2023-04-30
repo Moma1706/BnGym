@@ -17,7 +17,7 @@ namespace Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task SendConfirmationEmailAsync(string email, string token)
+        public async Task SendConfirmationEmailAsync(string email)
         {
             //*******************************SNMP SERVER FOR SENDING EMAIL*********************************************//
             //var url = _configuration["SendGrid:EmailConfirmationUrl"].Replace("*email*", email).Replace("*token*", token);
@@ -40,7 +40,6 @@ namespace Infrastructure.Services
             System.Diagnostics.Debug.WriteLine("Email Confirmation Message");
             System.Diagnostics.Debug.WriteLine("--------------------------");
             System.Diagnostics.Debug.WriteLine($"TO: {email}");
-            System.Diagnostics.Debug.WriteLine($"TOKEN: {token}");
         }
 
         public async Task SendResetPasswordAsync(string email, string token)

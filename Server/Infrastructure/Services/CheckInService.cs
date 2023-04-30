@@ -21,12 +21,14 @@ namespace Infrastructure.Identity
         private readonly IConfiguration _configuration;
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMaintenanceService _maintenanceService;
 
-        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager)
+        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager, IMaintenanceService maintenanceService)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
+            _maintenanceService = maintenanceService;
         }
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
@@ -38,6 +40,7 @@ namespace Infrastructure.Identity
             if (user == null)
                 return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User doesn't exist" });
 
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
             if (gymUser.IsFrozen)
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
 
