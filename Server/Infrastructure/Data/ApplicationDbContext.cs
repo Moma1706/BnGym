@@ -21,6 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<DailyTraining> DailyTraining { get; set; }
     public DbSet<DailyHistory> DailyHistory { get; set; }
     public DbSet<DailyHistoryView> DailyHistoryView { get; set; }
+    public DbSet<DailyTrainingView> DailyTrainingView { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeService dateTimeService)
         : base(options) => _dateTimeService = dateTimeService;
@@ -49,6 +50,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         builder.Entity<DailyTraining>().ToTable("DailyTraining");
         builder.Entity<DailyHistory>().ToTable("DailyHistory");
         builder.Entity<DailyHistoryView>().ToView("DailyHistoryView");
+        builder.Entity<DailyTrainingView>().ToView("DailyTrainingView");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

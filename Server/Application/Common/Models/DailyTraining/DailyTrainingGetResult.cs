@@ -11,11 +11,13 @@ namespace Application.Common.Models.DailyTraining
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime LastCheckIn { get; set; }
+        public int NumberOfArrivalsCurrentMonth { get; set; }
+        public int NumberOfArrivalsLastMonth { get; set; }
 
         public bool Success { get; set; }
         public Error Error { get; set; }
 
-        public DailyTrainingGetResult(bool success, Error error, Guid id, string firstName, string lastName, DateTime dateOfBirth, DateTime lastCheckIn)
+        public DailyTrainingGetResult(bool success, Error error, Guid id, string firstName, string lastName, DateTime dateOfBirth, DateTime lastCheckIn, int numberOfArrivalsCurrentMonth, int numberOfArrivalsLastMonth)
         {
             Success = success;
             Error = error;
@@ -24,6 +26,9 @@ namespace Application.Common.Models.DailyTraining
             LastName = lastName;
             DateOfBirth = dateOfBirth;
             LastCheckIn = lastCheckIn;
+            NumberOfArrivalsCurrentMonth = numberOfArrivalsCurrentMonth;
+            NumberOfArrivalsLastMonth = numberOfArrivalsLastMonth;
+
         }
 
         public DailyTrainingGetResult() { }
@@ -32,7 +37,7 @@ namespace Application.Common.Models.DailyTraining
             Error = error;
         }
 
-        public static DailyTrainingGetResult Sucessfull(Guid id, string firstName, string lastName, DateTime dateOfBirth, DateTime lastCheckIn) => new(true, new Error { Code = 0, Message = string.Empty}, id, firstName, lastName, dateOfBirth, lastCheckIn);
+        public static DailyTrainingGetResult Sucessfull(Guid id, string firstName, string lastName, DateTime dateOfBirth, DateTime lastCheckIn, int numberOfArrivalsCurrentMonth, int numberOfArrivalsLastMonth) => new(true, new Error { Code = 0, Message = string.Empty}, id, firstName, lastName, dateOfBirth, lastCheckIn, numberOfArrivalsCurrentMonth, numberOfArrivalsLastMonth);
         public static DailyTrainingGetResult Failure(Error error) => new(error);
     }
 }

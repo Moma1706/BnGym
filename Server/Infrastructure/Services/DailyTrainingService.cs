@@ -77,7 +77,7 @@ namespace Infrastructure.Identity
             var dailyList = new List<DailyTrainingGetResult>();
 
             // prepare result
-            var countDetails = _dbContext.DailyTraining.Count();
+            var countDetails = _dbContext.DailyTrainingView.Count();
             var result = new PageResult<DailyTrainingGetResult>
             {
                 Count = countDetails,
@@ -93,7 +93,7 @@ namespace Infrastructure.Identity
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.DailyTraining.Skip(page * pageSize).Take(pageSize);
+            var query = _dbContext.DailyTrainingView.Skip(page * pageSize).Take(pageSize);
 
             // applay searching string
             if (!String.IsNullOrEmpty(searchString))
@@ -109,7 +109,9 @@ namespace Infrastructure.Identity
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DateOfBirth = x.DateOfBirth,
-                LastCheckIn = x.LastCheckIn
+                LastCheckIn = x.LastCheckIn,
+                NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth,
+                NumberOfArrivalsCurrentMonth = x.numberOfArrivalsCurrentMonth
             }).ToList();
 
             result.Items = dailyList;
@@ -154,8 +156,6 @@ namespace Infrastructure.Identity
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DateOfBirth = x.DateOfBirth,
-                NumberOfArrivalsCurrentMonth = x.NumberOfArrivalsCurrentMonth,
-                NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth,
                 CheckInDate = x.CheckInDate
             }).ToList();
 
@@ -174,7 +174,15 @@ namespace Infrastructure.Identity
                 dailyUser.FirstName = data.FirstName ?? dailyUser.FirstName;
                 dailyUser.LastName = data.LastName ?? dailyUser.LastName;
                 if (data.DateOfBirth.Date != dailyUser.DateOfBirth.Date)
+                {
+                    // todo
+                    var uniqueUser = _dbContext.DailyTraining.Count((x) =>
+                        x.FirstName.ToLower() == dailyUser.FirstName.ToLower() && x.LastName.ToLower() == dailyUser.LastName.ToLower() && x.DateOfBirth.Date == data.DateOfBirth.Date && x.Id != id);
+                    if (uniqueUser > 0)
+                        return DailyTrainingResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "User already exists" });
+
                     dailyUser.DateOfBirth = data.DateOfBirth;
+                }
 
                 //update daily user
                 _dbContext.Update(dailyUser);
@@ -223,7 +231,7 @@ namespace Infrastructure.Identity
 
         public async Task<DailyTrainingGetResult> GetOne(Guid id)
         {
-            var dailyUser = await _dbContext.DailyTraining.FirstOrDefaultAsync((x) => x.Id == id);
+            var dailyUser = await _dbContext.DailyTrainingView.FirstOrDefaultAsync((x) => x.Id == id);
             if (dailyUser == null)
                 return DailyTrainingGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Daily user does not exist" });
 
@@ -232,7 +240,9 @@ namespace Infrastructure.Identity
                 dailyUser.FirstName,
                 dailyUser.LastName,
                 dailyUser.DateOfBirth,
-                dailyUser.LastCheckIn
+                dailyUser.LastCheckIn,
+                dailyUser.numberOfArrivalsCurrentMonth,
+                dailyUser.NumberOfArrivalsLastMonth
                 );
         }
     }
