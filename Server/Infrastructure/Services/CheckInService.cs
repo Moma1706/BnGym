@@ -120,7 +120,8 @@ namespace Infrastructure.Identity
                 LastName = x.LastName,
                 Email = x.Email,
                 LastCheckIn = x.LastCheckIn,
-                TimeStamp = x.TimeStamp
+                TimeStamp = x.TimeStamp,
+                GymUserId = x.GymUserId
             }).ToList();
 
             result.Items = checkInList;

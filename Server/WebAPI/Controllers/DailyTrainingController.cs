@@ -36,7 +36,7 @@ namespace WebApi.Controllers
             var dailyTrainingResult = await Mediator.Send(command);
 
             if (dailyTrainingResult.Success)
-                return Ok();
+                return Ok(dailyTrainingResult);
 
             return Conflict(new { dailyTrainingResult.Error });
         }

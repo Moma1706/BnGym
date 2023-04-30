@@ -17,6 +17,7 @@ namespace Application.Enums
         ExpiredMembership,
         CanNotAccesTwice,
         InvalidGymUserType,
+        WrongCurrentPassword,
 
         UnableToDelete,
         UnableToUpdate,

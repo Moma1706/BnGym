@@ -137,7 +137,7 @@ namespace Infrastructure.Services
 
         public async Task<GymWorkerGetResult> GetOne(Guid id)
         {
-            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id && x.IsBlocked == false).FirstOrDefaultAsync();
+            var gymWorker = await _dbContext.GymWorkers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymWorker == null)
                 return GymWorkerGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym worker with provided id does not exist" });
 
