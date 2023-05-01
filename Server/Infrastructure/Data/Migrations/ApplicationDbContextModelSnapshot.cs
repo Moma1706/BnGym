@@ -230,9 +230,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfArrivals")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
@@ -250,23 +247,17 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastCheckIn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfArrivalsCurrentMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfArrivalsLastMonth")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

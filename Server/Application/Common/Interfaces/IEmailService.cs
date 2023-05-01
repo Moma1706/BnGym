@@ -2,7 +2,7 @@
 
 public interface IEmailService
 {
-    Task SendConfirmationEmailAsync(string email, string token);
+    Task SendConfirmationEmailAsync(string email);
 
     Task SendResetPasswordAsync(string email, string token);
 }

@@ -31,9 +31,14 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("{Id:Guid}")]
-        public async Task<IActionResult> GetOne([FromQuery] DailyTrainingGetOneCommand command)
+        public async Task<IActionResult> GetOne([FromRoute] DailyTrainingGetOneCommand command)
         {
-            return Ok(await Mediator.Send(command));
+            var dailyTrainingResult = await Mediator.Send(command);
+
+            if (dailyTrainingResult.Success)
+                return Ok(dailyTrainingResult);
+
+            return Conflict(new { dailyTrainingResult.Error });
         }
 
         [HttpPut]

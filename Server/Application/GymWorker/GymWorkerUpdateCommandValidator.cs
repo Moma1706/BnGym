@@ -19,13 +19,7 @@ namespace Application.GymWorker
                .NotEmpty().WithMessage("Last name is required");
 
             RuleFor(x => x.Id)
-                    .NotEmpty().WithMessage("Id is required")
-                    .Must(BeAValidGuid).WithMessage("Invalid UUID");
-        }
-
-        private bool BeAValidGuid(Guid guid)
-        {
-            return guid != Guid.Empty;
+                    .NotEmpty().WithMessage("Id is required");
         }
     }
 }

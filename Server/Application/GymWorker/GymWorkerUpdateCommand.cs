@@ -9,7 +9,7 @@ namespace Application.GymWorker
 {
 	public class GymWorkerUpdateCommand : IRequest<GymWorkerResult>
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public UpdateGymWorkerDto Data { get; set; }
 
         public class GymWorkerUpdateCommandHandler : IRequestHandler<GymWorkerUpdateCommand, GymWorkerResult>
@@ -28,14 +28,8 @@ namespace Application.GymWorker
             public async Task<GymWorkerResult> Handle(GymWorkerUpdateCommand request, CancellationToken cancellationToken)
             {
                 var gymWorkerResult = await _gymWorkerService.Update(request.Id, request.Data);
-
-                var tokenResult = await _identityService.GenerateTokenForIdentityPurpose(request.Data.Email, TokenPurpose.ConfirmEmail);
-                if (tokenResult.Success)
-                    await _emailService.SendConfirmationEmailAsync(request.Data.Email, tokenResult.Token);
-
                 return gymWorkerResult;
             }
         }
     }
 }
-

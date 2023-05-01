@@ -16,7 +16,6 @@ namespace Application.Common.Models.CheckIn
         public int UserId { get; set; }
         public string Email { get; set; }
         public DateTime LastCheckIn { get; set; }
-        public int NumberOfArrivals { get; set; }
 
         public CheckInGetResult() {}
     }

@@ -1,6 +1,8 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
+using Application.Common.Models.BaseResult;
+using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +23,7 @@ namespace Infrastructure.Identity
         private readonly IEmailService _emailService;
         private readonly IMaintenanceService _maintenanceService;
         private readonly ApplicationDbContext _dbContext;
+        private readonly string password = "Bngym2023";
 
         public IdentityService(SignInManager<User> signInManager,
                                UserManager<User> userManager,
@@ -53,6 +56,9 @@ namespace Infrastructure.Identity
             if (userRole.RoleId == Convert.ToInt32(UserRole.RegularUser))
                 return Result.Failure("Invalid user role");
 
+            if (user.IsBlocked)
+                return Result.Failure("User is blocked");
+
             var role = _dbContext.Roles.Where(x => x.Id == userRole.RoleId).FirstOrDefault();
 
             var claims = GetClaims(user);
@@ -60,12 +66,7 @@ namespace Infrastructure.Identity
             var token = GenerateJwtForUser(user, claims);
 
             //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-            //if (!maintenanceResult.Success)
-            //    throw new Exception("Unable to login because maintenace service return an exception.");
-
             //var clearResult = await _maintenanceService.ClearCheckIns();
-            //if (!clearResult.Success)
-            //    throw new Exception("Unable to login because maintenace service return an exception.");
 
             return Result.Successful(token);
         }
@@ -91,10 +92,11 @@ namespace Infrastructure.Identity
 
             var token = GenerateJwtForUser(user, claims);
 
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
             return Result.Successful(token);
         }
 
-        public async Task<RegisterResult> Register(string email, string password, string firstName, string lastName, string address)
+        public async Task<RegisterResult> Register(string email, string firstName, string lastName, string address)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
                 return RegisterResult.Failure("User with given E-mail already exist");
@@ -102,10 +104,11 @@ namespace Infrastructure.Identity
             var user = new User
             {
                 Email = email.ToLower(),
-                UserName = email,
+                UserName = email.ToLower(),
                 FirstName = firstName,
                 LastName = lastName,
-                Address = address
+                Address = address,
+                EmailConfirmed = true
             };
 
             var registerResult = await _userManager.CreateAsync(user, password);
@@ -196,6 +199,19 @@ namespace Infrastructure.Identity
             }
 
             return Result.Successful(token);
+        }
+
+        public async Task<Result> ChangePassword(int id, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return Result.Failure("User does not exist");
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!result.Succeeded)
+                return Result.Failure("Unable to change password.");
+
+            return Result.Successful();
         }
     }
 }

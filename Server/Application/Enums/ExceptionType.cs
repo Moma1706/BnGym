@@ -13,8 +13,11 @@ namespace Application.Enums
         UserIsInActive,
         UserIsFrozen,
         UserIsBlocked,
+        WorkerIsActive,
         ExpiredMembership,
         CanNotAccesTwice,
+        InvalidGymUserType,
+        WrongCurrentPassword,
 
         UnableToDelete,
         UnableToUpdate,

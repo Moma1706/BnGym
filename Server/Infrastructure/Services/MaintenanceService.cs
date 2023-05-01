@@ -45,9 +45,9 @@ namespace Infrastructure.Identity
             }
         }
 
-        public async Task<MaintenanceResult> CheckExpirationDate(Guid id)
+        public async Task<MaintenanceResult> CheckExpirationDate(int id)
         {
-            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var gymUser = await _dbContext.GymUsers.Where(x => x.UserId == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 return MaintenanceResult.Failure("Gym user does not exist");
 

@@ -8,7 +8,5 @@ namespace Infrastructure.Identity.Views
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime CheckInDate { get; set; }
-        public int NumberOfArrivalsCurrentMonth { get; set; }
-        public int NumberOfArrivalsLastMonth { get; set; }
     }
 }

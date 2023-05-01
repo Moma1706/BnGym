@@ -11,12 +11,13 @@ namespace Application.Common.Models.GymWorker
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public bool IsBlocked { get; set; }
         public int RoleId { get; set; }
 
         public bool Success { get; set; }
         public Error Error { get; set; }
 
-        public GymWorkerGetResult(bool success, Error error, Guid id, int userId, string firstName, string lastName, string email, int roleId)
+        public GymWorkerGetResult(bool success, Error error, Guid id, int userId, string firstName, string lastName, string email, int roleId, bool isBlocked)
         {
             Success = success;
             Error = error;
@@ -26,11 +27,12 @@ namespace Application.Common.Models.GymWorker
             LastName = lastName;
             Email = email;
             RoleId = roleId;
+            IsBlocked = isBlocked;
         }
 
         public GymWorkerGetResult() { }
 
-        public static GymWorkerGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, int roleId) => new(true, new Error { Code = 0, Message = string.Empty }, id, userId, firstName, lastName, email, roleId);
-        public static GymWorkerGetResult Failure(Error error) => new(false, error, Guid.Empty, 0, string.Empty, string.Empty, string.Empty, 0);
+        public static GymWorkerGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, int roleId, bool isBlocked) => new(true, new Error { Code = 0, Message = string.Empty }, id, userId, firstName, lastName, email, roleId, isBlocked);
+        public static GymWorkerGetResult Failure(Error error) => new(false, error, Guid.Empty, 0, string.Empty, string.Empty, string.Empty, 0, false);
     }
 }

@@ -34,10 +34,7 @@ namespace Application.GymUser
             if (gymUserResult.Error.Code != 0)
                 return gymUserResult;
        
-            var tokenResult = await _identityService.GenerateTokenForIdentityPurpose(request.Email, TokenPurpose.ConfirmEmail);
-            if (tokenResult.Success)
-                await _emailService.SendConfirmationEmailAsync(request.Email, tokenResult.Token);
-
+            _emailService.SendConfirmationEmailAsync(gymUserResult.Email);
             return gymUserResult;
         }
     }

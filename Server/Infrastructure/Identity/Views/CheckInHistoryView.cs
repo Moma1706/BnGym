@@ -13,7 +13,6 @@ namespace Infrastructure.Identity.Views
         public string Email { get; set; }
         public DateTime TimeStamp { get; set; }
         public DateTime LastCheckIn { get; set; }
-        public int NumberOfArrivals { get; set; }
     }
 }
 

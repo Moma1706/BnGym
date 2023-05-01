@@ -1,8 +1,10 @@
-﻿using Application.Auth;
+﻿using System.Data;
+using Application.Auth;
 using Application.Auth.ForgotPassword;
 using Application.Auth.Login;
 using Application.Auth.Register;
 using Application.Auth.ResetPassword;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -70,5 +72,17 @@ public class AuthController : ApiBaseController
     {
         await Mediator.Send(command);
         return Ok();
+    }
+
+    [HttpPost]
+    [Route("change-password")]
+    [Authorize(Roles = "Admin, Worker, Regular User")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (result.Success)
+            return Ok();
+
+        return Conflict(new { result.Error });
     }
 }
