@@ -1,3 +1,4 @@
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GymUserService } from './../../_services/gym-user.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -38,6 +39,10 @@ export class AllGymUsersComponent implements OnInit {
   EmpData: gymUser[] = [];
   empTable?: EmployeeTable;
 
+  model: any= {};
+  form: FormGroup;
+  submitted = false;
+
   displayedColumns: string[] = ['FirstName','LastName','Email','isInactive','isFrozen','ExpiresOn', 'Buttons'];
 
   dataSource: MatTableDataSource<gymUser> = new MatTableDataSource();
@@ -46,17 +51,33 @@ export class AllGymUsersComponent implements OnInit {
   @ViewChild('paginator') paginator?: MatPaginator;
 
 
-  constructor(private gymUserService: GymUserService) { 
+  constructor(private gymUserService: GymUserService,private formBuilder: FormBuilder) { 
+    this.form = this.formBuilder.group({
+      title: this.formBuilder.control('initial value', Validators.required)
+    });
   }
 
   ngOnInit() {
+    this.form = this.formBuilder.group({
+      search: ['', Validators.required],
+    });
   }
+
+  get f() { return this.form.controls; }
 
   getTableData$(pageNumber: number, pageSize: number, searchText: string) {
     return this.gymUserService.getAllUsers(pageSize, pageNumber, '');
   }
 
   ngAfterViewInit() {
+    this.getData();
+  }
+  search(){
+    this.searchText = this.f['serach'].value;
+    this.getData();
+  }
+
+  getData(){
     this.dataSource.paginator = this.paginator!;
     if(this.paginator){
     this.paginator!.page
@@ -91,4 +112,6 @@ export class AllGymUsersComponent implements OnInit {
 function observableOf(arg0: null): any {
   throw new Error('Function not implemented.');
 }
+
+
 

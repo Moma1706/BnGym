@@ -8,7 +8,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
+import { AccountService } from './_services/account.service';
+import { AuthInterceptor } from './_services/auth-interceptor';
+
+
+// called on every request to retrieve the token
+export function jwtOptionsFactory(tokenService: AccountService) {
+  return tokenService.getAuthToken();
+}
 
 @NgModule({
   imports: [
@@ -22,7 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
     HomeComponent,
     AlertComponent
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -29,4 +29,12 @@ constructor(private http: HttpClient) { }
     return this.http.get(this.baseUrl + queryParams);
   }
 
+  getWorker(id:string){
+    return this.http.get(this.baseUrl + '/' + id);
+  }
+
+  update(id: string, model:any){
+    return this.http.put(this.baseUrl + '/' +id, model);
+  }
+
 }

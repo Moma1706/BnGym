@@ -29,13 +29,16 @@ export class AccountService {
         const user = response;
         console.log(user);
         if (user) {
-          localStorage.setItem('token', user.tokenString);
-          this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
-          this.userToken = user.tokenString;
-          localStorage.setItem('email', user.email);
+          localStorage.setItem('token', user.token);
+          this.decodedToken = this.jwtHelper.decodeToken(user.token);
+          this.userToken = user.token;
         }
       })
     );
+  }
+
+  getAuthToken():string {
+    return localStorage.getItem('token') ?? ''
   }
 
 }

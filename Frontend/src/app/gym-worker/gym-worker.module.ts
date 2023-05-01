@@ -8,6 +8,7 @@ import { GymWorkerRoutingModule } from './gym-worker-routing.module';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ViewGymWorkerComponent } from './view-gym-worker/view-gym-worker.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   declarations: [
     GymWorkerComponent,
     AddGymWorkerComponent,
-    AllGymWorkersComponent
+    AllGymWorkersComponent,
+    ViewGymWorkerComponent
   ]
 })
 export class GymWorkerModule { }

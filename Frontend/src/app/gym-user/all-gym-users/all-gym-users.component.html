@@ -6,6 +6,35 @@
     Add Gym User
   </button>
 </div>
+<form [formGroup]="form">
+  <div>
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Trazi</span
+        >
+      </div>
+      <input
+        formControlName="search"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter First Name..."
+        [ngClass]="{ 'is-invalid': submitted && f['search'].errors }"
+        required
+      />
+    </div>
+
+    <div *ngIf="visible">
+      <button type="button" class="btn btn-primary" (click)="search()">
+        Trazi
+      </button>
+    </div>
+
+  </div>
+</form>
+
 <br>
 <!--Table-->
   <table mat-table [dataSource]="dataSource" class="example-container mat-elevation-z8 mt-0">
@@ -51,8 +80,8 @@
     <ng-container matColumnDef="Buttons" >
       <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
       <td mat-cell *matCellDef="let element; let i" class="mat-cell">
-        <button *ngIf="visible" mat-stroked-button color="warn" [routerLink]="['/gym-user/view-gym-user', element.id]" class="btn btn-secondary">
-          View
+        <button *ngIf="visible" mat-stroked-button color="warn" [routerLink]="['/gym-user/view-gym-user', element.userId]" class="btn btn-secondary">
+          Pogledaj
         </button>
       </td>
     </ng-container>

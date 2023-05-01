@@ -67,7 +67,7 @@ export class AllGymWorkersComponent implements OnInit {
             this.paginator!.pageIndex + 1,
             this.paginator!.pageSize, 
             ''
-          ).pipe(catchError(() => this.observableOf(null)));
+          ).pipe(catchError((errr) => this.observableOf(null)));
         }),
         map((empData) => {
           if (empData == null) return [];
