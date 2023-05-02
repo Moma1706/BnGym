@@ -37,54 +37,65 @@ export class AllGymWorkersComponent implements OnInit {
   empTable?: EmployeeTable;
   EmpData: gymWorker[] = [];
 
-  displayedColumns: string[] = ['FirstName','LastName','Email', 'Buttons'];
+  displayedColumns: string[] = ['firstName','lastName','email', 'Buttons'];
   dataSource: MatTableDataSource<gymWorker> = new MatTableDataSource(this.DataSource);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort: MatSort = new MatSort();
+  public searchText = '';
 
-  constructor(private router: Router, private gymWorkerService: GymWorkerService ) 
-  {
-    
+  constructor(private router: Router, private gymWorkerService: GymWorkerService ){  
   }
 
   ngOnInit() {
   }
 
+  applyFilter(event: Event) {
+    let filterValue = (event.target as HTMLInputElement).value;
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.backendCall(filterValue);
+  }
+
   getTableData$(pageNumber: number, pageSize: number, searchText: string) {
-    return this.gymWorkerService.getAllWorkers(pageSize, pageNumber, '');
+    return this.gymWorkerService.getAllWorkers(pageSize, pageNumber, searchText);
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator!;
-    if(this.paginator){
-    this.paginator!.page
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.loading = true;
-          return this.getTableData$(
-            this.paginator!.pageIndex + 1,
-            this.paginator!.pageSize, 
-            ''
-          ).pipe(catchError(() => this.observableOf(null)));
-        }),
-        map((empData) => {
-          if (empData == null) return [];
-          
-          this.totalWorkers = (<EmployeeTable>empData).count;
-          this.loading = false;
-          return (empData as EmployeeTable).items;
-        })
-      )
-      .subscribe((empData) => {
-        this.EmpData = empData;
-        console.log(empData);
-        this.dataSource = new MatTableDataSource(this.EmpData);
-      });
-    }
+    this.backendCall('');
   }
   
+  private backendCall(filter: string) {
+    this.dataSource.paginator = this.paginator!;
+    if (this.paginator) {
+      this.paginator!.page
+        .pipe(
+          startWith({}),
+          switchMap(() => {
+            this.loading = true;
+            return this.getTableData$(
+              this.paginator!.pageIndex + 1,
+              this.paginator!.pageSize,
+              filter
+            ).pipe(catchError(() => this.observableOf(null)));
+          }),
+          map((empData) => {
+            if (empData == null)
+              return [];
+
+            this.totalWorkers = (<EmployeeTable>empData).count;
+            this.loading = false;
+            return (empData as EmployeeTable).items;
+          })
+        )
+        .subscribe((empData) => {
+          this.EmpData = empData;
+          console.log(empData);
+          this.dataSource = new MatTableDataSource(this.EmpData);
+        });
+    }
+  }
+
   observableOf(arg0: null): any {
     throw new Error('Function not implemented.');
   }

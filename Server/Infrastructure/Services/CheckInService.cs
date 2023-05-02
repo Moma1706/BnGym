@@ -86,7 +86,7 @@ namespace Infrastructure.Identity
             var checkInList = new List<CheckInGetResult>();
 
             // prepare result
-            var countDetails = _dbContext.CheckInHistoryView.Count();
+            var countDetails = _dbContext.CheckInHistoryView.Count(x => x.CheckInDate.Date == date.Date);
             var result = new PageResult<CheckInGetResult>
             {
                 Count = countDetails,
@@ -108,7 +108,7 @@ namespace Infrastructure.Identity
             if (!String.IsNullOrEmpty(searchString))
                 query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
 
-            var checkIns = await query.Where(x => x.TimeStamp.Date == date.Date).OrderBy(x => x.LastCheckIn).ToListAsync();
+            var checkIns = await query.Where(x => x.CheckInDate.Date == date.Date).OrderBy(x => x.CheckInDate).ToListAsync();
             if (checkIns.Count == 0)
                 return result;
 
@@ -118,9 +118,8 @@ namespace Infrastructure.Identity
                 UserId = x.UserId,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-                Email = x.Email,
-                LastCheckIn = x.LastCheckIn,
-                TimeStamp = x.TimeStamp,
+                Email = x.Email == "email" ? "null" : x.Email ,
+                CheckInDate = x.CheckInDate,
                 GymUserId = x.GymUserId
             }).ToList();
 

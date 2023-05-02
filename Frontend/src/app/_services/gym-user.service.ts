@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,7 @@ export class GymUserService {
 
   baseUrl = 'https://localhost:7085/api/GymUser';
 
-constructor(private http: HttpClient) { }
-
+constructor(private http: HttpClient, private auth: AccountService) { }
   addGymUser(model: any)  {
     return this.http.post(this.baseUrl, model);
   }
@@ -31,11 +31,11 @@ constructor(private http: HttpClient) { }
     return this.http.put(this.baseUrl + '/activate/' + id, undefined);
   }
 
-  Extend(id: string, numberOfMonths: number){
+  Extend(id: string, numberOfMonths: any){
     return this.http.put(this.baseUrl + '/extend/' + id, numberOfMonths);
   }
 
   Update(id: string, model:any){
-    return this.http.put(this.baseUrl + '/update/' +id, model);
+    return this.http.put(this.baseUrl + '/' + id, model);
   }
 }
