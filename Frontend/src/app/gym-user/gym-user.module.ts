@@ -8,6 +8,9 @@ import { GymUserComponent } from './gym-user.component';
 import { AddGymUserComponent } from './add-gym-user.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   imports: [
@@ -15,13 +18,16 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     ReactiveFormsModule,
     GymUserRoutingModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSortModule
   ],
   declarations: [
     GymUserComponent,
     AddGymUserComponent,
     AllGymUsersComponent,
-    ViewGymUserComponent
+    ViewGymUserComponent,
   ]
 })
 export class GymUserModule { }

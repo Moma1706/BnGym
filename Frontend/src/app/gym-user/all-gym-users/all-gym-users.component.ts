@@ -43,12 +43,13 @@ export class AllGymUsersComponent implements OnInit {
   form: FormGroup;
   submitted = false;
 
-  displayedColumns: string[] = ['FirstName','LastName','Email','isInactive','isFrozen','ExpiresOn', 'Buttons'];
+  displayedColumns: string[] = ['firstName','lastName','email','isInactive','isFrozen','expiresOn', 'Buttons'];
 
   dataSource: MatTableDataSource<gymUser> = new MatTableDataSource();
 
 
   @ViewChild('paginator') paginator?: MatPaginator;
+  @ViewChild('MatSort') sort!: MatSort;
 
 
   constructor(private gymUserService: GymUserService,private formBuilder: FormBuilder) { 
@@ -71,10 +72,14 @@ export class AllGymUsersComponent implements OnInit {
 
   ngAfterViewInit() {
     this.getData();
+    //this.dataSource.sort = this.sort;
   }
-  search(){
-    this.searchText = this.f['serach'].value;
-    this.getData();
+
+  applyFilter(event: Event) {
+    let filterValue = (event.target as HTMLInputElement).value;
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
   }
 
   getData(){
@@ -103,6 +108,7 @@ export class AllGymUsersComponent implements OnInit {
         this.EmpData = empData;
         console.log(empData);
         this.dataSource = new MatTableDataSource(this.EmpData);
+        this.dataSource.sort = this.sort;
       });
     }
   }

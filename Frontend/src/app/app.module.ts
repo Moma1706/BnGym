@@ -12,6 +12,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
 import { AccountService } from './_services/account.service';
 import { AuthInterceptor } from './_services/auth-interceptor';
+import {MatFormFieldModule} from '@angular/material/form-field';  
 
 
 // called on every request to retrieve the token
@@ -25,6 +26,7 @@ export function jwtOptionsFactory(tokenService: AccountService) {
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MatFormFieldModule
   ],
   declarations: [
     AppComponent,
