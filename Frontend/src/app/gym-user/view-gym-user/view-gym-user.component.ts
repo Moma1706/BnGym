@@ -35,6 +35,8 @@ export class ViewGymUserComponent implements OnInit {
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
       email: ['', Validators.required],
+      address: ['', Validators.required],
+      type: ['', Validators.required],
     });
 
   }
@@ -108,7 +110,7 @@ export class ViewGymUserComponent implements OnInit {
   }
 
   Extend(){
-    this.gymUserService.Extend(this.id ?? '', 1).subscribe((response:any) =>{
+    this.gymUserService.Extend(this.id ?? '', {Type : 1}).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
     });;
@@ -124,8 +126,23 @@ export class ViewGymUserComponent implements OnInit {
     if(this.f['email'].value != ''){
     this.model.email=this.f['email'].value;
     }
+    if(this.f['address'].value != ''){
+      this.model.address=this.f['address'].value;
+    }
 
-    this.gymUserService.Update(this.id?? '', this.model).subscribe((response:any)=>{
+    if(this.model.type == 'Pola Meseca'){
+      this.model.type = 0
+    }else if(this.model == 'Mesec dana'){
+      this.model.type = 1
+    }else if(this.model.type == 'Tri meseca'){
+      this.model.type = 2
+    }else if(this.model.type == 'Pola Godine'){
+      this.model.type = 3
+    }else {
+      this.model.type = 4
+    }
+
+    this.gymUserService.Update(this.model.id?? '', this.model).subscribe((response:any)=>{
       console.log(response);
       window.location.reload();
     });

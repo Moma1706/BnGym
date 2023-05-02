@@ -1,0 +1,71 @@
+<h2 style="text-align: center">Novi Dnevni Korisnik</h2>
+<hr />
+<br />
+
+<div style="margin-left: 25%">
+  <form [formGroup]="form" (ngSubmit)="save()" ngNativeValidate>
+    <!--Label Name and input Enter name-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Ime</span
+        >
+      </div>
+      <input
+        formControlName="firstname"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter First Name..."
+        [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label Lastname and input Enter Lastname-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Prezime</span
+        >
+      </div>
+      <input
+      formControlName="lastname"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder="Enter Last Name..."
+        [ngClass]="{ 'is-invalid': submitted && f['lastname'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label email and input Enter Email-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Datum Rodjenja</span
+        >
+      </div>
+      <input
+        formControlName="dateOfBirth"
+        type="date"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        [ngClass]="{ 'is-invalid': submitted && f['dateOfBirth'].errors }"
+        required
+      />
+    </div>
+
+    <!--Button Reposrt-->
+    <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Dodaj korisnika
+      </button>
+    </div>
+  </form>
+</div>

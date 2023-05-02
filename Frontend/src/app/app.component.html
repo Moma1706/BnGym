@@ -2,10 +2,13 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark">
   <div class="navbar-nav">
       <a class="nav-item nav-link" routerLink="/account/login" routerLinkActive="active">Login</a>
-      <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-      <a class="nav-item nav-link" routerLink="/gym-worker/all-gym-workers" routerLinkActive="active">All Gym Workers</a>
-      <a class="nav-item nav-link" routerLink="/gym-user/all-gym-users" routerLinkActive="active">All Gym Users</a>
-  </div>
+      <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Pocetna Strana</a>
+      <a class="nav-item nav-link" routerLink="/gym-worker/all-gym-workers" routerLinkActive="active">Svi Radnici</a>
+      <a class="nav-item nav-link" routerLink="/gym-user/all-gym-users" routerLinkActive="active">Svi vezbaci</a>
+      <a class="nav-item nav-link" routerLink="/account/profile" routerLinkActive="active">Profil</a>
+      <a class="nav-item nav-link" routerLink="/dayli-training/view-all-dayli" routerLinkActive="active">Dnevni Korisnici</a>
+      <a class="nav-item nav-link" routerLinkActive="active" (click)="logOut()">LogOut</a>  
+    </div>
 </nav>
 
 <!-- main app container -->

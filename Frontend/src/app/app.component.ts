@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app',
@@ -10,4 +11,14 @@ import { AccountService } from './_services/account.service';
 export class AppComponent {
 
   title = 'bn-gym';
+
+ 
+  constructor(private router: Router) {
+
+  }
+
+  logOut(){
+    localStorage.setItem('token', '');
+    this.router.navigate(['login']);
+  }
 }
