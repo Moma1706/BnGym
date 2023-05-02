@@ -17,7 +17,7 @@ addTraining(model: any){
 getAllDayliTrainings(PageSize: number, Page: number, SearchString: string)
 {
   const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}`;
-  return this.http.get(this.baseUrl + queryParams);
+  return this.http.get(this.baseUrl + '/users/' + queryParams);
 }
 
   getTraining(id:string){

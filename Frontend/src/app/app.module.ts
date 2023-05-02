@@ -28,11 +28,11 @@ export function jwtOptionsFactory(tokenService: AccountService) {
     HttpClientModule,
     MatFormFieldModule
   ],
-  declarations: [
+  declarations: [	
     AppComponent,
     HomeComponent,
-    AlertComponent
-  ],
+    AlertComponent,
+   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })

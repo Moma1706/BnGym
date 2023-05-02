@@ -9,6 +9,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ViewGymWorkerComponent } from './view-gym-worker/view-gym-worker.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
@@ -18,13 +21,16 @@ import { ViewGymWorkerComponent } from './view-gym-worker/view-gym-worker.compon
     GymWorkerRoutingModule,
     MatTableModule,
     MatPaginatorModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSortModule,
   ],
   declarations: [
     GymWorkerComponent,
     AddGymWorkerComponent,
     AllGymWorkersComponent,
-    ViewGymWorkerComponent
+    ViewGymWorkerComponent,
   ]
 })
 export class GymWorkerModule { }

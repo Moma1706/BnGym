@@ -61,7 +61,7 @@ export class AddDayliTrainingComponent implements OnInit {
             .subscribe({
                 next: () => {
                     // get return url from query parameters or default to home page
-                    const returnUrl ='/home';
+                    const returnUrl ='/dayli-training/view-all-dayli';
                     this.router.navigateByUrl(returnUrl);
                 },
                 error: (error : HttpErrorResponse) => {

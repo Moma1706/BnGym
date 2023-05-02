@@ -1,32 +1,31 @@
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { GymUserService } from './../../_services/gym-user.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, map, startWith, switchMap } from 'rxjs';
+import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
 
-
-export interface gymUser {
+export interface User {
   id: number;
   firstName: string;
   lastName: string;
+  birthDay?: Date;
 }
 
-export interface EmployeeTable {
-  items: gymUser[];
+export interface UsersTable {
+  items: User[];
   pageIndex: number;
   pageSize: number;
   count: number;
 }
 
 @Component({
-  selector: 'app-all-gym-users',
-  templateUrl: './all-gym-users.component.html',
-  styleUrls: ['./all-gym-users.component.css']
+  selector: 'app-view-all-dayli',
+  templateUrl: './view-all-dayli.component.html',
+  styleUrls: ['./view-all-dayli.component.css']
 })
-
-export class AllGymUsersComponent implements OnInit {
+export class ViewAllDayliComponent implements OnInit {
 
   visible: boolean = true;
   id : string = '';
@@ -36,36 +35,35 @@ export class AllGymUsersComponent implements OnInit {
   loading: boolean = false;
   totalUsers: number = 0;
   pageSizeOption: number[] = [5, 10, 25, 50, 100];
-  EmpData: gymUser[] = [];
-  empTable?: EmployeeTable;
+  EmpData: User[] = [];
+  empTable!: UsersTable;
 
   model: any= {};
+  form!: FormGroup;
   submitted = false;
 
-  displayedColumns: string[] = ['firstName','lastName','email','isInactive','isFrozen','expiresOn', 'Buttons'];
+  displayedColumns: string[] = ['firstName','lastName','dateOfBirth', 'Buttons'];
 
-  dataSource: MatTableDataSource<gymUser> = new MatTableDataSource();
+  dataSource: MatTableDataSource<User> = new MatTableDataSource();
 
 
   @ViewChild('paginator') paginator?: MatPaginator;
   @ViewChild('MatSort') sort!: MatSort;
 
-
-  constructor(private gymUserService: GymUserService) { 
+  constructor(private dayliService: DayliTrainingService) {
   }
 
   ngOnInit() {
   }
 
-  getTableData$(pageNumber: number, pageSize: number, searchText: string) {
-    return this.gymUserService.getAllUsers(pageSize, pageNumber, '');
-  }
-
   ngAfterViewInit() {
     this.getData();
-    //this.dataSource.sort = this.sort;
   }
 
+  getTableData$(pageNumber: number, pageSize: number, searchText: string) {
+    return this.dayliService.getAllDayliTrainings(pageSize, pageNumber, '');
+  }
+  
   applyFilter(event: Event) {
     let filterValue = (event.target as HTMLInputElement).value;
     filterValue = filterValue.trim(); // Remove whitespace
@@ -90,9 +88,9 @@ export class AllGymUsersComponent implements OnInit {
         map((empData) => {
           if (empData == null) return [];
           
-          this.totalUsers = (<EmployeeTable>empData).count;
+          this.totalUsers = (<UsersTable>empData).count;
           this.loading = false;
-          return (empData as EmployeeTable).items;
+          return (empData as UsersTable).items;
         })
       )
       .subscribe((empData) => {
@@ -106,9 +104,9 @@ export class AllGymUsersComponent implements OnInit {
 
 
 }
+
 function observableOf(arg0: null): any {
   throw new Error('Function not implemented.');
 }
-
 
 
