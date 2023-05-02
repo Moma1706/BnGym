@@ -2,6 +2,7 @@ import { GymUserService } from './../../_services/gym-user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CheckInService } from 'src/app/_services/check-in.service';
 
 @Component({
   selector: 'app-view-gym-user',
@@ -20,7 +21,7 @@ export class ViewGymUserComponent implements OnInit {
   loading: boolean = false;
 
 
-  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder) {
+  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder, private checkInService: CheckInService) {
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
     });
@@ -146,5 +147,13 @@ export class ViewGymUserComponent implements OnInit {
       console.log(response);
       window.location.reload();
     });
+  }
+
+  checkIn(){
+  this.checkInService.checkIn(this.model.id).subscribe((response:any)=>{
+    console.log(response);
+    window.location.reload();
+  });
+    
   }
 }

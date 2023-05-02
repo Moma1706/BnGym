@@ -201,7 +201,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Number Of Arrivals</span
+          >Broj dolazaka ovog meseca</span
         >
       </div>
       <input
@@ -209,7 +209,23 @@
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.numberOfArrivals}}
+        placeholder={{model.numberOfArrivalsCurrentMonth}}
+        readonly = true
+      />
+    </div>
+
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Broj dolazaka proslog meseca</span
+        >
+      </div>
+      <input
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        placeholder={{model.numberOfArrivalsLastMonth}}
         readonly = true
       />
     </div>
@@ -225,6 +241,10 @@
 
       <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
         Produzi Clanarinu
+      </button>
+
+      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="checkIn()">
+        CheckIn
       </button>
     </div>
 

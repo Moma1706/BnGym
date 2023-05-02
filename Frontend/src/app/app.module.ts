@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
+import { JWT_OPTIONS, JwtHelperService, JwtModule } from '@auth0/angular-jwt';
 import { AccountService } from './_services/account.service';
 import { AuthInterceptor } from './_services/auth-interceptor';
 import {MatFormFieldModule} from '@angular/material/form-field';  
@@ -33,7 +33,7 @@ export function jwtOptionsFactory(tokenService: AccountService) {
     HomeComponent,
     AlertComponent,
    ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, JwtHelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,3 +1,75 @@
-<p>
-  profile works!
-</p>
+<h2 style="text-align: center">Profil: {{model.firstName}}</h2>
+<hr />
+<br />
+
+<div style="margin-left: 25%">
+  <form [formGroup]="form" (ngSubmit)="update()" ngNativeValidate>
+    <!--Label Name and input Enter name-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Ime</span
+        >
+      </div>
+      <input
+        formControlName="firstName"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        value={{model?.firstName}}
+        [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label Lastname and input Enter Lastname-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Prezime</span
+        >
+      </div>
+      <input
+        formControlName="lastName"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        value= {{model?.lastName}}
+        [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }"
+        required
+      />
+    </div>
+
+    <!--Label email and input Enter Email-->
+    <div class="input-group mb-3" style="width: 700px">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default"
+          >Email</span
+        >
+      </div>
+      <input
+        formControlName="email"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        value={{model?.email}}
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Promeni
+      </button>
+    </div>
+  </form>
+
+    <div>
+    <!-- dugmici -->
+    </div>
+
+</div>
