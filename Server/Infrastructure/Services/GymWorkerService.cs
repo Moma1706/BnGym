@@ -111,12 +111,11 @@ namespace Infrastructure.Services
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.GymWorkers.Skip(page * pageSize).Take(pageSize);
-            // applay searching string
-            if (!String.IsNullOrEmpty(searchString))
-                query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
+            //if you perform first pagination then sorting then you are missing data (search-sort-pagination this is the order)
+            var gymWorkers = _dbContext.GymWorkers.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? "")) //first apply filter
+                .OrderBy(x => x.FirstName) //then sort
+                .Skip(page * pageSize).Take(pageSize).ToList(); //then pagination
 
-            var gymWorkers = await query.OrderBy(x => x.FirstName).ToListAsync();
             if (gymWorkers.Count == 0)
                 return result;
 
