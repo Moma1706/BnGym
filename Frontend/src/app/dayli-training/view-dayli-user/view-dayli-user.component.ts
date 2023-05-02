@@ -32,9 +32,9 @@ export class ViewDayliUserComponent implements OnInit {
     this.form = this.formBuilder.group({
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
-      email: ['', Validators.required],
-      address: ['', Validators.required],
-      type: ['', Validators.required],
+      mberOfArrivalsCurrentMonth: ['', Validators.required],
+      mberOfArrivalsLastMonth: ['', Validators.required],
+      dateOfBirth: ['', Validators.required]
     });
   }
 
@@ -57,9 +57,6 @@ export class ViewDayliUserComponent implements OnInit {
     }
     if(this.f['lastname'].value != ''){
     this.model.lastName=this.f['lastname'].value;
-    }
-    if(this.f['email'].value != ''){
-    this.model.email=this.f['email'].value;
     }
     
     this.dayliService.update(this.model.Id, this.model).subscribe((response:any) =>{

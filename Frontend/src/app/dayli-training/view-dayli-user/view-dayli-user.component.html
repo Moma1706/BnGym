@@ -50,7 +50,7 @@
         >
       </div>
       <input
-        formControlName="email"
+        formControlName="dateOfBirth"
         type="text"
         class="form-control"
         aria-label="Default"
@@ -58,6 +58,7 @@
         value={{model.dateOfBirth}}
         [ngClass]="{ 'is-invalid': submitted && f['dateOfBirth'].errors }"
         required
+        readonly
       />
     </div>
 
@@ -68,13 +69,13 @@
         >
       </div>
       <input
-        formControlName="email"
+        formControlName="mberOfArrivalsCurrentMonth"
         type="number"
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        value={{model.numberOfArrivalsThisMonth}}
-        [ngClass]="{ 'is-invalid': submitted && f['numberOfArrivalsThisMonth'].errors }"
+        value={{model.numberOfArrivalsCurrentMonth}}
+        [ngClass]="{ 'is-invalid': submitted && f['numberOfArrivalsCurrentMonth'].errors }"
         required
         readonly
       />
@@ -87,7 +88,7 @@
         >
       </div>
       <input
-        formControlName="email"
+        formControlName="mberOfArrivalsCurrentMonth"
         type="number"
         class="form-control"
         aria-label="Default"

@@ -1,4 +1,4 @@
-<h2 style="padding-top: 3%">Svi Vezbaci</h2>
+<h2 style="padding-top: 3%">Dnevni Korisnici</h2>
 <br>
 <!--New Consumer-->
 <div *ngIf="visible">
@@ -32,7 +32,6 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header> Datum rodjenja </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.dateOfBirth}} </mat-cell>
     </ng-container>
-
 
     <!-- Edit buttom Column -->
     <ng-container matColumnDef="Buttons" >
