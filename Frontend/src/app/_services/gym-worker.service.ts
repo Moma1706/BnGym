@@ -14,7 +14,7 @@ constructor(private http: HttpClient) { }
   addGymWorker(model: any){
 
     let gymWorkerModel = new GymWorkerModel();
-    
+
     gymWorkerModel.email = model.email;
     gymWorkerModel.firstname = model.firstName;
     gymWorkerModel.lastname = model.lastName;
@@ -24,8 +24,8 @@ constructor(private http: HttpClient) { }
     return this.http.post(this.baseUrl, gymWorkerModel);
   }
 
-  getAllWorkers(PageSize: number, Page: number, SearchString: string)  {
-    const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}`;
+  getAllWorkers(PageSize: number, Page: number, SearchString: string, sortDirect: number)  {
+    const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}&SortOrder=${sortDirect}`;
     return this.http.get(this.baseUrl + queryParams);
   }
 
