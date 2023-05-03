@@ -6,6 +6,7 @@ const accountModule = () => import('./account/account-module').then(x => x.Accou
 const gymWorkerModule = () => import('./gym-worker/gym-worker.module').then(x => x.GymWorkerModule);
 const gymUserModule = () => import('./gym-user/gym-user.module').then(x => x.GymUserModule);
 const dayliTrainingModule = () => import('./dayli-training/dayli-training.module').then(x => x.DayliTrainingModule);
+const checkInHistoryModule = () => import('./checkIn-history/checkIn-history.module').then(x => x.CheckInHistoryModule);
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'gym-worker', loadChildren: gymWorkerModule },
   { path: 'gym-user', loadChildren: gymUserModule },
   { path: 'dayli-training', loadChildren: dayliTrainingModule },
+  { path: 'checkIn-history', loadChildren: checkInHistoryModule },
   // otherwise redirect to home
   { path: '**', redirectTo: '' }
 ];

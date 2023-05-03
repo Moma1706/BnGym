@@ -17,16 +17,31 @@ export class ProfileComponent implements OnInit {
   decodedToken: any;
   userid: number = 0;
   model: any = {};
+  changePasswordModel: any = {};
+  
   form: FormGroup = new FormGroup({
     firstName: new FormControl('', Validators.required),
     lastName: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
   });
+
+  formPasswordChange: FormGroup = new FormGroup({
+    currentPassword: new FormControl('', Validators.required),
+    newPassword: new FormControl('', Validators.required),
+    confirmNewPassword: new FormControl('', Validators.required),
+  });
+
   submitted: boolean = false;
   loading: boolean = false;
   userId: string = '';
+  changePasswordVisible: boolean = false;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private formBuilder: FormBuilder, private gymWorkerService: GymWorkerService) {
+  constructor(
+    private route: ActivatedRoute,
+    private userService: UserService, 
+    private formBuilder: FormBuilder,
+    private gymWorkerService: GymWorkerService,
+    private accountService: AccountService) {
 
     
   }
@@ -44,6 +59,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get f() { return this.form.controls; }
+  get g() { return this.formPasswordChange.controls; }
 
   update(){
 
@@ -57,7 +73,29 @@ export class ProfileComponent implements OnInit {
     this.model.email=this.f['email'].value;
     }
     
-    this.gymWorkerService.update(this.model.userId, this.model).subscribe((response:any) =>{
+    this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
+      console.log(response);
+    })
+  }
+
+  changePasswordVisibleEnable(){
+    this.changePasswordVisible = true;
+  }
+
+  changePassword(){
+
+    if(this.g['currentPassword'].value != ''){
+      this.changePasswordModel.currentPassword = this.g['currentPassword'].value;
+    }
+    if(this.g['newPassword'].value != ''){
+    this.changePasswordModel.newPassword=this.g['newPassword'].value;
+    }
+    if(this.g['confirmNewPassword'].value != ''){
+    this.changePasswordModel.confirmNewPassword=this.g['confirmNewPassword'].value;
+    }
+    this.changePasswordModel.id = this.model.id;
+
+    this.accountService.changePassword(this.changePasswordModel).subscribe((response:any) =>{
       console.log(response);
     })
   }

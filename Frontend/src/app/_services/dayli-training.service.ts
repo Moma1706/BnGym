@@ -28,4 +28,8 @@ getAllDayliTrainings(PageSize: number, Page: number, SearchString: string)
     return this.http.put(this.baseUrl + '/' +id, model);
   }
 
+  addArrival(id: string){
+    return this.http.post(this.baseUrl + '/arrival/' + id, undefined);
+  }
+
 }

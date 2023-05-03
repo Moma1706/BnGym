@@ -68,8 +68,85 @@
     </div>
   </form>
 
-    <div>
-    <!-- dugmici -->
-    </div>
+  <div *ngIf="!changePasswordVisible">
+    <button  class="btn btn-primary" style="margin-top: 2%" (click)="changePasswordVisibleEnable()">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1" ></span>
+      Promeni password
+    </button>
+  </div>
+
+  <div *ngIf="changePasswordVisible" >
+    <form [formGroup]="formPasswordChange" (ngSubmit)="changePassword()" ngNativeValidate>
+      <div>
+        <div class="input-group mb-3" style="width: 700px" >
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default"
+              >Trenutni password</span
+            >
+          </div>
+          <input
+            formControlName="currentPassword"
+            type="password"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+            [ngClass]="{ 'is-invalid': submitted && g['currentPassword'].errors }"
+            placeholder="Trenutni password"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <div class="input-group mb-3" style="width: 700px">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default"
+              >Novi password</span
+            >
+          </div>
+          <input
+            formControlName="newPassword"
+            type="password"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+            placeholder="Novi password"
+            [ngClass]="{ 'is-invalid': submitted && g['newPassword'].errors }"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <div class="input-group mb-3" style="width: 700px">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default"
+              >potvrdite password</span
+            >
+          </div>
+          <input
+            formControlName="confirmNewPassword"
+            type="password"
+            class="form-control"
+            aria-label="Default"
+            aria-describedby="inputGroup-sizing-default"
+            placeholder="Potvrdite password"
+            [ngClass]="{ 'is-invalid': submitted && g['confirmNewPassword'].errors }"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Promeni password
+        </button>
+      </div>
+      
+    </form>
+  </div>
+
+  
+
 
 </div>
