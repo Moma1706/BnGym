@@ -59,8 +59,15 @@ export class ViewDayliUserComponent implements OnInit {
     this.model.lastName=this.f['lastname'].value;
     }
     
-    this.dayliService.update(this.model.Id, this.model).subscribe((response:any) =>{
+    this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
       console.log(response);
+    })
+  }
+
+  addArrival(){
+    this.dayliService.addArrival(this.model.id).subscribe((response:any) =>{
+      console.log(response);
+      window.location.reload();
     })
   }
 

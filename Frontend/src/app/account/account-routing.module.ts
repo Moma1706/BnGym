@@ -9,7 +9,7 @@ const routes: Routes = [
         path: '', component: LayoutComponent,
         children: [
             { path: 'login', component: LoginComponent },
-            { path: 'profile', component: ProfileComponent },
+            { path: 'profile/:id', component: ProfileComponent },
         ]
     }
 ];

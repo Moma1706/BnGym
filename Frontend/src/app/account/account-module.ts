@@ -6,17 +6,23 @@ import { CommonModule } from '@angular/common';
 import { AccountRoutingModule } from './account-routing.module';
 import { LoginComponent } from './login.component';
 import { ProfileComponent } from './profile/profile.component';
+import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 
 @NgModule({
     imports: [
         CommonModule,
         ReactiveFormsModule,
         AccountRoutingModule,
+
     ],
     declarations: [
         LoginComponent,
         LayoutComponent,
         ProfileComponent
+    ],
+    providers:[
+        { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+        JwtHelperService
     ]
 })
 export class AccountModule { }

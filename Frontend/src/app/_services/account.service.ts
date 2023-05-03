@@ -14,7 +14,8 @@ export class AccountService {
   userToken: any;
   jwtHelper = new JwtHelperService();
 
-  baseUrl = 'https://localhost:7085/api/Auth/login';
+  baseUrlLogin = 'https://localhost:7085/api/Auth/login';
+  baseUrl = 'https://localhost:7085/api/Auth';
 
   constructor(private http: HttpClient) { }
 
@@ -24,7 +25,7 @@ export class AccountService {
     loginModel.email = email;
     loginModel.password = password;
     
-    return this.http.post(this.baseUrl, loginModel).pipe(
+    return this.http.post(this.baseUrlLogin, loginModel).pipe(
       map((response: any) => {
         const user = response;
         console.log(user);
@@ -39,6 +40,10 @@ export class AccountService {
 
   getAuthToken():string {
     return localStorage.getItem('token') ?? ''
+  }
+
+  changePassword(model: any){
+    return this.http.post(this.baseUrl + '/change-password', model);
   }
 
 }

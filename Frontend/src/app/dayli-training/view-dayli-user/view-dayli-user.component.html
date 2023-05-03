@@ -111,7 +111,7 @@
   </form>
 
   <div class="form-group">
-    <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
+    <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%" (click)="addArrival()">
         <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
         Dodaj Dolazak
     </button>
