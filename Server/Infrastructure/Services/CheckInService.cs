@@ -1,18 +1,12 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.CheckIn;
-using Application.Common.Models.GymUser;
 using Application.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Identity
 {
@@ -81,50 +75,38 @@ namespace Infrastructure.Identity
             return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId, checkIn.TimeStamp);
         }
 
-        public async Task<PageResult<CheckInGetResult>> GetCheckInsByDate(DateTime date, string searchString, int page, int pageSize)
+        public async Task<PageResult<CheckInGetResult>> GetCheckInsByDate(DateTime date, string searchString, int page, int pageSize, SortOrder sortOrder)
         {
-            var checkInList = new List<CheckInGetResult>();
-
-            // prepare result
-            var countDetails = _dbContext.CheckInHistoryView.Count(x => x.CheckInDate.Date == date.Date);
-            var result = new PageResult<CheckInGetResult>
-            {
-                Count = countDetails,
-                PageIndex = page,
-                PageSize = pageSize,
-                Items = checkInList
-            };
-
-            if (countDetails == 0)
-                return result;
-
             page -= 1;
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.CheckInHistoryView.Skip(page * pageSize).Take(pageSize);
+            var query = _dbContext.CheckInHistoryView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? "") && x.CheckInDate.Date == date.Date);
 
-            // applay searching string
-            if (!String.IsNullOrEmpty(searchString))
-                query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
 
-            var checkIns = await query.Where(x => x.CheckInDate.Date == date.Date).OrderBy(x => x.CheckInDate).ToListAsync();
-            if (checkIns.Count == 0)
-                return result;
+            if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                query = query.OrderBy(x => x.FirstName);
+            else
+                query = query.OrderByDescending(x => x.FirstName);
 
-            checkInList = checkIns.Select(x => new CheckInGetResult()
+             var list = query.Skip(page * pageSize).Take(pageSize).ToList();
+
+            return new PageResult<CheckInGetResult>
             {
-                Id = x.Id,
-                UserId = x.UserId,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email == "email" ? "null" : x.Email ,
-                CheckInDate = x.CheckInDate,
-                GymUserId = x.GymUserId
-            }).ToList();
-
-            result.Items = checkInList;
-            return result;
+                Count = query.ToList().Count,
+                PageIndex = page,
+                PageSize = pageSize,
+                Items = list.Select(x => new CheckInGetResult()
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Email = x.Email == "email" ? "null" : x.Email,
+                    CheckInDate = x.CheckInDate,
+                    GymUserId = x.GymUserId
+                }).ToList()
+            };
         }
     }
 }

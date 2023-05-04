@@ -37,6 +37,7 @@ export class ViewAllDayliComponent implements OnInit {
   pageSizeOption: number[] = [5, 10, 25, 50, 100];
   EmpData: User[] = [];
   empTable!: UsersTable;
+  filterValue = '';
 
   model: any= {};
   form!: FormGroup;
@@ -47,8 +48,8 @@ export class ViewAllDayliComponent implements OnInit {
   dataSource: MatTableDataSource<User> = new MatTableDataSource();
 
 
-  @ViewChild('paginator') paginator?: MatPaginator;
-  @ViewChild('MatSort') sort!: MatSort;
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort = new MatSort();
 
   constructor(private dayliService: DayliTrainingService) {
   }
@@ -57,21 +58,27 @@ export class ViewAllDayliComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.getData();
+    if(this.sort.direction !== "desc")
+      this.getData('', 0);
+    else
+      this.getData('', 1);
   }
 
-  getTableData$(pageNumber: number, pageSize: number, searchText: string) {
-    return this.dayliService.getAllDayliTrainings(pageSize, pageNumber, '');
+  getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
+    return this.dayliService.getAllDayliTrainings(pageSize, pageNumber, searchText, sortDirect);
   }
   
   applyFilter(event: Event) {
-    let filterValue = (event.target as HTMLInputElement).value;
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-    this.dataSource.filter = filterValue;
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.filterValue = this.filterValue.trim(); // Remove whitespace
+    this.filterValue = this.filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    if(this.sort.direction !== "desc")
+      this.getData(this.filterValue, 0);
+    else
+      this.getData(this.filterValue, 1);
   }
 
-  getData(){
+  getData(filter: string, sortDirect: number){
     this.dataSource.paginator = this.paginator!;
     if(this.paginator){
     this.paginator!.page
@@ -82,7 +89,8 @@ export class ViewAllDayliComponent implements OnInit {
           return this.getTableData$(
             this.paginator!.pageIndex + 1,
             this.paginator!.pageSize, 
-            ''
+            filter,
+            sortDirect
           ).pipe(catchError(() => observableOf(null)));
         }),
         map((empData) => {
@@ -102,7 +110,12 @@ export class ViewAllDayliComponent implements OnInit {
     }
   }
 
-
+  getRecord(){
+    if(this.sort.direction !== "desc")
+      this.getData(this.filterValue, 0);
+    else
+      this.getData(this.filterValue, 1);
+  }
 }
 
 function observableOf(arg0: null): any {

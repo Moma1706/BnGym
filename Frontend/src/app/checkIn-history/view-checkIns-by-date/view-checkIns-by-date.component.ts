@@ -46,6 +46,7 @@ export class ViewCheckInsByDateComponent implements OnInit {
   EmpData: checkIn[] = [];
   empTable?: EmployeeTable;
 
+  filterValue = '';
 
   date: string = '';
   selected = new Date();
@@ -57,8 +58,8 @@ export class ViewCheckInsByDateComponent implements OnInit {
   dataSource: MatTableDataSource<checkIn> = new MatTableDataSource();
 
 
-  @ViewChild('paginator') paginator!: MatPaginator;
-  @ViewChild('MatSort') sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort = new MatSort();
 
   constructor(private checkInService: CheckInService) { 
   }
@@ -67,20 +68,33 @@ export class ViewCheckInsByDateComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.getData();
+    if(this.sort.direction !== "desc")
+      this.getData('', 0);
+    else
+      this.getData('', 1);;
   }
 
-  getTableData$(pageNumber: number, pageSize: number, searchText: string) {
+  getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
 
     let isoDateString = this.selected.toLocaleDateString();
     console.log(isoDateString) 
 
     this.date = isoDateString;
 
-    return this.checkInService.getCheckInsByDate(isoDateString, pageSize, pageNumber, '')
+    return this.checkInService.getCheckInsByDate(isoDateString, pageSize, pageNumber, searchText, sortDirect)
   }
 
-  getData(){
+  applyFilter(event: Event) {
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.filterValue = this.filterValue.trim(); // Remove whitespace
+    this.filterValue = this.filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    if(this.sort.direction !== "desc")
+      this.getData(this.filterValue, 0);
+    else
+      this.getData(this.filterValue, 1);
+  }
+
+  getData(filter: string, sortDirect: number){
     this.dataSource.paginator = this.paginator!;
     if(this.paginator){
     this.paginator!.page
@@ -91,7 +105,8 @@ export class ViewCheckInsByDateComponent implements OnInit {
           return this.getTableData$(
             this.paginator!.pageIndex + 1,
             this.paginator!.pageSize, 
-            ''
+            filter,
+            sortDirect
           ).pipe(catchError(() => observableOf(null)));
         }),
         map((empData) => {
@@ -111,7 +126,10 @@ export class ViewCheckInsByDateComponent implements OnInit {
     }
   }
   updateTable(){
-    this.getData();
+    if(this.sort.direction !== "desc")
+      this.getData(this.filterValue, 0);
+    else
+      this.getData(this.filterValue, 1);
   }
 }
 function observableOf(arg0: null): any {

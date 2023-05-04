@@ -14,9 +14,9 @@ addTraining(model: any){
   return this.http.post(this.baseUrl, model);
 }
 
-getAllDayliTrainings(PageSize: number, Page: number, SearchString: string)
+getAllDayliTrainings(PageSize: number, Page: number, SearchString: string, sortDirect: number)
 {
-  const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}`;
+  const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}&SortOrder=${sortDirect}`;
   return this.http.get(this.baseUrl + '/users/' + queryParams);
 }
 

@@ -43,6 +43,7 @@ export class AllGymWorkersComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort: MatSort = new MatSort();
   filterValue = '';
+  
   constructor(private gymWorkerService: GymWorkerService){
   }
 

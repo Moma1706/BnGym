@@ -9,6 +9,7 @@ using Application.Enums;
 using Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -72,51 +73,37 @@ namespace Infrastructure.Identity
             }
         }
 
-        public async Task<PageResult<DailyTrainingGetResult>> GetDailyUsers(string searchString, int page, int pageSize)
+        public async Task<PageResult<DailyTrainingGetResult>> GetDailyUsers(string searchString, int page, int pageSize, SortOrder sortOrder)
         {
-            var dailyList = new List<DailyTrainingGetResult>();
-
-            // prepare result
-            var countDetails = _dbContext.DailyTrainingView.Count();
-            var result = new PageResult<DailyTrainingGetResult>
-            {
-                Count = countDetails,
-                PageIndex = page,
-                PageSize = pageSize,
-                Items = dailyList
-            };
-
-            if (countDetails == 0)
-                return result;
-
             page -= 1;
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.DailyTrainingView.Skip(page * pageSize).Take(pageSize);
+            var query = _dbContext.DailyTrainingView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
 
-            // applay searching string
-            if (!String.IsNullOrEmpty(searchString))
-                query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
+            if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                query = query.OrderBy(x => x.FirstName);
+            else
+                query = query.OrderByDescending(x => x.FirstName);
 
-            var dailyTrainings = await query.OrderBy(x => x.FirstName).ToListAsync();
-            if (dailyTrainings.Count == 0)
-                return result;
+            var list = query.ToList().Skip(page * pageSize).Take(pageSize).ToList();
 
-            dailyList = dailyTrainings.Select(x => new DailyTrainingGetResult()
+            return new PageResult<DailyTrainingGetResult>
             {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                DateOfBirth = x.DateOfBirth,
-                LastCheckIn = x.LastCheckIn,
-                NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth,
-                NumberOfArrivalsCurrentMonth = x.numberOfArrivalsCurrentMonth
-            }).ToList();
-
-            result.Items = dailyList;
-            return result;
-
+                Count = query.ToList().Count,
+                PageIndex = page,
+                PageSize = pageSize,
+                Items = list.Select(x => new DailyTrainingGetResult()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    DateOfBirth = x.DateOfBirth,
+                    LastCheckIn = x.LastCheckIn,
+                    NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth,
+                    NumberOfArrivalsCurrentMonth = x.numberOfArrivalsCurrentMonth
+                }).ToList()
+            };
         }
 
         public async Task<PageResult<DailyHistoryGetResult>> GetDailyByDate(DateTime date, string searchString, int page, int pageSize)
