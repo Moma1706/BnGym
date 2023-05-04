@@ -3,14 +3,15 @@ using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 using Application.Common.Models.User;
 using Application.GymWorker.Dtos;
+using Microsoft.Data.SqlClient;
 
 namespace Application.Common.Interfaces
 {
-	public interface IGymWorkerService
-	{
+    public interface IGymWorkerService
+    {
         Task<GymWorkerGetResult> Create(string firstName, string lastName, string email);
 
-        Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize);
+        Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder);
 
         Task<GymWorkerGetResult> GetOne(Guid id);
 
@@ -23,4 +24,3 @@ namespace Application.Common.Interfaces
         Task<UserGetResult> GetUser(int id);
     }
 }
-
