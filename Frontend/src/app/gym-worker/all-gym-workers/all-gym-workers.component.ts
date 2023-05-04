@@ -42,31 +42,35 @@ export class AllGymWorkersComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort: MatSort = new MatSort();
-  public searchText = '';
-
-  constructor(private router: Router, private gymWorkerService: GymWorkerService ){  
+  filterValue = '';
+  constructor(private gymWorkerService: GymWorkerService){
   }
 
   ngOnInit() {
   }
 
   applyFilter(event: Event) {
-    let filterValue = (event.target as HTMLInputElement).value;
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-    this.backendCall(filterValue);
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.filterValue = this.filterValue.trim(); // Remove whitespace
+    this.filterValue = this.filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    if(this.sort.direction !== "desc")
+      this.backendCall(this.filterValue, 0);
+    else
+      this.backendCall(this.filterValue, 1);
   }
 
-  getTableData$(pageNumber: number, pageSize: number, searchText: string) {
-    return this.gymWorkerService.getAllWorkers(pageSize, pageNumber, searchText);
+  getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
+    return this.gymWorkerService.getAllWorkers(pageSize, pageNumber, searchText, sortDirect);
   }
 
   ngAfterViewInit(): void {
-    this.backendCall('');
+    if(this.sort.direction !== "desc")
+      this.backendCall('', 0);
+    else
+      this.backendCall('', 1);
   }
-  
-  private backendCall(filter: string) {
-    this.dataSource.paginator = this.paginator!;
+
+  private backendCall(filter: string, sortDirect: number) {
     if (this.paginator) {
       this.paginator!.page
         .pipe(
@@ -76,7 +80,8 @@ export class AllGymWorkersComponent implements OnInit {
             return this.getTableData$(
               this.paginator!.pageIndex + 1,
               this.paginator!.pageSize,
-              filter
+              filter,
+              sortDirect
             ).pipe(catchError(() => this.observableOf(null)));
           }),
           map((empData) => {
@@ -98,5 +103,12 @@ export class AllGymWorkersComponent implements OnInit {
 
   observableOf(arg0: null): any {
     throw new Error('Function not implemented.');
+  }
+
+  getRecord(){
+    if(this.sort.direction !== "desc")
+      this.backendCall(this.filterValue, 0);
+    else
+      this.backendCall(this.filterValue, 1);
   }
 }

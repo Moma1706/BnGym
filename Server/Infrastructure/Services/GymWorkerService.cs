@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using Application.Common.Interfaces;
+using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
@@ -11,6 +12,7 @@ using Application.GymWorker.Dtos;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SendGrid.Helpers.Mail;
 
@@ -93,45 +95,39 @@ namespace Infrastructure.Services
             return GymWorkerResult.Sucessfull();
         }
 
-        public async Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize)
+        public async Task<PageResult<GymWorkerGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder)
         {
             var gymWorkerList = new List<GymWorkerGetResult>();
-
-            // prepare result
-            var countDetails = _dbContext.GymWorkers.Count();
-            var result = new PageResult<GymWorkerGetResult>
-            {
-                Count = countDetails,
-                PageIndex = page,
-                PageSize = pageSize,
-                Items = gymWorkerList
-            };
 
             page -= 1;
             if (page <= 0)
                 page = 0;
 
             //if you perform first pagination then sorting then you are missing data (search-sort-pagination this is the order)
-            var gymWorkers = _dbContext.GymWorkers.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? "")) //first apply filter
-                .OrderBy(x => x.FirstName) //then sort
-                .Skip(page * pageSize).Take(pageSize).ToList(); //then pagination
+            var gymWorkers = _dbContext.GymWorkers.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? "")); //first apply filter
+            if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                gymWorkers = gymWorkers.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
+            else
+                gymWorkers = gymWorkers.OrderByDescending(x => x.FirstName).ThenByDescending(x => x.LastName);
 
-            if (gymWorkers.Count == 0)
-                return result;
+            var gymWorkersList = gymWorkers.ToList().Skip(page * pageSize).Take(pageSize).ToList(); //then pagination
 
-            gymWorkerList = gymWorkers.Select(x => new GymWorkerGetResult()
+            return new PageResult<GymWorkerGetResult>
             {
-                Id = x.Id,
-                UserId = x.UserId,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
-                RoleId = x.RoleId,
-                IsBlocked = x.IsBlocked
-            }).ToList();
-
-            result.Items = gymWorkerList;
-            return result;
+                Count = gymWorkers.ToList().Count,
+                PageIndex = page,
+                PageSize = pageSize,
+                Items = gymWorkersList.Select(x => new GymWorkerGetResult()
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Email = x.Email,
+                    RoleId = x.RoleId,
+                    IsBlocked = x.IsBlocked
+                }).ToList()
+            };
         }
 
         public async Task<GymWorkerGetResult> GetOne(Guid id)

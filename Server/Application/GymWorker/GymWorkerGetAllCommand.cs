@@ -1,16 +1,18 @@
-﻿using System;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymWorker;
 using MediatR;
+using Microsoft.Data.SqlClient;
 
 namespace Application.GymWorker
 {
-	public class GymWorkerGetAllCommand : IRequest<PageResult<GymWorkerGetResult>>
+    public class GymWorkerGetAllCommand : IRequest<PageResult<GymWorkerGetResult>>
     {
-        public string SearchString { get; set; }
+        public string SearchString { get; set; } = "";
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
+
+        public SortOrder SortOrder { get; set; } = SortOrder.Ascending;
     }
 
     public class GymWorkerGetAllCommandHandler : IRequestHandler<GymWorkerGetAllCommand, PageResult<GymWorkerGetResult>>
@@ -21,7 +23,7 @@ namespace Application.GymWorker
 
         public async Task<PageResult<GymWorkerGetResult>> Handle(GymWorkerGetAllCommand request, CancellationToken cancellationToken)
         {
-            var gymWorkersResult = await _gymWorkerService.GetAll(request.SearchString, request.Page, request.PageSize);
+            var gymWorkersResult = await _gymWorkerService.GetAll(request.SearchString, request.Page, request.PageSize, request.SortOrder);
             return gymWorkersResult;
         }
     }
