@@ -72,12 +72,12 @@ export class ViewCheckInsByDateComponent implements OnInit {
 
   getTableData$(pageNumber: number, pageSize: number, searchText: string) {
 
-    let isoDateString = this.selected.toISOString();
+    let isoDateString = this.selected.toLocaleDateString();
     console.log(isoDateString) 
 
     this.date = isoDateString;
 
-    return this.checkInService.getCheckInsByDate(isoDateString,pageSize, pageNumber, '')
+    return this.checkInService.getCheckInsByDate(isoDateString, pageSize, pageNumber, '')
   }
 
   getData(){
