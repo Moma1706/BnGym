@@ -1,9 +1,9 @@
-<h2 style="padding-top: 3%">Svi Vezbaci</h2>
+<h2 style="padding-top: 3%">Svi Članovi</h2>
 <br>
 <!--New Consumer-->
 <div *ngIf="visible">
   <button type="button" class="btn btn-primary" [routerLink]="['/gym-user/add-gym-user']">
-    Dodaj Vezbaca
+    Dodaj Člana
   </button>
 </div>
 <br>
@@ -19,38 +19,38 @@
   <mat-table [dataSource]="dataSource" matSort>
 
     <ng-container matColumnDef="firstName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Ime </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Ime </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.firstName}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="lastName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Prezime </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Prezime </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.lastName}} </mat-cell>
     </ng-container>
     
     <ng-container matColumnDef="email">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef > Email </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
     </ng-container>
     
     <ng-container matColumnDef="isInactive">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Aktivan </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> Aktivan </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.isInactive ? 'Ne' : 'Da'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="isFrozen">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Zamrznut </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.isFrozen ? 'Ne' : 'Da'}} </mat-cell>
+      <mat-header-cell *matHeaderCellDef> Zamrznut </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.isFrozen ? 'Da' : 'Ne'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="expiresOn">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Clanarina Istice </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord()"> Članarina Ističe </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.expiresOn | date: 'dd/MM/yyyy'}} </mat-cell>
     </ng-container>
 
     <!-- Edit buttom Column -->
     <ng-container matColumnDef="Buttons" >
-      <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
       <mat-cell *matCellDef="let element; let i" class="mat-cell">
         <button *ngIf="visible" mat-stroked-button color="warn" [routerLink]="['/gym-user/view-gym-user', element.userId]" class="btn btn-secondary">
           Pogledaj

@@ -43,6 +43,7 @@ export class AllGymWorkersComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort: MatSort = new MatSort();
   filterValue = '';
+  
   constructor(private gymWorkerService: GymWorkerService){
   }
 
@@ -110,5 +111,19 @@ export class AllGymWorkersComponent implements OnInit {
       this.backendCall(this.filterValue, 0);
     else
       this.backendCall(this.filterValue, 1);
+  }
+
+  block(id: string){
+    this.gymWorkerService.block(id).subscribe((response) => {
+      console.log(response);
+      window.location.reload();
+    });
+  }
+
+  activate(id: string){
+    this.gymWorkerService.activate(id).subscribe((response) => {
+      console.log(response);
+      window.location.reload();
+    });
   }
 }

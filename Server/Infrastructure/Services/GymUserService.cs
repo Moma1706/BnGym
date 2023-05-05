@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Application.Common.Models.User;
 using Application.App.Dtos;
 using MediatR;
+using Microsoft.Data.SqlClient;
 
 namespace Infrastructure.Services
 {
@@ -216,57 +217,46 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize)
+        public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder)
         {
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-
-            var gymUserList = new List<GymUserGetResult>();
-
-            // prepare result
-            var countDetails = _dbContext.GymUserView.Count();
-            var result = new PageResult<GymUserGetResult>
-            {
-                Count = countDetails,
-                PageIndex = page,
-                PageSize = pageSize,
-                Items = gymUserList
-            };
-
             page -= 1;
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.GymUserView.Skip(page * pageSize).Take(pageSize);
+            var query = _dbContext.GymUserView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
 
-            // applay searching string
-            if (!String.IsNullOrEmpty(searchString))
-                query = query.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString));
+            if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                query = query.OrderBy(x => x.ExpiresOn);
+            else
+                query = query.OrderByDescending(x => x.ExpiresOn);
 
-            var gymUsers = await query.OrderBy(x => x.ExpiresOn).ToListAsync();
-            if (gymUsers.Count == 0)
-                return result;
+            var list = query.ToList().Skip(page * pageSize).Take(pageSize).ToList();
 
-            gymUserList = gymUsers.Select(x => new GymUserGetResult()
+
+            return new PageResult<GymUserGetResult>
             {
-                Id = x.Id,
-                UserId = x.UserId,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
-                ExpiresOn = x.ExpiresOn,
-                IsBlocked = x.IsBlocked,
-                IsFrozen = x.IsFrozen,
-                FreezeDate = x.FreezeDate == DateTime.MinValue ? "null" : x.FreezeDate.ToString(),
-                IsInActive = x.IsInActive,
-                LastCheckIn = x.LastCheckIn == DateTime.MinValue ? "null" : x.LastCheckIn.ToString(),
-                Type = x.Type,
-                Address = x.Address,
-                NumberOfArrivalsCurrentMonth = x.NumberOfArrivalsCurrentMonth,
-                NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth
-            }).ToList();
-
-            result.Items = gymUserList;
-            return result;
+                Count = query.ToList().Count,
+                PageIndex = page,
+                PageSize = pageSize,
+                Items = list.Select(x => new GymUserGetResult()
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Email = x.Email,
+                    ExpiresOn = x.ExpiresOn,
+                    IsBlocked = x.IsBlocked,
+                    IsFrozen = x.IsFrozen,
+                    FreezeDate = x.FreezeDate == DateTime.MinValue ? "null" : x.FreezeDate.ToString(),
+                    IsInActive = x.IsInActive,
+                    LastCheckIn = x.LastCheckIn == DateTime.MinValue ? "null" : x.LastCheckIn.ToString(),
+                    Type = x.Type,
+                    Address = x.Address,
+                    NumberOfArrivalsCurrentMonth = x.NumberOfArrivalsCurrentMonth,
+                    NumberOfArrivalsLastMonth = x.NumberOfArrivalsLastMonth
+                }).ToList()
+            };
         }
 
         public async Task<GymUserGetResult> GetOne(int id)

@@ -14,6 +14,8 @@ export class AppComponent {
   title = 'bn-gym';
   decodedToken: any;
   userId: number = 0;
+  token: string = '';
+  role: string = '';
  
   constructor(private router: Router) {
     this.getUserInfo();
@@ -21,19 +23,24 @@ export class AppComponent {
 
   getUserInfo() {
     const token = this.getToken();
-    
-    this.decodedToken = jwt_decode(token!);
+    this.token = token;
+    this.role = localStorage.getItem('role') ?? '';
 
-    const userId = this.decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-    this.userId = userId;
+    if(token != '')
+    {
+      this.decodedToken = jwt_decode(token!);
+      const userId = this.decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      this.userId = userId;
+    }
   }
 
   getToken() {
-    return localStorage.getItem("token");
+    return localStorage.getItem('token') ?? '';
   }
 
   logOut(){
     localStorage.setItem('token', '');
+    this.token = '';
     this.router.navigate(['login']);
   }
 }

@@ -3,6 +3,7 @@ using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymUser;
 using Application.Enums;
 using MediatR;
+using Microsoft.Data.SqlClient;
 
 namespace Application.GymUser
 {
@@ -11,6 +12,8 @@ namespace Application.GymUser
         public string SearchString { get; set; }
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
+
+        public SortOrder SortOrder { get; set; } = SortOrder.Ascending;
     }
 
     public class GymUserGetAllCommandHandler : IRequestHandler<GymUserGetAllCommand, PageResult<GymUserGetResult>>
@@ -21,7 +24,7 @@ namespace Application.GymUser
 
         public async Task<PageResult<GymUserGetResult>> Handle(GymUserGetAllCommand request, CancellationToken cancellationToken)
         {
-            var gymUsersResult = await _gymUserService.GetAll(request.SearchString, request.Page, request.PageSize);
+            var gymUsersResult = await _gymUserService.GetAll(request.SearchString, request.Page, request.PageSize, request.SortOrder);
             return gymUsersResult;
         }
 

@@ -14,7 +14,7 @@ export class ViewDayliUserComponent implements OnInit {
   id: string | null = '' ;
   splited: string[] = [];
   numberOfMonths: number = 0;
-  Meseci: number[] = [0.5,1,3,6,12];
+  mjeseci: number[] = [0.5,1,3,6,12];
   form!: FormGroup;
   submitted: boolean = false;
   loading: boolean = false;

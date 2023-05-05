@@ -15,7 +15,7 @@ export class ViewGymUserComponent implements OnInit {
   id: string | null = '' ;
   splited: string[] = [];
   numberOfMonths: number = 0;
-  Meseci: number[] = [0.5,1,3,6,12];
+  mjeseci: number[] = [0.5,1,3,6,12];
   form: FormGroup;
   submitted: boolean = false;
   loading: boolean = false;
@@ -81,15 +81,15 @@ export class ViewGymUserComponent implements OnInit {
       }
 
       if(this.model.type == 0){
-        this.model.type = 'Pola Meseca'
+        this.model.type = 'Pola mjeseca'
       }else if(this.model.type == 1){
-        this.model.type = 'Mesec dana'
+        this.model.type = 'Mjesec dana'
       }else if(this.model.type == 2){
-        this.model.type = 'Tri meseca'
+        this.model.type = 'Tri mjeseca'
       }else if(this.model.type == 3){
-        this.model.type = 'Pola Godine'
+        this.model.type = 'Pola godine'
       }else {
-        this.model.type = 'Godinu Dana'
+        this.model.type = 'Godinu dana'
       }
 
       console.log(this.model);
@@ -97,21 +97,21 @@ export class ViewGymUserComponent implements OnInit {
   }
 
   Freez(){
-      this.gymUserService.freeze(this.id ?? '').subscribe((response:any) =>{
+      this.gymUserService.freeze(this.model.id ?? '').subscribe((response:any) =>{
         console.log(response);
         window.location.reload();
       });
   }
 
   Activate(){
-    this.gymUserService.Activate(this.id ?? '').subscribe((response:any) =>{
+    this.gymUserService.Activate(this.model.id ?? '').subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
     });;
   }
 
   Extend(){
-    this.gymUserService.Extend(this.id ?? '', {Type : 1}).subscribe((response:any) =>{
+    this.gymUserService.Extend(this.model.id ?? '', {Type : 1}).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
     });;
@@ -131,11 +131,11 @@ export class ViewGymUserComponent implements OnInit {
       this.model.address=this.f['address'].value;
     }
 
-    if(this.model.type == 'Pola Meseca'){
+    if(this.model.type == 'Pola mjeseca'){
       this.model.type = 0
-    }else if(this.model == 'Mesec dana'){
+    }else if(this.model == 'mjesec dana'){
       this.model.type = 1
-    }else if(this.model.type == 'Tri meseca'){
+    }else if(this.model.type == 'Tri mjeseca'){
       this.model.type = 2
     }else if(this.model.type == 'Pola Godine'){
       this.model.type = 3

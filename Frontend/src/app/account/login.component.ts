@@ -57,8 +57,7 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: () => {
                     // get return url from query parameters or default to home page
-                    const returnUrl ='/home';
-                    this.router.navigateByUrl(returnUrl);
+                    window.location.reload();
                 },
                 error: (error : HttpErrorResponse) => {
                   this.alertService.error(error.error.error);
@@ -66,7 +65,7 @@ export class LoginComponent implements OnInit {
               }
             });
     }
-
+    const returnUrl ='/home';
+    this.router.navigateByUrl(returnUrl);
   }
-
 }

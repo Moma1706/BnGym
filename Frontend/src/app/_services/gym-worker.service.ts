@@ -37,4 +37,12 @@ constructor(private http: HttpClient) { }
     return this.http.put(this.baseUrl + '/' +id, model);
   }
 
+  block(id:string){
+    return this.http.delete(this.baseUrl + '/' +id);
+  }
+
+  activate(id:string){
+    return this.http.put(this.baseUrl + '/activate/' +id, undefined);
+  }
+
 }

@@ -1,4 +1,4 @@
-<h2 style="text-align: center">Vezbac: : {{model.firstName}}</h2>
+<h2 style="text-align: center">Član: : {{model.firstName}}</h2>
 <hr />
 <br />
 
@@ -8,7 +8,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >First Name</span
+          >Ime</span
         >
       </div>
       <input
@@ -27,7 +27,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Last Name</span
+          >Prezime</span
         >
       </div>
       <input
@@ -97,14 +97,14 @@
     <div class="form-group">
       <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
           <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-          Promeni
+          Promijeni
       </button>
     </div>
   </form>
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Expires on</span
+          >Članarina ističe</span
         >
       </div>
       <input
@@ -120,7 +120,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Is Frozen</span
+          >Zamrznut</span
         >
       </div>
       <input
@@ -136,7 +136,7 @@
     <div class="input-group mb-3" style="width: 700px" >
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Freez Date</span
+          >Datum zamrzavanja</span
         >
       </div>
       <input
@@ -153,7 +153,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Is Inactive</span
+          >Neaktivan</span
         >
       </div>
       <input
@@ -169,7 +169,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Last CheckIn</span
+          >Poslednje prijavljivanje</span
         >
       </div>
       <input
@@ -201,7 +201,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Broj dolazaka ovog meseca</span
+          >Broj dolazaka ovog mjeseca</span
         >
       </div>
       <input
@@ -217,7 +217,7 @@
     <div class="input-group mb-3" style="width: 700px">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default"
-          >Broj dolazaka proslog meseca</span
+          >Broj dolazaka prošlog mjeseca</span
         >
       </div>
       <input
@@ -240,7 +240,7 @@
       </button>
 
       <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
-        Produzi Clanarinu
+        Produzi članarinu
       </button>
 
       <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="checkIn()">

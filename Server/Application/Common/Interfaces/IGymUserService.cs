@@ -6,6 +6,7 @@ using Application.Common.Models.GymUser;
 using Application.Enums;
 using Application.GymUser;
 using Application.GymUser.Dtos;
+using Microsoft.Data.SqlClient;
 
 namespace Application.Common.Interfaces
 {
@@ -13,7 +14,7 @@ namespace Application.Common.Interfaces
 	{
         Task<GymUserGetResult> Create(string firstName, string lastName, string email, string address, GymUserType type);
 
-        Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize);
+        Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder);
 
         Task<GymUserGetResult> GetOne(int id);
 
