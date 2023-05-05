@@ -39,6 +39,12 @@
         <button *ngIf="visible" mat-stroked-button color="warn"[routerLink]="['/gym-worker/view-gym-worker', element.id]" class="btn btn-secondary">
           Pogledaj
         </button>
+        <button *ngIf="element.isBlocked == false" mat-stroked-button color="warn" (click)="block(element.id)" class="btn btn-secondary">
+          Blokiraj
+        </button>
+        <button *ngIf="element.isBlocked == true" mat-stroked-button color="warn" (click)="activate(element.id)" class="btn btn-secondary">
+          Aktiviraj
+        </button>
       </mat-cell>
     </ng-container>
 

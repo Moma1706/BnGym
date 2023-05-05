@@ -112,4 +112,18 @@ export class AllGymWorkersComponent implements OnInit {
     else
       this.backendCall(this.filterValue, 1);
   }
+
+  block(id: string){
+    this.gymWorkerService.block(id).subscribe((response) => {
+      console.log(response);
+      window.location.reload();
+    });
+  }
+
+  activate(id: string){
+    this.gymWorkerService.activate(id).subscribe((response) => {
+      console.log(response);
+      window.location.reload();
+    });
+  }
 }

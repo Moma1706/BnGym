@@ -3,7 +3,7 @@
 <!--New Consumer-->
 <div *ngIf="visible">
   <button type="button" class="btn btn-primary" [routerLink]="['/dayli-training/add-dayli-training']">
-    Dodaj Vezbaca
+    Dodaj Korisnika
   </button>
 </div>
 <br>
@@ -30,7 +30,7 @@
     
     <ng-container matColumnDef="dateOfBirth">
       <mat-header-cell *matHeaderCellDef > Datum rodjenja </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.dateOfBirth}} </mat-cell>
+      <mat-cell *matCellDef="let row"> {{row.dateOfBirth | date: 'dd/MM/yyyy'}} </mat-cell>
     </ng-container>
 
     <!-- Edit buttom Column -->

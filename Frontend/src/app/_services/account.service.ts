@@ -33,6 +33,7 @@ export class AccountService {
           localStorage.setItem('token', user.token);
           this.decodedToken = this.jwtHelper.decodeToken(user.token);
           this.userToken = user.token;
+          localStorage.setItem('role',this.decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']);
         }
       })
     );

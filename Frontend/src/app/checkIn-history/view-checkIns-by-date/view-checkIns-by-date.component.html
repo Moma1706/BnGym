@@ -33,7 +33,10 @@
     <ng-container matColumnDef="Buttons" >
       <mat-header-cell *matHeaderCellDef> </mat-header-cell>
       <mat-cell *matCellDef="let element; let i" class="mat-cell">
-        <button *ngIf="visible" mat-stroked-button color="warn" [routerLink]="['/gym-user/view-gym-user', element.userId]" class="btn btn-secondary">
+        <button *ngIf="element.email != 'null'" mat-stroked-button color="warn" [routerLink]="['/gym-user/view-gym-user', element.userId]" class="btn btn-secondary">
+          Pogledaj
+        </button>
+        <button *ngIf="element.email == 'null'" mat-stroked-button color="warn" [routerLink]="['/dayli-training/view-daily-user', element.gymUserId]" class="btn btn-secondary">
           Pogledaj
         </button>
       </mat-cell>
