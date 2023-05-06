@@ -16,7 +16,7 @@
 
 <!--Table-->
 <div class="table">
-  <mat-table matSort [dataSource]="dataSource" style="color: transparent;">
+  <mat-table matSort [dataSource]="dataSource" style="width: 1000px;">
 
     <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord()"> Ime </mat-header-cell>
@@ -39,7 +39,7 @@
         <button *ngIf="visible" mat-stroked-button color="warn"[routerLink]="['/gym-worker/view-gym-worker', element.id]" class="btn btn-secondary">
           Pogledaj
         </button>
-        <button *ngIf="element.isBlocked == false" mat-stroked-button color="warn" (click)="block(element.id)" class="btn btn-secondary">
+        <button *ngIf="element.isBlocked == false" mat-stroked-button color="warn" (click)="block(element.id)" class="btn btn-primary" style="left: 20px;">
           Blokiraj
         </button>
         <button *ngIf="element.isBlocked == true" mat-stroked-button color="warn" (click)="activate(element.id)" class="btn btn-secondary">
