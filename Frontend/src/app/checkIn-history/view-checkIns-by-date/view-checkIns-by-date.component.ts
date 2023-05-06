@@ -76,8 +76,9 @@ export class ViewCheckInsByDateComponent implements OnInit {
 
   getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
 
-    let isoDateString = this.selected.toLocaleDateString();
-    console.log(isoDateString) 
+    const timeZoneOffsetMs = this.selected.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
+    const adjustedDate = new Date(this.selected.getTime() - timeZoneOffsetMs);
+    let isoDateString = adjustedDate.toISOString();
 
     this.date = isoDateString;
 
