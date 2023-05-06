@@ -25,7 +25,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/css/nucleo-icons.css",
+              "src/assets/scss/blk-design-system.scss",
+              "src/assets/demo/demo.css"
             ],
             "scripts": []
           },

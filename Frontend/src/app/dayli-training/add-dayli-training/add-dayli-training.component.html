@@ -5,9 +5,9 @@
 <div style="margin-left: 25%">
   <form [formGroup]="form" (ngSubmit)="save()" ngNativeValidate>
     <!--Label Name and input Enter name-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Ime</span
         >
       </div>
@@ -24,9 +24,9 @@
     </div>
 
     <!--Label Lastname and input Enter Lastname-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Prezime</span
         >
       </div>
@@ -43,12 +43,12 @@
     </div>
 
     <!--Label email and input Enter Email-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div class="col-xs-12 col-12 col-md-4 form-group">
+        <span
           >Datum Rodjenja</span
         >
-      </div>
+      </div >
       <input
         formControlName="dateOfBirth"
         type="date"

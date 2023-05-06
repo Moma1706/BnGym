@@ -5,9 +5,9 @@
 <div style="margin-left: 25%">
   <form [formGroup]="form" (ngSubmit)="save()" ngNativeValidate>
     <!--Label Name and input Enter name-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div cstyle="width: 700px">
+      <div>
+        <span
           >Ime</span
         >
       </div>
@@ -16,17 +16,16 @@
         type="text"
         class="form-control"
         aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        placeholder="Enter First Name..."
+        placeholder="Upisite ime"
         [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
         required
       />
     </div>
 
     <!--Label Lastname and input Enter Lastname-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Prezime</span
         >
       </div>
@@ -35,17 +34,16 @@
         type="text"
         class="form-control"
         aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        placeholder="Enter Last Name..."
+        placeholder="Upisite prezime"
         [ngClass]="{ 'is-invalid': submitted && f['lastname'].errors }"
         required
       />
     </div>
 
     <!--Label email and input Enter Email-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div  style="width: 700px">
+      <div>
+        <span
           >Email</span
         >
       </div>
@@ -54,8 +52,7 @@
         type="text"
         class="form-control"
         aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        placeholder="Enter Email..."
+        placeholder="Upisite email"
         [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
         required
       />

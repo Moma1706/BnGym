@@ -5,9 +5,9 @@
 <div style="margin-left: 25%">
   <form [formGroup]="form" (ngSubmit)="Update()" ngNativeValidate>
     <!--Label Name and input Enter name-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Ime</span
         >
       </div>
@@ -24,9 +24,9 @@
     </div>
 
     <!--Label Lastname and input Enter Lastname-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Prezime</span
         >
       </div>
@@ -43,9 +43,9 @@
     </div>
 
     <!--Label email and input Enter Email-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Email</span
         >
       </div>
@@ -60,9 +60,9 @@
         required
       />
     </div>
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Adresa</span
         >
       </div>
@@ -77,14 +77,14 @@
         required
       />
     </div>
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Tip</span
         >
       </div>
       <input
-        formControlName="type"
+        formControlName="userType"
         type="text"
         class="form-control"
         aria-label="Default"
@@ -101,9 +101,9 @@
       </button>
     </div>
   </form>
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Članarina ističe</span
         >
       </div>
@@ -117,9 +117,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Zamrznut</span
         >
       </div>
@@ -133,9 +133,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px" >
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Datum zamrzavanja</span
         >
       </div>
@@ -150,9 +150,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Neaktivan</span
         >
       </div>
@@ -166,9 +166,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Poslednje prijavljivanje</span
         >
       </div>
@@ -182,25 +182,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
-          >Type</span
-        >
-      </div>
-      <input
-        type="text"
-        class="form-control"
-        aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.type}}
-        readonly = true
-      />
-    </div>
-
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Broj dolazaka ovog mjeseca</span
         >
       </div>
@@ -214,9 +198,9 @@
       />
     </div>
 
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Broj dolazaka prošlog mjeseca</span
         >
       </div>
@@ -239,13 +223,41 @@
         Aktiviraj
       </button>
 
-      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
+      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne' && this.extend == false" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
         Produzi članarinu
       </button>
+
+      <div *ngIf="this.extend == true">
+        <form [formGroup]="formExtend" (ngSubmit)="ExtendMembersip()" ngNativeValidate>
+          <div style="width: 700px">
+            <div>
+              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
+            </div>
+            <select
+              formControlName="type"
+              class="custom-select"
+              placeholder="Select type..."
+              [ngClass]="{ 'is-invalid': submitted && f['type'].errors }"
+              required
+            >
+              <option value="HalfMonth">Pola mjeseca</option>
+              <option value="Month">Mjesec</option>
+              <option value="ThreeMonts">Tri mjeseca</option>
+              <option value="HalfYear">Pola godine</option>
+              <option value="Year">Godina</option>
+            </select>
+          </div>
+            <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary">
+              Produzi članarinu
+            </button>
+        </form>
+      </div>
 
       <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="checkIn()">
         CheckIn
       </button>
+
+     
     </div>
 
 </div>
