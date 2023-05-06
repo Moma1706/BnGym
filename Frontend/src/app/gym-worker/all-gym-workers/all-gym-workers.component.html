@@ -15,8 +15,8 @@
 </div>
 
 <!--Table-->
-<div class="example-container mat-elevation-z8">
-  <mat-table matSort [dataSource]="dataSource">
+<div class="table">
+  <mat-table matSort [dataSource]="dataSource" style="color: transparent;">
 
     <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord()"> Ime </mat-header-cell>
@@ -53,7 +53,7 @@
   </mat-table>
 </div>
 
-<mat-paginator
+<mat-paginator 
 #paginator
 [length]="totalWorkers"
 [pageSizeOptions]="[5,10,15,50,100]"

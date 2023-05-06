@@ -19,11 +19,17 @@ export class ViewGymUserComponent implements OnInit {
   form: FormGroup;
   submitted: boolean = false;
   loading: boolean = false;
+  extend: boolean = false;
+  formExtend: FormGroup;
 
 
-  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder, private checkInService: CheckInService) {
+  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder,private formBuilder1: FormBuilder, private checkInService: CheckInService) {
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
+    });
+
+    this.formExtend = this.formBuilder1.group({
+      title: formBuilder1.control('type', Validators.required)
     });
   }
 
@@ -37,12 +43,16 @@ export class ViewGymUserComponent implements OnInit {
       lastname: ['', Validators.required],
       email: ['', Validators.required],
       address: ['', Validators.required],
-      type: ['', Validators.required],
+      userType: ['', Validators.required],
     });
 
+    this.formExtend = this.formBuilder.group({
+      type: ['', Validators.required],
+    });
   }
 
   get f() { return this.form.controls; }
+  get g() { return this.formExtend.controls; }
 
   getUser(id : string)
   {
@@ -80,16 +90,16 @@ export class ViewGymUserComponent implements OnInit {
         this.model.isInactive = 'Ne';
       }
 
-      if(this.model.type == 0){
-        this.model.type = 'Pola mjeseca'
-      }else if(this.model.type == 1){
-        this.model.type = 'Mjesec dana'
-      }else if(this.model.type == 2){
-        this.model.type = 'Tri mjeseca'
-      }else if(this.model.type == 3){
-        this.model.type = 'Pola godine'
+      if(this.model.userType == 0){
+        this.model.userType = 'Pola mjeseca'
+      }else if(this.model.userType == 1){
+        this.model.userType = 'Mjesec dana'
+      }else if(this.model.userType == 2){
+        this.model.userType = 'Tri mjeseca'
+      }else if(this.model.userType == 3){
+        this.model.userType = 'Pola godine'
       }else {
-        this.model.type = 'Godinu dana'
+        this.model.userType = 'Godinu dana'
       }
 
       console.log(this.model);
@@ -111,7 +121,26 @@ export class ViewGymUserComponent implements OnInit {
   }
 
   Extend(){
-    this.gymUserService.Extend(this.model.id ?? '', {Type : 1}).subscribe((response:any) =>{
+    this.extend = true;
+  }
+
+  ExtendMembersip(){
+    
+    let type: any = this.g['type'].value;
+    
+    if(type == 'Half Month'){
+      type = 0
+    }else if(type == 'Month'){
+      type = 1
+    }else if(type == 'ThreeMonths'){
+      type = 2
+    }else if(type == 'Half Year'){
+      type = 3
+    }else {
+      type = 4
+    }
+
+    this.gymUserService.Extend(this.model.id ?? '', {'Type':type}).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
     });;
@@ -131,16 +160,16 @@ export class ViewGymUserComponent implements OnInit {
       this.model.address=this.f['address'].value;
     }
 
-    if(this.model.type == 'Pola mjeseca'){
-      this.model.type = 0
+    if(this.model.userType == 'Pola mjeseca'){
+      this.model.userType = 0
     }else if(this.model == 'mjesec dana'){
-      this.model.type = 1
-    }else if(this.model.type == 'Tri mjeseca'){
-      this.model.type = 2
-    }else if(this.model.type == 'Pola Godine'){
-      this.model.type = 3
+      this.model.userType = 1
+    }else if(this.model.userType == 'Tri mjeseca'){
+      this.model.userType = 2
+    }else if(this.model.userType == 'Pola Godine'){
+      this.model.userType = 3
     }else {
-      this.model.type = 4
+      this.model.userType = 4
     }
 
     this.gymUserService.Update(this.model.id?? '', this.model).subscribe((response:any)=>{

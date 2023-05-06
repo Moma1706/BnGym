@@ -5,9 +5,9 @@
 <div style="margin-left: 25%">
   <form [formGroup]="form" (ngSubmit)="update()" ngNativeValidate>
     <!--Label Name and input Enter name-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Ime</span
         >
       </div>
@@ -24,9 +24,9 @@
     </div>
 
     <!--Label Lastname and input Enter Lastname-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Prezime</span
         >
       </div>
@@ -43,9 +43,9 @@
     </div>
 
     <!--Label email and input Enter Email-->
-    <div class="input-group mb-3" style="width: 700px">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-default"
+    <div style="width: 700px">
+      <div>
+        <span
           >Email</span
         >
       </div>
@@ -78,9 +78,9 @@
   <div *ngIf="changePasswordVisible" >
     <form [formGroup]="formPasswordChange" (ngSubmit)="changePassword()" ngNativeValidate>
       <div>
-        <div class="input-group mb-3" style="width: 700px" >
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-default"
+        <div style="width: 700px" >
+          <div>
+            <span
               >Trenutna lozinka</span
             >
           </div>
@@ -91,16 +91,16 @@
             aria-label="Default"
             aria-describedby="inputGroup-sizing-default"
             [ngClass]="{ 'is-invalid': submitted && g['currentPassword'].errors }"
-            placeholder="Trenutni password"
+            placeholder="Trenutna lozinka"
             required
           />
         </div>
       </div>
 
       <div>
-        <div class="input-group mb-3" style="width: 700px">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-default"
+        <div style="width: 700px">
+          <div>
+            <span
               >Nova Lozinka</span
             >
           </div>
@@ -110,7 +110,7 @@
             class="form-control"
             aria-label="Default"
             aria-describedby="inputGroup-sizing-default"
-            placeholder="Novi password"
+            placeholder="Nova lozinka"
             [ngClass]="{ 'is-invalid': submitted && g['newPassword'].errors }"
             required
           />
@@ -118,9 +118,9 @@
       </div>
 
       <div>
-        <div class="input-group mb-3" style="width: 700px">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-default"
+        <div style="width: 700px">
+          <div>
+            <span
               >Potvrdite lozinka</span
             >
           </div>
@@ -130,7 +130,7 @@
             class="form-control"
             aria-label="Default"
             aria-describedby="inputGroup-sizing-default"
-            placeholder="Potvrdite password"
+            placeholder="Potvrdite lozinku"
             [ngClass]="{ 'is-invalid': submitted && g['confirmNewPassword'].errors }"
             required
           />
