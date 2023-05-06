@@ -15,8 +15,8 @@
 </div>
 
 <!--Table-->
-<div class="table">
-  <mat-table matSort [dataSource]="dataSource" style="width: 1000px;">
+<div class="example-container mat-elevation-z8">
+  <mat-table matSort [dataSource]="dataSource">
 
     <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord()"> Ime </mat-header-cell>
