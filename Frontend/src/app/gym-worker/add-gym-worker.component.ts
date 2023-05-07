@@ -62,7 +62,7 @@ export class AddGymWorkerComponent implements OnInit {
             .subscribe({
                 next: () => {
                     // get return url from query parameters or default to home page
-                    const returnUrl ='/home';
+                    const returnUrl ='/gym-worker/all-gym-workers';
                     this.router.navigateByUrl(returnUrl);
                 },
                 error: (error : HttpErrorResponse) => {

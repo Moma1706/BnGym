@@ -128,13 +128,13 @@ export class ViewGymUserComponent implements OnInit {
     
     let type: any = this.g['type'].value;
     
-    if(type == 'Half Month'){
+    if(type == 'HalfMonth'){
       type = 0
     }else if(type == 'Month'){
       type = 1
     }else if(type == 'ThreeMonths'){
       type = 2
-    }else if(type == 'Half Year'){
+    }else if(type == 'HalfYear'){
       type = 3
     }else {
       type = 4
