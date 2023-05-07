@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Admin, Worker")]
+    [Authorize(Roles = "Admin")]
     public class UserController : ApiBaseController
     {
         [HttpGet]

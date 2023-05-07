@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class DayliTrainingService {
 
-  baseUrl = 'https://localhost:7085/api/DailyTraining';
+  baseUrl = 'https://localhost:7085/api/DailyUser';
 
 constructor(private http: HttpClient) { }
 

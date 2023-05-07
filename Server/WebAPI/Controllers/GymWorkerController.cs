@@ -14,6 +14,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] GymWorkerCreateCommand command)
         {
+            throw new NotImplementedException("Functionality is disabled.");
             var gymWorkerResult = await Mediator.Send(command);
 
             if (gymWorkerResult.Success)
@@ -26,6 +27,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] GymWorkerGetAllCommand command)
         {
+            throw new NotImplementedException("Functionality is disabled.");
             var gymWorkerResult = await Mediator.Send(command);
             return Ok(gymWorkerResult);
         }
@@ -35,6 +37,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOne([FromRoute] GymWorkerGetOneCommand command)
         {
+            throw new NotImplementedException("Functionality is disabled.");
             var gymWorkerResult = await Mediator.Send(command);
             if (gymWorkerResult.Success)
                 return Ok(gymWorkerResult);
@@ -44,12 +47,11 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("{Id:Int}")]
-        [Authorize(Roles = "Admin, Worker")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateGymWorkerDto data)
         {
             var userId = GetUserId();
-            var role = GetUserRole();
-            if (userId != Id && role != "Admin")
+            if (userId != Id)
                 return BadRequest("Invalid id provided");
 
             var command = new GymWorkerUpdateCommand
@@ -70,6 +72,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] GymWorkerDeleteCommand data)
         {
+            throw new NotImplementedException("Functionality is disabled.");
             var gymUserResult = await Mediator.Send(data);
 
             if (gymUserResult.Success)
@@ -83,6 +86,7 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Activate([FromRoute] GymWorkerActivateCommand data)
         {
+            throw new NotImplementedException("Functionality is disabled.");
             var gymUserResult = await Mediator.Send(data);
 
             if (gymUserResult.Success)
@@ -94,11 +98,6 @@ namespace WebApi.Controllers
         protected int GetUserId()
         {
             return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
-        }
-
-        protected string GetUserRole()
-        {
-            return this.User.Claims.First(i => i.Type == ClaimTypes.Role).Value;
         }
     }
 }

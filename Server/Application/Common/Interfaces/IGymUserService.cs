@@ -26,6 +26,10 @@ namespace Application.Common.Interfaces
 
         Task<GymUserResult> ActivateMembership(Guid id);
 
+        Task<GymUserResult> FreezAllMemberships();
+
+        Task<GymUserResult> ActivateAllMemberships();
+
         Task<GymUserResult> UpdateRegularUser(int id, UpdateRegularUserDto data);
     }
 }

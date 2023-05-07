@@ -9,7 +9,7 @@ using System.Data;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Admin, Worker")]
+    [Authorize(Roles = "Admin")]
     public class GymUserController: ApiBaseController
     {
         [HttpPost]
@@ -71,6 +71,30 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
+        [Route("freez-all")]
+        public async Task<IActionResult> FreezAllMemberships([FromRoute] GymUserFreezAllCommand command)
+        {
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
+
+        [HttpPut]
+        [Route("activate-all")]
+        public async Task<IActionResult> ActivateAllMemberships([FromRoute] GymUserActivateAllCommand command)
+        {
+            var gymUserResult = await Mediator.Send(command);
+
+            if (gymUserResult.Success)
+                return Ok();
+
+            return Conflict(new { gymUserResult.Error });
+        }
+
+        [HttpPut]
         [Route("activate/{Id:Guid}")]
         public async Task<IActionResult> ActivateMembership([FromRoute] GymUserActivateCommand command)
         {
@@ -99,5 +123,13 @@ namespace WebApi.Controllers
 
             return Conflict(new { gymUserResult.Error });
         }
+
+        //[HttpGet]
+        //[Route("most-arrivals")]
+        //public async Task<IActionResult> GetWithMostAttivals([FromQuery] GymUserGetAllCommand command)
+        //{
+        //    var gymUserResult = await Mediator.Send(command);
+        //    return Ok(gymUserResult);
+        //}
     }
 }

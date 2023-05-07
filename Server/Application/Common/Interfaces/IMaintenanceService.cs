@@ -1,8 +1,8 @@
 ﻿using System;
 using Application.Common.Models.BaseResult;
-using Application.Common.Models.DailyTraining;
+using Application.Common.Models.DailyUser;
 using Application.Common.Models.Maintenance;
-using Application.DailyTraining.Dtos;
+using Application.DailyUser.Dtos;
 
 namespace Application.Common.Interfaces
 {

@@ -53,7 +53,7 @@ namespace Infrastructure.Identity
                 return Result.Failure("E-mail not confirmed");
 
             var userRole = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
-            if (userRole.RoleId == Convert.ToInt32(UserRole.RegularUser))
+            if (userRole.RoleId != Convert.ToInt32(UserRole.Admin))
                 return Result.Failure("Invalid user role");
 
             if (user.IsBlocked)

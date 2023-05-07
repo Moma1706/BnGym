@@ -20,6 +20,7 @@ using Application.Common.Models.User;
 using Application.App.Dtos;
 using MediatR;
 using Microsoft.Data.SqlClient;
+using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Services
 {
@@ -150,6 +151,39 @@ namespace Infrastructure.Services
             return GymUserResult.Sucessfull();
         }
 
+        public async Task<GymUserResult> ActivateAllMemberships()
+        {
+            // samo aktiviramo, pa on neka se cekira
+            var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == true).ToListAsync();
+            if (gymUsers.Count() == 0)
+                return GymUserResult.Sucessfull();
+
+            // izracunati koliko dana im je ostalo
+            var currentDate = _dateTimeService.Now.Date;
+            foreach (GymUser gymUser in gymUsers)
+            {
+                var expiresOn = gymUser.ExpiresOn.Date;
+                var days = 0;
+                if (expiresOn < currentDate)
+                {
+                    days = (expiresOn - gymUser.FreezeDate.Date).Days;
+                }
+                else
+                {
+                    days = (currentDate - gymUser.FreezeDate.Date).Days;
+                }
+
+                gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
+                gymUser.FreezeDate = DateTime.MinValue;
+                gymUser.IsFrozen = false;
+            }
+
+            _dbContext.GymUsers.UpdateRange(gymUsers);
+            await _dbContext.SaveChangesAsync();
+
+            return GymUserResult.Sucessfull();
+        }
+
         public async Task<GymUserResult> ExtendMembership(Guid id, ExtendMembershipDto data)
         {
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
@@ -215,6 +249,27 @@ namespace Infrastructure.Services
             await _dbContext.SaveChangesAsync();
             return GymUserResult.Sucessfull();
 
+        }
+
+        public async Task<GymUserResult> FreezAllMemberships()
+        {
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+
+            var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == false && x.IsInActive == false && x.ExpiresOn > _dateTimeService.Now).ToListAsync();
+            if (gymUsers.Count() == 0)
+                return GymUserResult.Sucessfull();
+
+            foreach (GymUser gymUser in gymUsers)
+            {
+                gymUser.IsFrozen = true; // Set isFrozen to true
+                gymUser.FreezeDate = _dateTimeService.Now; ; // Set FrozenDate to current date and time
+            }
+
+            _dbContext.GymUsers.UpdateRange(gymUsers);
+            await _dbContext.SaveChangesAsync();
+
+
+            return GymUserResult.Sucessfull();
         }
 
         public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder)

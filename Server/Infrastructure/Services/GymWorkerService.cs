@@ -57,7 +57,7 @@ namespace Infrastructure.Services
                 var userRoles = new IdentityUserRole<int>
                 {
                     UserId = result.Id,
-                    RoleId = Convert.ToInt32(UserRole.Worker)
+                    RoleId = Convert.ToInt32(UserRole.Admin)
                 };
                 _dbContext.Add(userRoles);
 
