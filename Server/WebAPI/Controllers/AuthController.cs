@@ -4,6 +4,9 @@ using Application.Auth.ForgotPassword;
 using Application.Auth.Login;
 using Application.Auth.Register;
 using Application.Auth.ResetPassword;
+using Application.Common.Exceptions;
+using Application.Common.Models.BaseResult;
+using Application.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -76,13 +79,25 @@ public class AuthController : ApiBaseController
 
     [HttpPost]
     [Route("change-password")]
-    [Authorize(Roles = "Admin, Worker, Regular User")]
+    [Authorize(Roles = "Admin, Regular User")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
     {
-        var result = await Mediator.Send(command);
-        if (result.Success)
-            return Ok();
+        try
+        {
+            var result = await Mediator.Send(command);
+            if (result.Success)
+                return Ok();
 
-        return Conflict(new { result.Error });
+            return BadRequest(result.Error);
+        }
+        catch (Exception exception)
+        {
+            if (exception is ValidationException)
+            {
+                string result = string.Join(". ", ((ValidationException)exception).Errors);
+                return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+            }
+            throw;
+        }
     }
 }

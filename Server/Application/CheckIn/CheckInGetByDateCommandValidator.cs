@@ -13,8 +13,8 @@ namespace Application.CheckIn
         public CheckInGetByDateCommandValidator()
         {
             RuleFor(x => x.DateTime)
-                .NotEmpty().WithMessage("Date is required")
-                .Must(BeAValidDate).WithMessage("Date is required");
+                .NotEmpty().WithMessage("Datum je obavezan")
+                .Must(BeAValidDate).WithMessage("Nevalidan format datuma");
         }
 
         private bool BeAValidDate(DateTime date)

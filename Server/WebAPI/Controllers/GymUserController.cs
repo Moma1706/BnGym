@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Application.GymUser.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
-
+using Application.Common.Models.GymUser;
+using Application.Common.Exceptions;
+using System;
+using Application.Common.Models.BaseResult;
 
 namespace WebApi.Controllers
 {
@@ -15,12 +18,23 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GymUserCreateCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
+                if (gymUserResult.Success)
+                    return Ok(gymUserResult);
 
-            if (gymUserResult.Success)
-                return Ok(gymUserResult);
-
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch(Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation});
+                }
+                throw;
+            }
         }
 
         [HttpGet]
@@ -34,94 +48,178 @@ namespace WebApi.Controllers
         [Route("{Id:Int}")]
         public async Task<IActionResult> GetOne([FromRoute] GymUserGetOneCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
-            if (gymUserResult.Success)
-                return Ok(gymUserResult);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
+                if (gymUserResult.Success)
+                    return Ok(gymUserResult);
 
-            return BadRequest(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("{Id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateGymUserDto data)
         {
-            var command = new GymUserUpdateCommand
+            try
             {
-                Id = Id,
-                Data = data
-            };
-            var gymUserResult = await Mediator.Send(command);
+                var command = new GymUserUpdateCommand
+                {
+                    Id = Id,
+                    Data = data
+                };
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("freez/{Id:Guid}")]
         public async Task<IActionResult> FreezMembership([FromRoute] GymUserFreezCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("freez-all")]
         public async Task<IActionResult> FreezAllMemberships([FromRoute] GymUserFreezAllCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("activate-all")]
         public async Task<IActionResult> ActivateAllMemberships([FromRoute] GymUserActivateAllCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("activate/{Id:Guid}")]
         public async Task<IActionResult> ActivateMembership([FromRoute] GymUserActivateCommand command)
         {
-            var gymUserResult = await Mediator.Send(command);
+            try
+            {
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
         [Route("extend/{Id:Guid}")]
         public async Task<IActionResult> ExtendMembership([FromRoute] Guid id, [FromBody] ExtendMembershipDto data)
         {
-            var command = new GymUserExtendCommand
+            try
             {
-                Id = id,
-                Data = data
-            };
+                var command = new GymUserExtendCommand
+                {
+                    Id = id,
+                    Data = data
+                };
 
-            var gymUserResult = await Mediator.Send(command);
+                var gymUserResult = await Mediator.Send(command);
 
-            if (gymUserResult.Success)
-                return Ok();
+                if (gymUserResult.Success)
+                    return Ok();
 
-            return Conflict(new { gymUserResult.Error });
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         //[HttpGet]

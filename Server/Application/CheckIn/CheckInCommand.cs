@@ -18,9 +18,7 @@ namespace Application.CheckIn.CheckIn
         public async Task<CheckInResult> Handle(CheckInCommand request, CancellationToken cancellationToken)
         {
             var checkinResult = await _checkInService.CheckIn(request.GymUserId);
-
             return checkinResult;
         }
-
     }
 }

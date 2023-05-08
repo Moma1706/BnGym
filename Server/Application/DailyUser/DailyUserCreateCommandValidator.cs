@@ -8,14 +8,14 @@ public class DailyUserCommandValidator : AbstractValidator<DailyUserCreateComman
     public DailyUserCommandValidator()
     {
         RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required"); ;
+            .NotEmpty().WithMessage("Ime je obavezno polje");
 
         RuleFor(x => x.LastName)
-           .NotEmpty().WithMessage("Last name is required");
+           .NotEmpty().WithMessage("Prezime je obavezno polje");
 
         RuleFor(x => x.DateOfBirth)
-           .NotEmpty().WithMessage("Date is required")
-           .Must(BeAValidDate).WithMessage("Invalid date format");
+           .NotEmpty().WithMessage("Datum rodjenja je obavezno polje")
+           .Must(BeAValidDate).WithMessage("Nevalidan format datuma");
     }
 
     private bool BeAValidDate(DateTime date)

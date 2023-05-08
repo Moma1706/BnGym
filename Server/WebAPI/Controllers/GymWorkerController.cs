@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using System.Security.Claims;
+using Application.Common.Exceptions;
+using Application.Common.Models.BaseResult;
 using Application.Enums;
 using Application.GymWorker;
 using Application.GymWorker.Dtos;
@@ -50,21 +52,33 @@ namespace WebApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateGymWorkerDto data)
         {
-            var userId = GetUserId();
-            if (userId != Id)
-                return BadRequest("Invalid id provided");
-
-            var command = new GymWorkerUpdateCommand
+            try
             {
-                Id = Id,
-                Data = data
-            };
-            var gymWorkerResult = await Mediator.Send(command);
+                var userId = GetUserId();
+                if (userId != Id)
+                    return BadRequest(new Error { Message = "Proslijedjen nevalidan id", Code = ExceptionType.Validation });
 
-            if (gymWorkerResult.Success)
-                return Ok();
+                var command = new GymWorkerUpdateCommand
+                {
+                    Id = Id,
+                    Data = data
+                };
+                var gymWorkerResult = await Mediator.Send(command);
 
-            return Conflict(new { gymWorkerResult.Error });
+                if (gymWorkerResult.Success)
+                    return Ok();
+
+                return BadRequest(gymWorkerResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpDelete]

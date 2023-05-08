@@ -9,18 +9,18 @@ namespace Application.DailyUser
         public DailyUserUpdateCommandValidator()
         {
             RuleFor(x => x.Data.FirstName)
-                .NotEmpty().WithMessage("First name is required");
+                .NotEmpty().WithMessage("Ime je obavezno polje");
 
             RuleFor(x => x.Data.LastName)
-               .NotEmpty().WithMessage("Last name is required");
+               .NotEmpty().WithMessage("Prezime je obavezno polje");
 
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id is required")
-                .Must(BeAValidGuid).WithMessage("Invalid UUID");
+                .NotEmpty().WithMessage("Id je obavezan")
+                .Must(BeAValidGuid).WithMessage("Nevallidan UUID");
 
             RuleFor(x => x.Data.DateOfBirth)
-                .NotEmpty().WithMessage("Date is required")
-                .Must(BeAValidDate).WithMessage("Invalid date format");
+                .NotEmpty().WithMessage("Datum rodjenja je obavezno polje")
+                .Must(BeAValidDate).WithMessage("Nevalidan format datumat");
         }
 
         private bool BeAValidDate(DateTime date)

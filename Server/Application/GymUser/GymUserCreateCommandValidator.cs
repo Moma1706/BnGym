@@ -10,17 +10,17 @@ public class GymUserCreateCommandValidator : AbstractValidator<GymUserCreateComm
     {
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Email is not in correct format");
+            .NotEmpty().WithMessage("Email je obavezno polje")
+            .EmailAddress().WithMessage("Email nije u korektnom formatu");
 
         RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required"); ;
+            .NotEmpty().WithMessage("Ime je obavezno polje");
 
         RuleFor(x => x.LastName)
-           .NotEmpty().WithMessage("Last name is required");
+           .NotEmpty().WithMessage("Prezime je obavezno polje");
 
         RuleFor(x => x.Type)
-            .NotNull().WithMessage("User type is required")
-            .IsInEnum().WithMessage("User type must have correct value");
+            .NotNull().WithMessage("Tip je obavezno polje")
+            .IsInEnum().WithMessage("Tip mora imati korektnu vrijednost");
     }
 }

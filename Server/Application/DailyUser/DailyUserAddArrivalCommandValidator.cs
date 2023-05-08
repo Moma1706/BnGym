@@ -8,8 +8,8 @@ namespace Application.DailyUser
         public DailyUserAddArrivalCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id is required")
-                .Must(BeAValidGuid).WithMessage("Invalid UUID");
+                .NotEmpty().WithMessage("Id je obavezan")
+                .Must(BeAValidGuid).WithMessage("Nevalidan UUID");
         }
 
         private bool BeAValidGuid(Guid guid)

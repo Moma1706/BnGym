@@ -111,7 +111,7 @@ namespace Infrastructure.Identity
             var dailyList = new List<DailyHistoryGetResult>();
 
             // prepare result
-            var countDetails = _dbContext.DailyHistoryView.Count();
+            var countDetails = _dbContext.DailyHistoryView.Count(x => x.CheckInDate.Date == date.Date);
             var result = new PageResult<DailyHistoryGetResult>
             {
                 Count = countDetails,

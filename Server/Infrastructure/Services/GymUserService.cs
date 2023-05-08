@@ -192,7 +192,7 @@ namespace Infrastructure.Services
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has a frozen membership" });
 
 
             var expiresOn = _dateTimeService.Now;
