@@ -42,8 +42,6 @@ export class ProfileComponent implements OnInit {
     private formBuilder: FormBuilder,
     private gymWorkerService: GymWorkerService,
     private accountService: AccountService) {
-
-    
   }
 
   ngOnInit() {
@@ -88,16 +86,30 @@ export class ProfileComponent implements OnInit {
       this.changePasswordModel.currentPassword = this.g['currentPassword'].value;
     }
     if(this.g['newPassword'].value != ''){
-    this.changePasswordModel.newPassword=this.g['newPassword'].value;
+      this.changePasswordModel.newPassword=this.g['newPassword'].value;
     }
     if(this.g['confirmNewPassword'].value != ''){
-    this.changePasswordModel.confirmNewPassword=this.g['confirmNewPassword'].value;
+      this.changePasswordModel.confirmNewPassword=this.g['confirmNewPassword'].value;
     }
+    // checkPasswordMatch();
     this.changePasswordModel.id = this.model.id;
 
     this.accountService.changePassword(this.changePasswordModel).subscribe((response:any) =>{
       console.log(response);
+      window.location.reload();
     })
   }
 
+  // checkPasswordMatch(): void {
+  //   const changePasswordBtn = document.querySelector('button[type="submit"]');
+  //   if (this.changePasswordModel.newPassword === this.changePasswordModel.confirmNewPassword) {
+  //     changePasswordBtn.removeAttribute('disabled');
+  //   } else {
+  //     changePasswordBtn.setAttribute('disabled', 'true');
+  //   }
+  // }
+
+  // passwordsMatch(): boolean {
+  //   return this.newPassword === this.confirmPassword;
+  // }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view-dayli-user',
@@ -19,7 +20,7 @@ export class ViewDayliUserComponent implements OnInit {
   submitted: boolean = false;
   loading: boolean = false;
 
-  constructor(private route: ActivatedRoute, private dayliService: DayliTrainingService, private formBuilder: FormBuilder) { 
+  constructor(private route: ActivatedRoute, private dayliService: DayliTrainingService, private formBuilder: FormBuilder, private router: Router) { 
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
     });
@@ -60,6 +61,7 @@ export class ViewDayliUserComponent implements OnInit {
     }
     
     this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
+      window.location.reload();
       console.log(response);
     })
   }
@@ -70,6 +72,4 @@ export class ViewDayliUserComponent implements OnInit {
       window.location.reload();
     })
   }
-
-
 }
