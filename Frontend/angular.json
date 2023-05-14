@@ -27,7 +27,8 @@
             "styles": [
               "src/styles.css",
               "src/assets/scss/now-ui-dashboard.scss",
-              "src/assets/demo/demo.css"
+              "src/assets/demo/demo.css",
+              "./node_modules/swiper/swiper-bundle.css"
             ],
             "scripts": []
           },
