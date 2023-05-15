@@ -11,8 +11,9 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AccountService } from './_services/account.service';
 import { AuthInterceptor } from './_services/auth-interceptor';
-import { MatFormFieldModule} from '@angular/material/form-field';  
+import { MatFormFieldModule} from '@angular/material/form-field';
 import { OpenLayersMapComponent } from './home/map/open-layers-map/open-layers-map.component';
+import { NgImageSliderModule } from 'ng-image-slider';
 
 // called on every request to retrieve the token
 export function jwtOptionsFactory(tokenService: AccountService) {
@@ -26,8 +27,9 @@ export function jwtOptionsFactory(tokenService: AccountService) {
     ReactiveFormsModule,
     HttpClientModule,
     MatFormFieldModule,
+    NgImageSliderModule
   ],
-  declarations: [	
+  declarations: [
     AppComponent,
     HomeComponent,
     AlertComponent,

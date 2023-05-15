@@ -7,79 +7,14 @@
     </div>
   </div>
   <br>
-  <div class="row" *ngIf="this.show == 1">
-    <div class=" col-lg-4">
+  <div class="row">
       <div class=" card card-chart">
         <div class=" card-header">
-          <h5 class=" card-category">Naše prostorije:</h5>
+          <h4 class=" card-category">Naše prostorije</h4>
         </div>
-        <div class=" card-body">
-          <div class="image-container">
-            <img src="assets/img/teretana slika 1.jpg" style="width: 100%; height: 100%;">
-          </div>
-        </div>
-      </div>
+        <ng-image-slider  style="width: 100%; height: 85%; text-align:center;margin:0; padding:0;" #nav
+          [images]="imageObject" [infinite]="false" [autoSlide]="1" [imageSize]="{width: '45%', height: 400}" slideImage="1"></ng-image-slider>  </div>
     </div>
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <br>
-        </div>
-        <div class=" card-body">
-          <img src="assets/img/teretana slika 2.jpg" style="width: 100%; height: 100%;">
-        </div>
-      </div>
-    </div>
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <br>
-        </div>
-        <div class=" card-body">
-          <img src="assets/img/teretana slika 3.jpg" style="width: 100%; height: 100%;">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class=" row" *ngIf="this.show == 0">
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <br>
-        </div>
-        <div class=" card-body">
-          <div class="image-container">
-            <img src="assets/img/teretana slika 4.jpg" style="width: 100%; height: 100%;">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <br>
-        </div>
-        <div class=" card-body">
-          <img src="assets/img/teretana slika 5.jpg" style="width: 100%; height: 100%;">
-        </div>
-      </div>
-    </div>
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <br>
-        </div>
-        <div class=" card-body">
-          <img src="assets/img/teretana slika 6.jpg" style="width: 100%; height: 100%;">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div>
-    <button class="btn btn-primary" (click)="toggleImages()">
-      Sledeće
-    </button>
-  </div>
 
   <div class=" row">
     <div class=" col-lg-6 col-md-12">
