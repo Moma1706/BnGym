@@ -12,7 +12,7 @@ namespace WebApi.Controllers
     public class CheckInController : ApiBaseController
     {
         [HttpPost]
-        [Authorize(Roles = "Admin, Regular User")]
+        //[Authorize(Roles = "Admin, Regular User")]
         public async Task<IActionResult> CheckIn([FromBody] CheckInCommand command)
         {
             try

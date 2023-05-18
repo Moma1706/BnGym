@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
+using Application.Common.Models.GymUser;
 using Application.Common.Models.GymWorker;
 using Application.Enums;
 using Infrastructure.Data;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -85,15 +87,18 @@ namespace Infrastructure.Identity
             if (role.RoleId != Convert.ToInt32(UserRole.RegularUser))
                 return Result.Failure("Invalid user role");
 
-            var role1 = _dbContext.Roles.Where(x => x.Id == role.RoleId).FirstOrDefault();
+            //var role1 = _dbContext.Roles.Where(x => x.Id == role.RoleId).FirstOrDefault();
 
-            var claims = GetClaims(user);
-            claims.Add(new Claim(ClaimTypes.Role, role1.Name));
+            //var claims = GetClaims(user);
+            //claims.Add(new Claim(ClaimTypes.Role, role1.Name));
 
-            var token = GenerateJwtForUser(user, claims);
+            //var token = GenerateJwtForUser(user, claims);
 
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+
+            var regularUser = _dbContext.GymUsers.Where(x => x.UserId == user.Id).FirstOrDefault();
             var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
-            return Result.Successful(token);
+            return Result.Successful(regularUser.Id, regularUser.UserId);
         }
 
         public async Task<RegisterResult> Register(string email, string firstName, string lastName, string address)
@@ -209,7 +214,7 @@ namespace Infrastructure.Identity
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (!result.Succeeded)
-                return Result.Failure("Unable to change password.");
+                return Result.Failure("Unable to change password."); // TODO: Vratiti bolju gresku
 
             return Result.Successful();
         }

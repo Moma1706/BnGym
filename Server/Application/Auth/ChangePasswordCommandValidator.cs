@@ -17,7 +17,8 @@ namespace Application.Auth
             RuleFor(x => x.NewPassword)
                .NotEmpty().WithMessage("Nova lozinka je obavezno polje")
                .MinimumLength(8).WithMessage("Lozinka mora sadržati najmanje 8 karaktera")
-               .Matches("[0-9]").WithMessage("Lozinka mora sadržati najmanje 1 broj");
+               .Matches("[0-9]").WithMessage("Lozinka mora sadržati najmanje 1 broj")
+               .Matches("[A-Z]").WithMessage("Lozinka mora sadržati najmanje jedno veliko slovo");
 
             RuleFor(x => x.ConfirmNewPassword)
                .NotEmpty().WithMessage("Morate potvrditi novu lozinku")

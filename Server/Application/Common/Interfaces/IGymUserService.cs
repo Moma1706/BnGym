@@ -17,6 +17,7 @@ namespace Application.Common.Interfaces
         Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder);
 
         Task<GymUserGetResult> GetOne(int id);
+        Task<GymUserGetResult> GetRegularOne(Guid id);
 
         Task<GymUserResult> Update(Guid id, UpdateGymUserDto data);
 
@@ -30,6 +31,6 @@ namespace Application.Common.Interfaces
 
         Task<GymUserResult> ActivateAllMemberships();
 
-        Task<GymUserResult> UpdateRegularUser(int id, UpdateRegularUserDto data);
+        Task<GymUserResult> UpdateRegularUser(Guid id, UpdateRegularUserDto data);
     }
 }

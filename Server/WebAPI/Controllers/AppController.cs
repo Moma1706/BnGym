@@ -14,18 +14,18 @@ using Application.Common.Exceptions;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Regular User")]
+    //[Authorize(Roles = "Regular User")]
     public class AppController : ApiBaseController
     {
         [HttpGet]
-        [Route("{Id:Int}")]
+        [Route("{Id:Guid}")]
         public async Task<IActionResult> GetRegularUser([FromRoute] RegularUserGetCommand command)
         {
             try
             {
-                var userId = GetUserId();
-                if (userId != command.Id)
-                    return BadRequest(new Error { Message = "Proslijedjen nevalidan id", Code = ExceptionType.Validation });
+                //var userId = GetUserId();
+                //if (userId != command.Id)
+                //    return BadRequest(new Error { Message = "Proslijedjen nevalidan id", Code = ExceptionType.Validation });
 
                 var result = await Mediator.Send(command);
                 if (result.Success)
@@ -45,14 +45,14 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
-        [Route("{Id:Int}")]
-        public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateRegularUserDto data)
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateRegularUserDto data)
         {
             try
             {
-                var userId = GetUserId();
-                if (userId != Id)
-                    return BadRequest(new Error { Message = "Proslidjen nevalidan id", Code = ExceptionType.Validation });
+                //var userId = GetUserId();
+                //if (userId != Id)
+                //    return BadRequest(new Error { Message = "Proslidjen nevalidan id", Code = ExceptionType.Validation });
 
                 var command = new RegularUserUpdateCommand
                 {
@@ -77,9 +77,9 @@ namespace WebApi.Controllers
             }
         }
 
-        protected int GetUserId()
-        {
-            return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
-        }
+        //protected int GetUserId()
+        //{
+        //    return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
+        //}
     }
 }

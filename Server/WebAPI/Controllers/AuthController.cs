@@ -29,22 +29,46 @@ public class AuthController : ApiBaseController
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var loginResult = await Mediator.Send(command);
-        if (loginResult.Success)
-            return Ok(loginResult);
+        try
+        {
+            var loginResult = await Mediator.Send(command);
+            if (loginResult.Success)
+                return Ok(loginResult);
 
-        return Unauthorized(new { loginResult.Error });
+            return Unauthorized(new { loginResult.Error });
+        }
+        catch (Exception exception)
+        {
+            if (exception is ValidationException)
+            {
+                string result = string.Join(". ", ((ValidationException)exception).Errors);
+                return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+            }
+            throw;
+        }
     }
 
     [HttpPost]
     [Route("login-app")]
     public async Task<IActionResult> LoginApp([FromBody] LoginAppCommand command)
     {
-        var loginResult = await Mediator.Send(command);
-        if (loginResult.Success)
-            return Ok(loginResult);
+        try
+        {
+            var loginResult = await Mediator.Send(command);
+            if (loginResult.Success)
+                return Ok(loginResult);
 
-        return Unauthorized(new { loginResult.Error });
+            return Unauthorized(new { loginResult.Error });
+        }
+        catch (Exception exception)
+        {
+            if (exception is ValidationException)
+            {
+                string result = string.Join(". ", ((ValidationException)exception).Errors);
+                return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+            }
+            throw;
+        }
     }
 
     [HttpPost]
@@ -79,7 +103,7 @@ public class AuthController : ApiBaseController
 
     [HttpPost]
     [Route("change-password")]
-    [Authorize(Roles = "Admin, Regular User")]
+    //[Authorize(Roles = "Admin, Regular User")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
     {
         try

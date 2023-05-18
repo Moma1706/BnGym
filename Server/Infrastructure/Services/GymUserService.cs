@@ -330,6 +330,22 @@ namespace Infrastructure.Services
                 gymUser.NumberOfArrivalsLastMonth, gymUser.NumberOfArrivalsCurrentMonth);
         }
 
+        public async Task<GymUserGetResult> GetRegularOne(Guid id)
+        {
+            var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (gymUser == null)
+                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+
+            return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
+                gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
+                gymUser.IsInActive,
+                gymUser.LastCheckIn == DateTime.MinValue ? "null" : gymUser.LastCheckIn.ToString(),
+                gymUser.Type, gymUser.Address,
+                gymUser.NumberOfArrivalsLastMonth, gymUser.NumberOfArrivalsCurrentMonth);
+        }
+
         public async Task<GymUserResult> Update(Guid id, UpdateGymUserDto data)
         {
             var sendMail = false;
@@ -442,14 +458,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<GymUserResult> UpdateRegularUser(int id, UpdateRegularUserDto data)
+        public async Task<GymUserResult> UpdateRegularUser(Guid id, UpdateRegularUserDto data)
         {
             var sendMail = false;
-            var gymUser = await _dbContext.GymUsers.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
-            var user = await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
             if (user == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
 
