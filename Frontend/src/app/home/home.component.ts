@@ -49,6 +49,11 @@ export class HomeComponent implements OnInit {
       image: 'assets/img/teretana-slika-6.jpg',
       alt: 'Slika ',
       thumbImage: 'assets/img/teretana-slika-6.jpg',
+    },
+    {
+      image: 'assets/img/teretana-slika-7.jpg',
+      alt: 'Slika ',
+      thumbImage: 'assets/img/teretana-slika-7.jpg',
     }
 ];
   constructor() {
