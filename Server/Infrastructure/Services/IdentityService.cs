@@ -163,6 +163,7 @@ namespace Infrastructure.Identity
                 return Result.Failure("There was error during confirmation");
         }
 
+        // TODO
         public async Task<Result> ResetPassword(string email, string token, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);

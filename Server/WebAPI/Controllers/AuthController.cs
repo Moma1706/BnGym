@@ -56,7 +56,7 @@ public class AuthController : ApiBaseController
     }
 
     [HttpPost]
-    [Route("reset-password")]
+    [Route("reset-password")] // TODO
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
     {
         var resetPasswordResult = await Mediator.Send(command);
@@ -67,7 +67,7 @@ public class AuthController : ApiBaseController
     }
 
     [HttpPost]
-    [Route("forgot-password")]
+    [Route("forgot-password")] // TODO
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommand command)
     {
         await Mediator.Send(command);
