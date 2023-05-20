@@ -26,8 +26,7 @@ export class AppComponent {
     this.token = token;
     this.role = localStorage.getItem('role') ?? '';
 
-    if(token != '')
-    {
+    if(token != ''){
       this.decodedToken = jwt_decode(token!);
       const userId = this.decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
       this.userId = userId;

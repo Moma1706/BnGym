@@ -1,0 +1,23 @@
+.image-container img {
+    display: none;
+  }
+  
+  .image-container img.active-image {
+    display: block;
+  }
+  .container {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .right-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  swiper {
+    height: 400px;
+    width: 600px;
+  }
