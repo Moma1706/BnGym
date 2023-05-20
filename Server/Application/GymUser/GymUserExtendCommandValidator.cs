@@ -8,11 +8,12 @@ namespace Application.GymUser
         public GymUserExtendCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id is required")
-                .Must(BeAValidGuid).WithMessage("Invalid UUID");
-            RuleFor(x => x.Data)
-                .NotEmpty().WithMessage("Type is required")
-                .NotNull();
+                .NotEmpty().WithMessage("Id je obavezan")
+                .Must(BeAValidGuid).WithMessage("Nevalidan UUID");
+            RuleFor(x => x.Data.Type)
+                .NotEmpty().WithMessage("Tip is obavezno polje")
+                .NotNull().WithMessage("Tip is obavezno polje")
+                .IsInEnum().WithMessage("Tip mora imati korektnu vrijednost");
         }
 
         private bool BeAValidGuid(Guid guid)

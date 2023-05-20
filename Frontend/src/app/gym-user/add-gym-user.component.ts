@@ -57,36 +57,30 @@ export class AddGymUserComponent implements OnInit {
     this.model.lastName=this.f['lastname'].value;
     this.model.email=this.f['email'].value;
     this.model.address=this.f['address'].value;
-    if(this.f['type'].value == 'HalfMonth'){
+    if (this.f['type'].value == 'HalfMonth'){
       this.model.type=0; 
-    }
-    if(this.f['type'].value == 'Month'){
+    } else if(this.f['type'].value == 'Month'){
       this.model.type=1; 
-    }
-    if(this.f['type'].value == 'ThreeMonts'){
+    } else if(this.f['type'].value == 'ThreeMonts'){
       this.model.type=2; 
-    }
-    if(this.f['type'].value == 'HalfYear'){
+    } else if(this.f['type'].value == 'HalfYear'){
       this.model.type=3; 
-    }
-    else
-    {
+    } else {
       this.model.type = 4;
     }
 
     this.gymUserService.addGymUser(this.model)
     .pipe(first())
-            .subscribe({
-                next: () => {
-                    // get return url from query parameters or default to home page
-                    const returnUrl ='/home';
-                    this.router.navigateByUrl(returnUrl);
-                },
-                error: (error : HttpErrorResponse) => {
-                  this.alertService.error(error.error.error);
-                  this.loading = false;
-              }
-            });
+      .subscribe({
+          next: () => {
+              // get return url from query parameters or default to home page
+              const returnUrl ='/gym-user/all-gym-users';
+              this.router.navigateByUrl(returnUrl);
+          },
+          error: (error : HttpErrorResponse) => {
+            this.alertService.error(error.error.error);
+            this.loading = false;
+        }
+      });
   }
-
 }

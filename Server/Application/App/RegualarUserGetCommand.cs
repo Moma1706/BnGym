@@ -8,7 +8,7 @@ namespace Application.User
 {
     public class RegularUserGetCommand : IRequest<GymUserGetResult>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 
     public class RegularUserGetCommandHandler : IRequestHandler<RegularUserGetCommand, GymUserGetResult>
@@ -19,7 +19,7 @@ namespace Application.User
 
         public async Task<GymUserGetResult> Handle(RegularUserGetCommand request, CancellationToken cancellationToken)
         {
-            var userResult = await _gymUserService.GetOne(request.Id);
+            var userResult = await _gymUserService.GetRegularOne(request.Id);
 
             return userResult;
         }

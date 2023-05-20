@@ -56,7 +56,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("DailyHistory", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.DailyTraining", b =>
+            modelBuilder.Entity("Infrastructure.Identity.DailyUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DailyTraining", (string)null);
+                    b.ToTable("DailyUser", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.GymUser", b =>
@@ -215,6 +215,9 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -224,14 +227,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("GymUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("LastCheckIn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -264,7 +261,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToView("DailyHistoryView");
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.Views.DailyTrainingView", b =>
+            modelBuilder.Entity("Infrastructure.Identity.Views.DailyUserView", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -290,7 +287,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToView("DailyTrainingView");
+                    b.ToView("DailyUserView");
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.Views.GymUserView", b =>

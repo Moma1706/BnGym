@@ -9,17 +9,17 @@ namespace Application.App
         {
             RuleFor(x => x.Data.Email)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("Email is required")
-                .EmailAddress().WithMessage("Email is not in correct format");
+                .NotEmpty().WithMessage("Email je obavezno polje")
+                .EmailAddress().WithMessage("Email nije u korektnom formatu");
 
             RuleFor(x => x.Data.FirstName)
-                .NotEmpty().WithMessage("First name is required");
+                .NotEmpty().WithMessage("Ime je obavezno polje");
 
             RuleFor(x => x.Data.LastName)
-               .NotEmpty().WithMessage("Last name is required");
+               .NotEmpty().WithMessage("Prezime je obavezno polje");
 
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id is required");
+                .NotEmpty().WithMessage("Id je obavezan");
         }
     }
 }

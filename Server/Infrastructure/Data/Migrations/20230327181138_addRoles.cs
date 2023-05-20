@@ -15,8 +15,7 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,] {
                     { "1", "Admin" },
-                    { "2", "Worker" },
-                    { "3", "Regular User" },
+                    { "2", "Regular User" }
                 });
         }
 
@@ -25,7 +24,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.DeleteData(
                 table: "Roles",
                 keyColumn: "Id",
-                keyValues: new object[] { 1, 2, 3 });
+                keyValues: new object[] { 1, 2 });
         }
     }
 }

@@ -9,11 +9,11 @@ namespace Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                create or alter view CheckInHistoryView as
-                select ch.Id, ch.GymUserId, ch.TimeStamp, gu.LastCheckIn, gu.NumberOfArrivals, u.Id as UserId, u.FirstName, u.LastName, u.Email
-                from CheckInHistory ch
-                inner join GymUser gu on ch.GymUserId = gu.Id
-                inner join Users u on u.Id = gu.UserId;");
+                CREATE OR ALTER VIEW CheckInHistoryView AS
+                    SELECT ch.Id, ch.GymUserId, ch.TimeStamp, gu.LastCheckIn, u.Id AS UserId, u.FirstName, u.LastName, u.Email
+                    FROM CheckInHistory ch
+                    INNER JOIN GymUser gu ON ch.GymUserId = gu.Id
+                    INNER JOIN Users u ON u.Id = gu.UserId;");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

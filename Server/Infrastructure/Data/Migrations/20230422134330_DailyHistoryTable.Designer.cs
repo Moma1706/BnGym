@@ -58,7 +58,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("DailyHistory", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Identity.DailyTraining", b =>
+            modelBuilder.Entity("Infrastructure.Identity.DailyUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,7 +77,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DailyTraining", (string)null);
+                    b.ToTable("DailyUser", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.GymUser", b =>

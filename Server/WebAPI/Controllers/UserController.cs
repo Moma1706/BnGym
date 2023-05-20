@@ -4,25 +4,40 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using Application.User;
 using System.Security.Claims;
+using Application.Common.Models.BaseResult;
+using Application.Enums;
+using Application.Common.Exceptions;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Admin, Worker")]
+    [Authorize(Roles = "Admin")]
     public class UserController : ApiBaseController
     {
         [HttpGet]
         [Route("{Id:Int}")]
         public async Task<IActionResult> GetUser([FromRoute] UserGetCommand command)
         {
-            var userId = GetUserId();
-            if (userId != command.Id)
-                return BadRequest("Invalid id provided");
+            try
+            {
+                var userId = GetUserId();
+                if (userId != command.Id)
+                    return BadRequest(new Error { Message = "Proslijedjen nevalidan id", Code = ExceptionType.Validation });
 
-            var result = await Mediator.Send(command);
-            if (result.Success)
-                return Ok(result);
+                var result = await Mediator.Send(command);
+                if (result.Success)
+                    return Ok(result);
 
-            return Conflict(new { result.Error });
+                return BadRequest(result.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         protected int GetUserId()

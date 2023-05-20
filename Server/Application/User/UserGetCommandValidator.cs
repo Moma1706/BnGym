@@ -9,7 +9,7 @@ namespace Application.User
         public UserGetCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Id is required");
+                .NotEmpty().WithMessage("Id je obavezan");
         }
     }
 }

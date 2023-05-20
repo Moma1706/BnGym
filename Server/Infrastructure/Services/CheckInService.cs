@@ -36,7 +36,7 @@ namespace Infrastructure.Identity
 
             //var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
             if (gymUser.IsFrozen)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has a frozen membership" });
 
             if (gymUser.IsInActive)
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });

@@ -10,7 +10,7 @@ namespace Application.App
 {
     public class RegularUserUpdateCommand : IRequest<GymUserResult>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public UpdateRegularUserDto Data { get; set; }
 
         public class UpdateCommandHandler : IRequestHandler<RegularUserUpdateCommand, GymUserResult>

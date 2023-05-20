@@ -15,9 +15,9 @@ namespace Infrastructure.Data.Migrations
                     INNER JOIN GymUser gu ON ch.GymUserId = gu.Id
                     INNER JOIN Users u ON u.Id = gu.UserId
                 UNION
-                    SELECT dh.Id, dh.DailyUserId, dh.CheckInDate, 0, dt.FirstName, dt.LastName, 'email'
+                    SELECT dh.Id, dh.DailyUserId, dh.CheckInDate, 0, du.FirstName, du.LastName, 'email'
                     FROM DailyHistory dh
-                    INNER JOIN DailyTraining dt ON dt.Id = dh.DailyUserId;");
+                    INNER JOIN DailyUser du ON du.Id = dh.DailyUserId;");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

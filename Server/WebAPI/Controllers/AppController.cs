@@ -8,51 +8,78 @@ using Application.GymUser;
 using Application.GymUser.Dtos;
 using Application.App.Dtos;
 using Application.App;
+using Application.Common.Models.BaseResult;
+using Application.Enums;
+using Application.Common.Exceptions;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = "Regular User")]
+    //[Authorize(Roles = "Regular User")]
     public class AppController : ApiBaseController
     {
         [HttpGet]
-        [Route("{Id:Int}")]
+        [Route("{Id:Guid}")]
         public async Task<IActionResult> GetRegularUser([FromRoute] RegularUserGetCommand command)
         {
-            var userId = GetUserId();
-            if (userId != command.Id)
-                return BadRequest("Invalid id provided");
+            try
+            {
+                //var userId = GetUserId();
+                //if (userId != command.Id)
+                //    return BadRequest(new Error { Message = "Proslijedjen nevalidan id", Code = ExceptionType.Validation });
 
-            var result = await Mediator.Send(command);
-            if (result.Success)
-                return Ok(result);
+                var result = await Mediator.Send(command);
+                if (result.Success)
+                    return Ok(result);
 
-            return Conflict(new { result.Error });
+                return BadRequest(result.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
         [HttpPut]
-        [Route("{Id:Int}")]
-        public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateRegularUserDto data)
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid Id, [FromBody] UpdateRegularUserDto data)
         {
-            var userId = GetUserId();
-            if (userId != Id)
-                return BadRequest("Invalid id provided");
-
-            var command = new RegularUserUpdateCommand
+            try
             {
-                Id = Id,
-                Data = data
-            };
-            var gymUserResult = await Mediator.Send(command);
+                //var userId = GetUserId();
+                //if (userId != Id)
+                //    return BadRequest(new Error { Message = "Proslidjen nevalidan id", Code = ExceptionType.Validation });
 
-            if (gymUserResult.Success)
-                return Ok();
+                var command = new RegularUserUpdateCommand
+                {
+                    Id = Id,
+                    Data = data
+                };
+                var gymUserResult = await Mediator.Send(command);
 
-            return Conflict(new { gymUserResult.Error });
+                if (gymUserResult.Success)
+                    return Ok();
+
+                return BadRequest(gymUserResult.Error);
+            }
+            catch (Exception exception)
+            {
+                if (exception is ValidationException)
+                {
+                    string result = string.Join(". ", ((ValidationException)exception).Errors);
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
+                }
+                throw;
+            }
         }
 
-        protected int GetUserId()
-        {
-            return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
-        }
+        //protected int GetUserId()
+        //{
+        //    return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
+        //}
     }
 }

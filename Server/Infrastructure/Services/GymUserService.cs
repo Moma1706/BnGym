@@ -20,6 +20,7 @@ using Application.Common.Models.User;
 using Application.App.Dtos;
 using MediatR;
 using Microsoft.Data.SqlClient;
+using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Services
 {
@@ -150,6 +151,39 @@ namespace Infrastructure.Services
             return GymUserResult.Sucessfull();
         }
 
+        public async Task<GymUserResult> ActivateAllMemberships()
+        {
+            // samo aktiviramo, pa on neka se cekira
+            var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == true).ToListAsync();
+            if (gymUsers.Count() == 0)
+                return GymUserResult.Sucessfull();
+
+            // izracunati koliko dana im je ostalo
+            var currentDate = _dateTimeService.Now.Date;
+            foreach (GymUser gymUser in gymUsers)
+            {
+                var expiresOn = gymUser.ExpiresOn.Date;
+                var days = 0;
+                if (expiresOn < currentDate)
+                {
+                    days = (expiresOn - gymUser.FreezeDate.Date).Days;
+                }
+                else
+                {
+                    days = (currentDate - gymUser.FreezeDate.Date).Days;
+                }
+
+                gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
+                gymUser.FreezeDate = DateTime.MinValue;
+                gymUser.IsFrozen = false;
+            }
+
+            _dbContext.GymUsers.UpdateRange(gymUsers);
+            await _dbContext.SaveChangesAsync();
+
+            return GymUserResult.Sucessfull();
+        }
+
         public async Task<GymUserResult> ExtendMembership(Guid id, ExtendMembershipDto data)
         {
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
@@ -158,7 +192,7 @@ namespace Infrastructure.Services
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has a frozen membership" });
 
 
             var expiresOn = _dateTimeService.Now;
@@ -217,6 +251,27 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<GymUserResult> FreezAllMemberships()
+        {
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+
+            var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == false && x.IsInActive == false && x.ExpiresOn > _dateTimeService.Now).ToListAsync();
+            if (gymUsers.Count() == 0)
+                return GymUserResult.Sucessfull();
+
+            foreach (GymUser gymUser in gymUsers)
+            {
+                gymUser.IsFrozen = true; // Set isFrozen to true
+                gymUser.FreezeDate = _dateTimeService.Now; ; // Set FrozenDate to current date and time
+            }
+
+            _dbContext.GymUsers.UpdateRange(gymUsers);
+            await _dbContext.SaveChangesAsync();
+
+
+            return GymUserResult.Sucessfull();
+        }
+
         public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder)
         {
             page -= 1;
@@ -262,6 +317,22 @@ namespace Infrastructure.Services
         public async Task<GymUserGetResult> GetOne(int id)
         {
             var gymUser = await _dbContext.GymUserView.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            if (gymUser == null)
+                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+
+            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+
+            return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
+                gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
+                gymUser.IsInActive,
+                gymUser.LastCheckIn == DateTime.MinValue ? "null" : gymUser.LastCheckIn.ToString(),
+                gymUser.Type, gymUser.Address,
+                gymUser.NumberOfArrivalsLastMonth, gymUser.NumberOfArrivalsCurrentMonth);
+        }
+
+        public async Task<GymUserGetResult> GetRegularOne(Guid id)
+        {
+            var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
@@ -387,14 +458,14 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<GymUserResult> UpdateRegularUser(int id, UpdateRegularUserDto data)
+        public async Task<GymUserResult> UpdateRegularUser(Guid id, UpdateRegularUserDto data)
         {
             var sendMail = false;
-            var gymUser = await _dbContext.GymUsers.Where(x => x.UserId == id).FirstOrDefaultAsync();
+            var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
 
-            var user = await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
             if (user == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
 

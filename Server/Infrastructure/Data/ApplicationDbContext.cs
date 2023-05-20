@@ -18,10 +18,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<CheckInHistory> CheckIns { get; set; }
     public DbSet<GymWorkerView> GymWorkers { get; set; }
     public DbSet<CheckInHistoryView> CheckInHistoryView { get; set; }
-    public DbSet<DailyTraining> DailyTraining { get; set; }
+    public DbSet<DailyUser> DailyUser { get; set; }
     public DbSet<DailyHistory> DailyHistory { get; set; }
     public DbSet<DailyHistoryView> DailyHistoryView { get; set; }
-    public DbSet<DailyTrainingView> DailyTrainingView { get; set; }
+    public DbSet<DailyUserView> DailyUserView { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeService dateTimeService)
         : base(options) => _dateTimeService = dateTimeService;
@@ -47,10 +47,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         builder.Entity<GymWorkerView>().ToView("GymWorkerView");
         builder.Entity<GymUserView>().ToView("GymUserView");
         builder.Entity<CheckInHistoryView>().ToView("CheckInHistoryView");
-        builder.Entity<DailyTraining>().ToTable("DailyTraining");
+        builder.Entity<DailyUser>().ToTable("DailyUser");
         builder.Entity<DailyHistory>().ToTable("DailyHistory");
         builder.Entity<DailyHistoryView>().ToView("DailyHistoryView");
-        builder.Entity<DailyTrainingView>().ToView("DailyTrainingView");
+        builder.Entity<DailyUserView>().ToView("DailyUserView");
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

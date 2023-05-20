@@ -8,8 +8,8 @@ public class CheckInCommandValidator : AbstractValidator<CheckInCommand>
     public CheckInCommandValidator()
     {
         RuleFor(x => x.GymUserId)
-           .NotEmpty().WithMessage("Id is required")
-           .Must(BeAValidGuid).WithMessage("Invalid UUID");
+           .NotEmpty().WithMessage("Id je obavezan")
+           .Must(BeAValidGuid).WithMessage("Nevalidan UUID");
     }
 
     private bool BeAValidGuid(Guid guid)

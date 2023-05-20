@@ -24,6 +24,7 @@ namespace Application.Enums
         UnableToCheckIn,
         UnableToRegister,
         UnableToCreate,
-        EmailAlredyExists
+        EmailAlredyExists,
+        Validation
     }
 }

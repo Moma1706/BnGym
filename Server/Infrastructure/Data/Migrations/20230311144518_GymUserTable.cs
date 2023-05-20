@@ -15,16 +15,13 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    NumberOfTrainingsLeft = table.Column<int>(type: "int", nullable: false),
                     ExpiresOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    IsStudent = table.Column<bool>(type: "bit", nullable: false),
-                    LastCheckIn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsEmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    LastCheckIn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: DateTime.MinValue),
                     IsFrozen = table.Column<bool>(type: "bit", nullable: false),
                     IsInActive = table.Column<bool>(type: "bit", nullable: false),
-                    NumberOfArrivals = table.Column<int>(type: "int", nullable: false)
-                },
+                    FreezeDate = table.Column< DateTime > (type: "datetime2", nullable: true, defaultValue: DateTime.MinValue)
+        },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GymUser", x => x.Id);
