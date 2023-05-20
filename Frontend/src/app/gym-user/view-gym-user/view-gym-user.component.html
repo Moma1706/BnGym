@@ -230,13 +230,12 @@
       <div *ngIf="this.extend == true">
         <form [formGroup]="formExtend" (ngSubmit)="ExtendMembersip()" ngNativeValidate>
           <div style="width: 700px">
-            <div>
-              <label class="input-group-text" for="inputGroupSelect01">Tip</label>
-            </div>
+            <span
+            >Tip</span>
             <select
               formControlName="type"
-              class="custom-select"
-              placeholder="Select type..."
+              class="form-control"
+              placeholder="Izaberite tip..."
               [ngClass]="{ 'is-invalid': submitted && f['type'].errors }"
               required
             >

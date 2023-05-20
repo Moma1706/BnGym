@@ -48,6 +48,16 @@
       <mat-cell *matCellDef="let row"> {{row.expiresOn | date: 'dd/MM/yyyy'}} </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="numberOfArrivalsCurrentMonth">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Broj dolazaka ovog meseca </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.numberOfArrivalsCurrentMonth}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="numberOfArrivalsLastMonth">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Broj dolazaka proslog meseca </mat-header-cell>
+      <<mat-cell *matCellDef="let row"> {{row.numberOfArrivalsLastMonth}} </mat-cell>
+    </ng-container>
+
     <!-- Edit buttom Column -->
     <ng-container matColumnDef="Buttons" >
       <mat-header-cell *matHeaderCellDef> </mat-header-cell>
