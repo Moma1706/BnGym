@@ -1,15 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AlertService } from 'src/app/_services/alert.service';
 import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
 
+
+
 @Component({
   selector: 'app-add-dayli-training',
   templateUrl: './add-dayli-training.component.html',
   styleUrls: ['./add-dayli-training.component.css']
+  
 })
 export class AddDayliTrainingComponent implements OnInit {
 

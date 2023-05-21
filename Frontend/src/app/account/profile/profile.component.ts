@@ -84,9 +84,21 @@ export class ProfileComponent implements OnInit {
     this.model.email=this.f['email'].value;
     }
     
-    this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
-      console.log(response);
-    })
+    // this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
+    //   console.log(response);
+    // })
+
+    this.gymWorkerService.update(this.model.id, this.model)
+    .pipe(first())
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertService.error(error.error.message);
+          this.loading = false;
+        }
+      })
   }
 
   changePasswordVisibleEnable(){
@@ -104,13 +116,7 @@ export class ProfileComponent implements OnInit {
     if(this.g['confirmNewPassword'].value != ''){
       this.changePasswordModel.confirmNewPassword=this.g['confirmNewPassword'].value;
     }
-    // checkPasswordMatch();
     this.changePasswordModel.id = this.model.id;
-
-    // this.accountService.changePassword(this.changePasswordModel).subscribe((response:any) =>{
-    //   console.log(response);
-    //   window.location.reload();
-    // })
 
     this.accountService.changePassword(this.changePasswordModel)
     .pipe(first())
@@ -120,22 +126,10 @@ export class ProfileComponent implements OnInit {
           window.location.reload();
         },
         error: (error : HttpErrorResponse) => {
-          this.alertService.error(error.error.error);
+          this.alertService.error(error.error.message);
           this.loading = false;
         }
       })
   }
 
-  // checkPasswordMatch(): void {
-  //   const changePasswordBtn = document.querySelector('button[type="submit"]');
-  //   if (this.changePasswordModel.newPassword === this.changePasswordModel.confirmNewPassword) {
-  //     changePasswordBtn.removeAttribute('disabled');
-  //   } else {
-  //     changePasswordBtn.setAttribute('disabled', 'true');
-  //   }
-  // }
-
-  // passwordsMatch(): boolean {
-  //   return this.newPassword === this.confirmPassword;
-  // }
 }
