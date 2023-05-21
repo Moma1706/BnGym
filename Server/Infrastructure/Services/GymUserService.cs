@@ -127,7 +127,7 @@ namespace Infrastructure.Services
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             if (!gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je vec aktivan" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već aktivan" });
 
             // izracunati koliko dana mu je ostalo
             var currentDate = _dateTimeService.Now.Date;
@@ -234,7 +234,7 @@ namespace Infrastructure.Services
 
             //var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je vec zaledjen" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već zaledjen" });
 
             if (gymUser.IsInActive)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnikova članarina je istekla" });
