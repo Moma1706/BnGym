@@ -2,7 +2,7 @@
 <hr />
 <br />
 
-<div style="margin-left: 10%;">
+<div style="margin-left: 20%;">
   <form [formGroup]="form" (ngSubmit)="Update()" ngNativeValidate>
     <!--Label Name and input Enter name-->
     <div style="width: 700px">
@@ -77,23 +77,6 @@
         required
       />
     </div>
-    <!-- <div style="width: 700px">
-      <div>
-        <span
-          >Tip</span
-        >
-      </div>
-      <input
-        formControlName="userType"
-        type=""
-        class="form-control"
-        aria-label="Default"
-        aria-describedby="inputGroup-sizing-default"
-        value={{model.userType}}
-        [ngClass]="{ 'is-invalid': submitted && f['type'].errors }"
-        required
-      />
-    </div> -->
     <div style="width: 700px">
       <span
       >Tip</span>
@@ -241,6 +224,10 @@
         Aktiviraj
       </button>
 
+      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="checkIn()">
+        CheckIn
+      </button>
+
       <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne' && this.extend == false" mat-stroked-button color="warn" class="btn btn-primary" (click)="Extend()">
         Produzi članarinu
       </button>
@@ -264,17 +251,11 @@
               <option value="Year">Godina</option>
             </select>
           </div>
-            <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary">
+            <button *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary">
               Produzi članarinu
             </button>
         </form>
       </div>
-
-      <button style="margin-left: 10%" *ngIf="model.isFrozen == 'Ne'" mat-stroked-button color="warn" class="btn btn-primary" (click)="checkIn()">
-        CheckIn
-      </button>
-
-     
     </div>
 
 </div>

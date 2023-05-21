@@ -20,7 +20,6 @@ public class GymUserCreateCommandValidator : AbstractValidator<GymUserCreateComm
            .NotEmpty().WithMessage("Prezime je obavezno polje");
 
         RuleFor(x => x.Type)
-            .NotNull().WithMessage("Tip je obavezno polje")
             .IsInEnum().WithMessage("Tip mora imati korektnu vrijednost");
     }
 }

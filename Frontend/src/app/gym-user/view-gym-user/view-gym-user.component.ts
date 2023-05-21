@@ -121,16 +121,21 @@ export class ViewGymUserComponent implements OnInit {
   Freez(){
       this.gymUserService.freeze(this.model.id ?? '').subscribe((response:any) =>{
         console.log(response);
-        window.location.reload();
+        const returnUrl ='/gym-user/all-gym-users';
+        this.router.navigateByUrl(returnUrl);
         this.alertService.success('Korisnik zamrznut!');
+        
       });
   }
 
   Activate(){
     this.gymUserService.Activate(this.model.id ?? '').subscribe((response:any) =>{
       console.log(response);
-      window.location.reload();
+      const returnUrl ='/gym-user/all-gym-users';
+      this.router.navigateByUrl(returnUrl);
       this.alertService.success('Korisnik Aktiviran');
+      // window.location.reload();
+      
     });;
   }
 
@@ -146,7 +151,7 @@ export class ViewGymUserComponent implements OnInit {
       type = 0
     }else if(type == 'Month'){
       type = 1
-    }else if(type == 'ThreeMonths'){
+    }else if(type == 'ThreeMonts'){
       type = 2
     }else if(type == 'HalfYear'){
       type = 3
@@ -156,7 +161,8 @@ export class ViewGymUserComponent implements OnInit {
 
     this.gymUserService.Extend(this.model.id ?? '', {'Type':type}).subscribe((response:any) =>{
       console.log(response);
-      window.location.reload();
+      const returnUrl ='/gym-user/all-gym-users';
+      this.router.navigateByUrl(returnUrl);
       this.alertService.success('Produzena clanarina!')
     });;
   }
@@ -223,7 +229,7 @@ export class ViewGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/checkIn-history/view-checkins-by-date';
               this.router.navigateByUrl(returnUrl);
-              this.alertService.success('Korisnik Checkinovan!')
+              this.alertService.success('Korisnik' + this.model.firstName +'evidentiran!')
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);

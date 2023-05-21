@@ -11,8 +11,6 @@ namespace Application.GymUser
                 .NotEmpty().WithMessage("Id je obavezan")
                 .Must(BeAValidGuid).WithMessage("Nevalidan UUID");
             RuleFor(x => x.Data.Type)
-                .NotEmpty().WithMessage("Tip is obavezno polje")
-                .NotNull().WithMessage("Tip is obavezno polje")
                 .IsInEnum().WithMessage("Tip mora imati korektnu vrijednost");
         }
 

@@ -75,7 +75,7 @@ export class AddGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/gym-user/all-gym-users';
               this.router.navigateByUrl(returnUrl);
-              this.alertService.success('Proslo');
+              this.alertService.success('Dodat novi korisnik!');
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);

@@ -1,19 +1,15 @@
+using Application.Common.Exceptions;
+using Application.Common.Models.BaseResult;
 using Application.Enums;
 using Application.GymUser;
-using Application.GymWorker;
-using Microsoft.AspNetCore.Mvc;
 using Application.GymUser.Dtos;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
-using Application.Common.Models.GymUser;
-using Application.Common.Exceptions;
-using System;
-using Application.Common.Models.BaseResult;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class GymUserController: ApiBaseController
+    public class GymUserController : ApiBaseController
     {
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] GymUserCreateCommand command)
@@ -26,12 +22,12 @@ namespace WebApi.Controllers
 
                 return BadRequest(gymUserResult.Error);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 if (exception is ValidationException)
                 {
                     string result = string.Join(". ", ((ValidationException)exception).Errors);
-                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation});
+                    return BadRequest(new Error { Message = result, Code = ExceptionType.Validation });
                 }
                 throw;
             }

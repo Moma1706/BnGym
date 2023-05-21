@@ -1,4 +1,4 @@
-input[type="date"]::-webkit-datetime-edit, input[type="date"]::-webkit-inner-spin-button, input[type="date"]::-webkit-clear-button {
+/* input[type="date"]::-webkit-datetime-edit, input[type="date"]::-webkit-inner-spin-button, input[type="date"]::-webkit-clear-button {
     color: #fff;
     position: relative;
   }
@@ -26,4 +26,4 @@ input[type="date"]::-webkit-datetime-edit, input[type="date"]::-webkit-inner-spi
     padding: 2px;
     left: 4px;
     
-  }
+  } */

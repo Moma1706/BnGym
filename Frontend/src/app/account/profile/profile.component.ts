@@ -123,7 +123,9 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           console.log(response);
-          window.location.reload();
+          this.alertService.success('Promijenjna lozinka!');
+          this.changePasswordVisible = false;
+
         },
         error: (error : HttpErrorResponse) => {
           this.alertService.error(error.error.message);

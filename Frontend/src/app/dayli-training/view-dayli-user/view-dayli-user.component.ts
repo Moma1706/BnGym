@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
+import { first } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-view-dayli-user',
@@ -68,10 +70,24 @@ export class ViewDayliUserComponent implements OnInit {
   }
 
   addArrival(){
-    this.dayliService.addArrival(this.model.id).subscribe((response:any) =>{
-      console.log(response);
-      window.location.reload();
-      this.alertservice.success("Dodat novi dolazak!")
-    })
+    // this.dayliService.addArrival(this.model.id).subscribe((response:any) =>{
+    //   console.log(response);
+    //   window.location.reload();
+    //   this.alertservice.success("Dodat novi dolazak!")
+    // })
+
+    this.dayliService.addArrival(this.model.id)
+    .pipe(first())
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.alertservice.success('Evidentiran dolazak za korisnika:' + this.model.firstname +'!');
+
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertservice.error(error.error.message);
+          this.loading = false;
+        }
+      })
   }
 }

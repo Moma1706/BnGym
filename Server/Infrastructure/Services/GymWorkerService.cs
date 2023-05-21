@@ -144,13 +144,13 @@ namespace Infrastructure.Services
             var sendMail = false;
             var user = await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (user == null)
-                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji!" });
 
             if (data.Email is string && data.Email.ToLower() != user.Email)
             {
                 var email = data.Email.ToLower();
                 if (await _userManager.FindByEmailAsync(email) != null)
-                    return GymWorkerResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
+                    return GymWorkerResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "Korisnik sa navedenim emailom već postoji!" });
 
                 user.Email = email;
                 user.UserName = email;
@@ -164,7 +164,7 @@ namespace Infrastructure.Services
             var registerResult = await _userManager.UpdateAsync(user);
 
             if (!registerResult.Succeeded)
-                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym worker" });
+                return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nije moguće ažurirati korisnika. " + registerResult.Errors });
 
             if (sendMail)
                 _emailService.SendConfirmationEmailAsync(user.Email);

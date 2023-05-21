@@ -69,7 +69,7 @@ export class AddDayliTrainingComponent implements OnInit {
                     this.alertService.success('Dodat dnevni korisnik!')
                 },
                 error: (error : HttpErrorResponse) => {
-                  this.alertService.error(error.error.error);
+                  this.alertService.error(error.error.message);
                   this.loading = false;
               }
             });

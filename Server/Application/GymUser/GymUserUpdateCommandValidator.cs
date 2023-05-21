@@ -19,7 +19,6 @@ namespace Application.GymUser
                .NotEmpty().WithMessage("Prezime je obavezno polje");
 
             RuleFor(x => x.Data.Type)
-                .NotNull().WithMessage("Tip je obavezno polje")
                 .IsInEnum().WithMessage("Tip mora imati korektnu vrijednost");
 
             RuleFor(x => x.Id)
