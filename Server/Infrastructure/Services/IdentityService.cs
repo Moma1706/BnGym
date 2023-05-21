@@ -49,17 +49,17 @@ namespace Infrastructure.Identity
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                return Result.Failure("Invalid username or password");
+                return Result.Failure("Pogrešan email ili lozinka");
 
             if (!user.EmailConfirmed)
-                return Result.Failure("E-mail not confirmed");
+                return Result.Failure("Email nije potvrdjen");
 
             var userRole = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             if (userRole.RoleId != Convert.ToInt32(UserRole.Admin))
-                return Result.Failure("Invalid user role");
+                return Result.Failure("Nevalida rola");
 
             if (user.IsBlocked)
-                return Result.Failure("User is blocked");
+                return Result.Failure("Korisnik je blokiran");
 
             var role = _dbContext.Roles.Where(x => x.Id == userRole.RoleId).FirstOrDefault();
 
@@ -78,14 +78,14 @@ namespace Infrastructure.Identity
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
-                return Result.Failure("Invalid username or password");
+                return Result.Failure("Pogrešan email ili lozinka");
 
             if (!user.EmailConfirmed)
-                return Result.Failure("E-mail not confirmed");
+                return Result.Failure("Email nije potvrdjen");
 
             var role = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             if (role.RoleId != Convert.ToInt32(UserRole.RegularUser))
-                return Result.Failure("Invalid user role");
+                return Result.Failure("Nevalidna rola");
 
             //var role1 = _dbContext.Roles.Where(x => x.Id == role.RoleId).FirstOrDefault();
 
@@ -104,7 +104,7 @@ namespace Infrastructure.Identity
         public async Task<RegisterResult> Register(string email, string firstName, string lastName, string address)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
-                return RegisterResult.Failure("User with given E-mail already exist");
+                return RegisterResult.Failure("Korisnik sa navedenim email-om već postoji");
 
             var user = new User
             {
@@ -173,14 +173,14 @@ namespace Infrastructure.Identity
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
-                return Result.Failure("There was an error while processing reset password");
+                return Result.Failure("Desila se greška prilikom procesiranja reset password poziva");
 
             var resetPasswordResult = await _userManager.ResetPasswordAsync(user, token, password);
 
             if (resetPasswordResult.Succeeded)
                 return Result.Successful();
             else
-                return Result.Failure("There was error during password reset request");
+                return Result.Failure("Desila se greška prilikom procesiranja reset password poziva");
         }
 
         public async Task<Result> GenerateTokenForIdentityPurpose(string email, TokenPurpose purpose)
@@ -188,7 +188,7 @@ namespace Infrastructure.Identity
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
-                return Result.Failure("There was an error while processing token request");
+                return Result.Failure("Desila se greška prilikom procesiranja token zahtijeva");
 
             string token = string.Empty;
 
@@ -210,11 +210,11 @@ namespace Infrastructure.Identity
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
-                return Result.Failure("User does not exist");
+                return Result.Failure("Korisnik sa proslijedjenim id ne postoji");
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (!result.Succeeded)
-                return Result.Failure("Unable to change password."); // TODO: Vratiti bolju gresku
+                return Result.Failure("Nije moguće promijeniti šifru. " + result.Errors);
 
             return Result.Successful();
         }
