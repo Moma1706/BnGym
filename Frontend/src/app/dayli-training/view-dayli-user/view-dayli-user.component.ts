@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/_services/alert.service';
 
 @Component({
   selector: 'app-view-dayli-user',
@@ -20,7 +21,7 @@ export class ViewDayliUserComponent implements OnInit {
   submitted: boolean = false;
   loading: boolean = false;
 
-  constructor(private route: ActivatedRoute, private dayliService: DayliTrainingService, private formBuilder: FormBuilder, private router: Router) { 
+  constructor(private route: ActivatedRoute, private dayliService: DayliTrainingService, private formBuilder: FormBuilder, private router: Router, private alertservice: AlertService) { 
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
     });
@@ -44,7 +45,6 @@ export class ViewDayliUserComponent implements OnInit {
   getUser(id : string)
   {
     this.dayliService.getTraining(id).subscribe((response:any) =>{
-
       this.model = response;
       console.log(this.model);
     })
@@ -63,6 +63,7 @@ export class ViewDayliUserComponent implements OnInit {
     this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
       window.location.reload();
       console.log(response);
+      this.alertservice.success("Profil korisnika promenjen!")
     })
   }
 
@@ -70,6 +71,7 @@ export class ViewDayliUserComponent implements OnInit {
     this.dayliService.addArrival(this.model.id).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
+      this.alertservice.success("Dodat novi dolazak!")
     })
   }
 }

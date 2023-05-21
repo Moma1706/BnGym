@@ -122,6 +122,7 @@ export class ViewGymUserComponent implements OnInit {
       this.gymUserService.freeze(this.model.id ?? '').subscribe((response:any) =>{
         console.log(response);
         window.location.reload();
+        this.alertService.success('Korisnik zamrznut!');
       });
   }
 
@@ -129,6 +130,7 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.Activate(this.model.id ?? '').subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
+      this.alertService.success('Korisnik Aktiviran');
     });;
   }
 
@@ -155,6 +157,7 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.Extend(this.model.id ?? '', {'Type':type}).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
+      this.alertService.success('Produzena clanarina!')
     });;
   }
 
@@ -198,6 +201,7 @@ export class ViewGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/gym-user/all-gym-users';
               this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Korisnikov profil promenjen!')
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);
@@ -219,6 +223,7 @@ export class ViewGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/checkIn-history/view-checkins-by-date';
               this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Korisnik Checkinovan!')
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);

@@ -75,11 +75,13 @@ export class AddGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/gym-user/all-gym-users';
               this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Proslo');
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);
             this.loading = false;
-        }
+          }
+          
       });
   }
 }
