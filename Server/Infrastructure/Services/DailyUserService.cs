@@ -39,7 +39,7 @@ namespace Infrastructure.Identity
                 x.FirstName.ToLower() == firstName.ToLower() && x.LastName.ToLower() == lastName.ToLower() && x.DateOfBirth.Date == dateOfBirth.Date);
 
             if (dailyUser != null)
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "User already exists" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "Korisnik sa navedenim imenom, prezimenom i datumom rodjenja već postoji" });
 
             var newDailyUser = new DailyUser
             {
@@ -66,10 +66,10 @@ namespace Infrastructure.Identity
                 transaction.Commit();
                 return DailyUserResult.Sucessfull();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
                 transaction.Rollback();
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCreate, Message = "Unable to add daily training" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCreate, Message = "Nije moguće sačuvati korisnika. " + exc.Message });
             }
         }
 
@@ -156,7 +156,7 @@ namespace Infrastructure.Identity
             {
                 var dailyUser = await _dbContext.DailyUser.FirstOrDefaultAsync((x) => x.Id == id);
                 if (dailyUser == null)
-                    return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Daily user does not exist" });
+                    return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
                 dailyUser.FirstName = data.FirstName ?? dailyUser.FirstName;
                 dailyUser.LastName = data.LastName ?? dailyUser.LastName;
@@ -165,7 +165,7 @@ namespace Infrastructure.Identity
                     var uniqueUser = _dbContext.DailyUser.Count((x) =>
                         x.FirstName.ToLower() == dailyUser.FirstName.ToLower() && x.LastName.ToLower() == dailyUser.LastName.ToLower() && x.DateOfBirth.Date == data.DateOfBirth.Date);
                     if (uniqueUser > 0)
-                        return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "User already exists" });
+                        return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityAlreadyExists, Message = "Korisnik sa navedemin imenom, prezimenom i datumom rodjenja već postoji" });
 
                     dailyUser.DateOfBirth = data.DateOfBirth;
                 }
@@ -176,9 +176,9 @@ namespace Infrastructure.Identity
 
                 return DailyUserResult.Sucessfull();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Unable to update daily user" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nije moguće ažurirati korisnika. " + exc.Message });
             }
         }
 
@@ -186,10 +186,10 @@ namespace Infrastructure.Identity
         {
             var dailyUser = await _dbContext.DailyUser.FirstOrDefaultAsync((x) => x.Id == id);
             if (dailyUser == null)
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Daily user does not exist" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             if (dailyUser.LastCheckIn.Date == _dateTimeService.Now.Date)
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Daily user can't access gym two times a day" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
 
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -208,10 +208,10 @@ namespace Infrastructure.Identity
                 transaction.Commit();
                 return DailyUserResult.Sucessfull();
 
-            } catch (Exception)
+            } catch (Exception exc)
             {
                 transaction.Rollback();
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Unable to add check in value" });
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Nije moguće evidentirati dolazak. " + exc.Message});
             }
         }
 
@@ -219,7 +219,7 @@ namespace Infrastructure.Identity
         {
             var dailyUser = await _dbContext.DailyUserView.FirstOrDefaultAsync((x) => x.Id == id);
             if (dailyUser == null)
-                return DailyUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Daily user does not exist" });
+                return DailyUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             return DailyUserGetResult.Sucessfull(
                 dailyUser.Id,

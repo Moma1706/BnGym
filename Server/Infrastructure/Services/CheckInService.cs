@@ -28,27 +28,29 @@ namespace Infrastructure.Identity
         {
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
             if (gymUser == null)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym korisnik sa proslijedjenim id ne postoji" });
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == gymUser.UserId);
             if (user == null)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User doesn't exist" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
+
             if (gymUser.IsFrozen)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has a frozen membership" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je zaledjen" });
 
             if (gymUser.IsInActive)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnik je neaktivan" });
 
             if (user.IsBlocked)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "GymUser with provided id is blocked" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "Korisnik je blokiran" });
 
             if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "GymUser with provided id can't access gym two times a day" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
 
             if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
-                return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "GymUser with provided id has a membership that has expired" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisniku je istekla članarina" });
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
 
@@ -66,10 +68,10 @@ namespace Infrastructure.Identity
 
                 transaction.Commit();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
                 transaction.Rollback();
-                return CheckInResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Unable to add check in value" });
+                return CheckInResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Nije moguće evidentirati dolazak. " + exc.Message });
             }
 
             return CheckInResult.Sucessfull(checkIn.Id, checkIn.GymUserId, checkIn.TimeStamp);

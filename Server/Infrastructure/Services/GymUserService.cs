@@ -112,10 +112,10 @@ namespace Infrastructure.Services
                     0,
                     0);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
                 transaction.Rollback();
-                return GymUserGetResult.Failure( new Error { Code = ExceptionType.UnableToCreate, Message = "Faild to save gym user" });
+                return GymUserGetResult.Failure( new Error { Code = ExceptionType.UnableToCreate, Message = "Nije moguće sačuvati korisnika. " + exc.Message });
             }
         }
 
@@ -124,10 +124,10 @@ namespace Infrastructure.Services
             // samo aktiviramo, pa on neka se cekira
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             if (!gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has not a frozen membership" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već aktivan" });
 
             // izracunati koliko dana mu je ostalo
             var currentDate = _dateTimeService.Now.Date;
@@ -189,10 +189,10 @@ namespace Infrastructure.Services
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
 
             if (gymUser == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user has a frozen membership" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Nije moguće produžiti članarinu. Korisnikov status: ZALEDJEN" });
 
 
             var expiresOn = _dateTimeService.Now;
@@ -230,17 +230,18 @@ namespace Infrastructure.Services
         {
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
             if (gymUser.IsFrozen)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Gym user already has a frozen membership" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već zaledjen" });
 
             if (gymUser.IsInActive)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Gym user is inactive" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnikova članarina je istekla" });
 
             if (gymUser.ExpiresOn < _dateTimeService.Now)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Gym user's membership has expired" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisnikova članarina je istekla" });
 
             gymUser.IsFrozen = true;
             gymUser.FreezeDate = _dateTimeService.Now;
@@ -253,7 +254,8 @@ namespace Infrastructure.Services
 
         public async Task<GymUserResult> FreezAllMemberships()
         {
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
 
             var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == false && x.IsInActive == false && x.ExpiresOn > _dateTimeService.Now).ToListAsync();
             if (gymUsers.Count() == 0)
@@ -318,9 +320,10 @@ namespace Infrastructure.Services
         {
             var gymUser = await _dbContext.GymUserView.Where(x => x.UserId == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
 
             return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
                 gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
@@ -334,9 +337,10 @@ namespace Infrastructure.Services
         {
             var gymUser = await _dbContext.GymUserView.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
 
             return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
                 gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
@@ -351,19 +355,20 @@ namespace Infrastructure.Services
             var sendMail = false;
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
             if (user == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
 
             if (data.Email is string && data.Email.ToLower() != user.Email)
             {
                 var email = data.Email.ToLower();
                 if (await _userManager.FindByEmailAsync(email) != null)
-                    return GymUserResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "Korisnik sa navedenim email-om već postoji" });
 
                 user.Email = email;
                 user.UserName = email;
@@ -378,7 +383,7 @@ namespace Infrastructure.Services
             if (data.Type != gymUser.Type)
             {
                 if (gymUser.IsInActive || gymUser.IsFrozen)
-                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Gym user is inactive or frozen" });
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Korisnik je zaledjen ili mu je istekla članarina" });
 
                 var dateOfPayment = _dateTimeService.Now;
                 var gymUserExpiresOn = gymUser.ExpiresOn;
@@ -432,7 +437,7 @@ namespace Infrastructure.Services
                 gymUser.ExpiresOn = expiresOn;
 
                 if (_dateTimeService.Now > expiresOn)
-                    return GymUserResult.Failure(new Error { Code = ExceptionType.InvalidGymUserType, Message = "Fail to update gym user. Inalid type" });
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.InvalidGymUserType, Message = "Nemoguće ažurirati korisnika. Nevalidan tip članarine" });
             }
             using var transaction = _dbContext.Database.BeginTransaction();
             try
@@ -440,7 +445,7 @@ namespace Infrastructure.Services
                 var registerResult = await _userManager.UpdateAsync(user);
 
                 if (!registerResult.Succeeded)
-                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym user" });
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nemoguće ažurirati korisnika" });
 
                 _dbContext.Update(gymUser);
                 await _dbContext.SaveChangesAsync();
@@ -451,10 +456,10 @@ namespace Infrastructure.Services
 
                 return GymUserResult.Sucessfull();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
                 transaction.Rollback();
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym user" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nemoguće ažurirati korisnika. " + exc.Message });
             }
         }
 
@@ -463,17 +468,17 @@ namespace Infrastructure.Services
             var sendMail = false;
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
-                GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym user with provided id does not exist" });
+                GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
             var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
             if (user == null)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "User does not exist" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
 
             if (data.Email is string && data.Email.ToLower() != user.Email)
             {
                 var email = data.Email.ToLower();
                 if (await _userManager.FindByEmailAsync(email) != null)
-                    return GymUserResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "User with given E-mail already exist" });
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.EmailAlredyExists, Message = "Korisnik sa navedenim email-om već postoji" });
 
                 user.Email = email;
                 user.UserName = email;
@@ -487,7 +492,7 @@ namespace Infrastructure.Services
 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
-                return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Fail to update gym user" });
+                return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nije moguće ažurirati korisnika" });
 
             if (sendMail)
                 _emailService.SendConfirmationEmailAsync(user.Email);
