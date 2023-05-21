@@ -283,9 +283,13 @@ namespace Infrastructure.Services
             var query = _dbContext.GymUserView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
 
             if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
-                query = query.OrderBy(x => x.ExpiresOn);
+                query = query.OrderBy(x => x.ExpiresOn)
+                    .ThenByDescending(x => x.NumberOfArrivalsLastMonth)
+                    .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth);
             else
-                query = query.OrderByDescending(x => x.ExpiresOn);
+                query = query.OrderByDescending(x => x.ExpiresOn)
+                    .ThenByDescending(x => x.NumberOfArrivalsLastMonth)
+                    .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth);
 
             var list = query.ToList().Skip(page * pageSize).Take(pageSize).ToList();
 
