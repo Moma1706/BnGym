@@ -1,8 +1,11 @@
 import { GymUserService } from './../../_services/gym-user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CheckInService } from 'src/app/_services/check-in.service';
+import { first } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AlertService } from 'src/app/_services/alert.service';
 
 @Component({
   selector: 'app-view-gym-user',
@@ -21,9 +24,10 @@ export class ViewGymUserComponent implements OnInit {
   loading: boolean = false;
   extend: boolean = false;
   formExtend: FormGroup;
+  index: number = 0;
 
 
-  constructor(private route: ActivatedRoute, private gymUserService: GymUserService, private formBuilder: FormBuilder,private formBuilder1: FormBuilder, private checkInService: CheckInService) {
+  constructor(private route: ActivatedRoute,private router:Router, private gymUserService: GymUserService,private alertService:AlertService, private formBuilder: FormBuilder,private formBuilder1: FormBuilder, private checkInService: CheckInService) {
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
     });
@@ -59,6 +63,7 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.getUser(id).subscribe((response:any) =>{
 
       this.model = response;
+      console.log(this.model);
 
       let ExpiresOn: string = this.model.expiresOn.toString();
       this.splited = ExpiresOn.split("T",2);
@@ -68,7 +73,7 @@ export class ViewGymUserComponent implements OnInit {
       this.splited = lastCheckin.split("T",2);
       this.model.lastCheckIn = this.splited[0];
 
-      if(this.model.lastCheckIn == "0001-01-01"){
+      if(this.model.lastCheckIn == "0001-01-01" || this.model.lastCheckIn === "null"){
         this.model.lastCheckIn = "Nema ni jedan dolazak..."
       }
 
@@ -90,16 +95,23 @@ export class ViewGymUserComponent implements OnInit {
         this.model.isInactive = 'Ne';
       }
 
-      if(this.model.userType == 0){
-        this.model.userType = 'Pola mjeseca'
-      }else if(this.model.userType == 1){
-        this.model.userType = 'Mjesec dana'
-      }else if(this.model.userType == 2){
-        this.model.userType = 'Tri mjeseca'
-      }else if(this.model.userType == 3){
-        this.model.userType = 'Pola godine'
+      console.log(this.model.userType);
+
+      if(this.model.type == 0){
+        this.model.type = 'Pola mjeseca';
+        this.index = 0;
+      }else if(this.model.type == 1){
+        this.model.type = 'Mjesec dana';
+        this.index = 1;
+      }else if(this.model.type == 2){
+        this.model.type = 'Tri mjeseca';
+        this.index = 2;
+      }else if(this.model.type == 3){
+        this.model.type = 'Pola godine';
+        this.index = 3;
       }else {
-        this.model.userType = 'Godinu dana'
+        this.model.type = 'Godinu dana';
+        this.index = 4;
       }
 
       console.log(this.model);
@@ -110,6 +122,7 @@ export class ViewGymUserComponent implements OnInit {
       this.gymUserService.freeze(this.model.id ?? '').subscribe((response:any) =>{
         console.log(response);
         window.location.reload();
+        this.alertService.success('Korisnik zamrznut!');
       });
   }
 
@@ -117,6 +130,7 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.Activate(this.model.id ?? '').subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
+      this.alertService.success('Korisnik Aktiviran');
     });;
   }
 
@@ -143,6 +157,7 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.Extend(this.model.id ?? '', {'Type':type}).subscribe((response:any) =>{
       console.log(response);
       window.location.reload();
+      this.alertService.success('Produzena clanarina!')
     });;
   }
 
@@ -159,30 +174,62 @@ export class ViewGymUserComponent implements OnInit {
     if(this.f['address'].value != ''){
       this.model.address=this.f['address'].value;
     }
-
-    if(this.model.userType == 'Pola mjeseca'){
-      this.model.userType = 0
-    }else if(this.model == 'mjesec dana'){
-      this.model.userType = 1
-    }else if(this.model.userType == 'Tri mjeseca'){
-      this.model.userType = 2
-    }else if(this.model.userType == 'Pola Godine'){
-      this.model.userType = 3
-    }else {
-      this.model.userType = 4
+    if(this.f['userType'].value !=''){
+      this.model.type = this.f['userType'].value;
     }
 
-    this.gymUserService.Update(this.model.id?? '', this.model).subscribe((response:any)=>{
-      console.log(response);
-      window.location.reload();
-    });
+    if(this.model.type == 'HalfMonth'){
+      this.model.type = 0
+    }else if(this.model.type == 'Month'){
+      this.model.type = 1
+    }else if(this.model.type == 'ThreeMonts'){
+      this.model.type = 2
+    }else if(this.model.type == 'HalfYear'){
+      this.model.type = 3
+    }else {
+      this.model.type = 4
+    }
+
+    // this.gymUserService.Update(this.model.id?? '', this.model).subscribe((response:any)=>{
+    //   console.log(response);
+    //   window.location.reload();
+    // });
+
+    this.gymUserService.Update(this.model.id?? '', this.model)
+    .pipe(first())
+      .subscribe({
+          next: () => {
+              const returnUrl ='/gym-user/all-gym-users';
+              this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Korisnikov profil promenjen!')
+          },
+          error: (error : HttpErrorResponse) => {
+            this.alertService.error(error.error.message);
+            this.loading = false;
+        }
+      });
   }
 
   checkIn(){
-  this.checkInService.checkIn(this.model.id).subscribe((response:any)=>{
-    console.log(response);
-    window.location.reload();
-  });
+
+  // this.checkInService.checkIn(this.model.id).subscribe((response:any)=>{
+  //   console.log(response);
+  //   window.location.reload();
+  // });
+
+  this.checkInService.checkIn(this.model.id)
+    .pipe(first())
+      .subscribe({
+          next: () => {
+              const returnUrl ='/checkIn-history/view-checkins-by-date';
+              this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Korisnik Checkinovan!')
+          },
+          error: (error : HttpErrorResponse) => {
+            this.alertService.error(error.error.message);
+            this.loading = false;
+        }
+      });
     
   }
 }

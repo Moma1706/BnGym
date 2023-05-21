@@ -1,15 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AlertService } from 'src/app/_services/alert.service';
 import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
+import {formatDate} from '@angular/common'
 
 @Component({
   selector: 'app-add-dayli-training',
   templateUrl: './add-dayli-training.component.html',
   styleUrls: ['./add-dayli-training.component.css']
+  
 })
 export class AddDayliTrainingComponent implements OnInit {
 
@@ -34,7 +37,7 @@ export class AddDayliTrainingComponent implements OnInit {
     this.form = this.formBuilder.group({
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
-      dateOfBirth: ['', Validators.required]
+      dateOfBirth: [formatDate(new Date(), "dd/MM/yyyy", 'en'), Validators.required]
     });
   }
 
@@ -63,6 +66,7 @@ export class AddDayliTrainingComponent implements OnInit {
                     // get return url from query parameters or default to home page
                     const returnUrl ='/dayli-training/view-all-dayli';
                     this.router.navigateByUrl(returnUrl);
+                    this.alertService.success('Dodat dnevni korisnik!')
                 },
                 error: (error : HttpErrorResponse) => {
                   this.alertService.error(error.error.error);

@@ -1,9 +1,12 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { JwtHelperService, JWT_OPTIONS} from '@auth0/angular-jwt';
 import jwt_decode from 'jwt-decode';
+import { first } from 'rxjs';
 import { AccountService } from 'src/app/_services/account.service';
+import { AlertService } from 'src/app/_services/alert.service';
 import { GymWorkerService } from 'src/app/_services/gym-worker.service';
 import { UserService } from 'src/app/_services/user.service';
 
@@ -41,6 +44,7 @@ export class ProfileComponent implements OnInit {
     private userService: UserService, 
     private formBuilder: FormBuilder,
     private gymWorkerService: GymWorkerService,
+    private alertService: AlertService,
     private accountService: AccountService) {
   }
 
@@ -54,6 +58,15 @@ export class ProfileComponent implements OnInit {
       console.log(response);
       this.model = response;
     });
+  }
+
+  onSubmit() {
+    this.submitted = true;
+    this.alertService.clear();
+    // stop here if form is invalid
+    if (this.form.invalid) {
+      return;
+    }
   }
 
   get f() { return this.form.controls; }
@@ -71,9 +84,21 @@ export class ProfileComponent implements OnInit {
     this.model.email=this.f['email'].value;
     }
     
-    this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
-      console.log(response);
-    })
+    // this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
+    //   console.log(response);
+    // })
+
+    this.gymWorkerService.update(this.model.id, this.model)
+    .pipe(first())
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertService.error(error.error.message);
+          this.loading = false;
+        }
+      })
   }
 
   changePasswordVisibleEnable(){
@@ -91,25 +116,20 @@ export class ProfileComponent implements OnInit {
     if(this.g['confirmNewPassword'].value != ''){
       this.changePasswordModel.confirmNewPassword=this.g['confirmNewPassword'].value;
     }
-    // checkPasswordMatch();
     this.changePasswordModel.id = this.model.id;
 
-    this.accountService.changePassword(this.changePasswordModel).subscribe((response:any) =>{
-      console.log(response);
-      window.location.reload();
-    })
+    this.accountService.changePassword(this.changePasswordModel)
+    .pipe(first())
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          window.location.reload();
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertService.error(error.error.message);
+          this.loading = false;
+        }
+      })
   }
 
-  // checkPasswordMatch(): void {
-  //   const changePasswordBtn = document.querySelector('button[type="submit"]');
-  //   if (this.changePasswordModel.newPassword === this.changePasswordModel.confirmNewPassword) {
-  //     changePasswordBtn.removeAttribute('disabled');
-  //   } else {
-  //     changePasswordBtn.setAttribute('disabled', 'true');
-  //   }
-  // }
-
-  // passwordsMatch(): boolean {
-  //   return this.newPassword === this.confirmPassword;
-  // }
 }

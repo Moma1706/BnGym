@@ -9,9 +9,9 @@ const routes: Routes = [
     {
         path: '', component: GymWorkerComponent,
         children: [
-            { path: 'add-gym-worker', component: AddGymWorkerComponent },
-            { path: 'all-gym-workers', component: AllGymWorkersComponent },
-            { path: 'view-gym-worker/:id', component: ViewGymWorkerComponent },
+            // { path: 'add-gym-worker', component: AddGymWorkerComponent },
+            // { path: 'all-gym-workers', component: AllGymWorkersComponent },
+            // { path: 'view-gym-worker/:id', component: ViewGymWorkerComponent },
 
         ]
     }

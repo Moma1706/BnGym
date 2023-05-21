@@ -73,14 +73,15 @@ export class AddGymUserComponent implements OnInit {
     .pipe(first())
       .subscribe({
           next: () => {
-              // get return url from query parameters or default to home page
               const returnUrl ='/gym-user/all-gym-users';
               this.router.navigateByUrl(returnUrl);
+              this.alertService.success('Proslo');
           },
           error: (error : HttpErrorResponse) => {
-            this.alertService.error(error.error.error);
+            this.alertService.error(error.error.message);
             this.loading = false;
-        }
+          }
+          
       });
   }
 }

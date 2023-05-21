@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
     }
 ];
   constructor() {
-    //setInterval(() => this.toggleImages(), 5000);
   }
 
   ngOnInit() {
