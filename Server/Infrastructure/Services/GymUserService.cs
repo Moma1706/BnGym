@@ -232,7 +232,8 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
             if (gymUser.IsFrozen)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već zaledjen" });
 
@@ -253,7 +254,8 @@ namespace Infrastructure.Services
 
         public async Task<GymUserResult> FreezAllMemberships()
         {
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
 
             var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == false && x.IsInActive == false && x.ExpiresOn > _dateTimeService.Now).ToListAsync();
             if (gymUsers.Count() == 0)
@@ -320,7 +322,8 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
 
             return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
                 gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
@@ -336,7 +339,8 @@ namespace Infrastructure.Services
             if (gymUser == null)
                 return GymUserGetResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(gymUser.UserId);
 
             return GymUserGetResult.Sucessfull(gymUser.Id, gymUser.UserId, gymUser.FirstName, gymUser.LastName, gymUser.Email, gymUser.ExpiresOn, gymUser.IsBlocked, gymUser.IsFrozen,
                 gymUser.FreezeDate == DateTime.MinValue ? "null" : gymUser.FreezeDate.ToString(),
@@ -357,7 +361,8 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
 
             if (data.Email is string && data.Email.ToLower() != user.Email)
             {

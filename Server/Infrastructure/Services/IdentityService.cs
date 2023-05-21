@@ -67,8 +67,10 @@ namespace Infrastructure.Identity
             claims.Add(new Claim(ClaimTypes.Role, role.Name));
             var token = GenerateJwtForUser(user, claims);
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate();
-            //var clearResult = await _maintenanceService.ClearCheckIns();
+            // Check expiration date
+            var maintenanceResult = await _maintenanceService.CheckExpirationDate();
+            // Clear history
+            var clearResult = await _maintenanceService.ClearCheckIns();
 
             return Result.Successful(token);
         }
@@ -94,9 +96,9 @@ namespace Infrastructure.Identity
 
             //var token = GenerateJwtForUser(user, claims);
 
-            //var maintenanceResult = await _maintenanceService.CheckExpirationDate(id);
 
             var regularUser = _dbContext.GymUsers.Where(x => x.UserId == user.Id).FirstOrDefault();
+            // Check expiration date
             var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
             return Result.Successful(regularUser.Id, regularUser.UserId);
         }
