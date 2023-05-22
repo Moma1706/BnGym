@@ -27,12 +27,12 @@
       <mat-header-cell *matHeaderCellDef> Prezime </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.lastName}} </mat-cell>
     </ng-container>
-    
+
     <ng-container matColumnDef="email">
       <mat-header-cell *matHeaderCellDef > Email </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
     </ng-container>
-    
+
     <ng-container matColumnDef="isInactive">
       <mat-header-cell *matHeaderCellDef> Aktivan </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.isInactive ? 'Ne' : 'Da'}} </mat-cell>
@@ -44,17 +44,17 @@
     </ng-container>
 
     <ng-container matColumnDef="expiresOn">
-      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord()"> Članarina Ističe </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('')"> Članarina Ističe </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.expiresOn | date: 'dd/MM/yyyy'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsCurrentMonth">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Broj dolazaka ovog meseca </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsCurrentMonth')"> Broj dolazaka ovog meseca </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.numberOfArrivalsCurrentMonth}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsLastMonth">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Broj dolazaka proslog meseca </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsLastMonth')"> Broj dolazaka proslog meseca </mat-header-cell>
       <<mat-cell *matCellDef="let row"> {{row.numberOfArrivalsLastMonth}} </mat-cell>
     </ng-container>
 
