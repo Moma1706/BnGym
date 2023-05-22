@@ -14,6 +14,7 @@ namespace Application.GymUser
         public int PageSize { get; set; } = 10;
 
         public SortOrder SortOrder { get; set; } = SortOrder.Ascending;
+        public string SortParam { get; set; }
     }
 
     public class GymUserGetAllCommandHandler : IRequestHandler<GymUserGetAllCommand, PageResult<GymUserGetResult>>
@@ -22,11 +23,7 @@ namespace Application.GymUser
 
         public GymUserGetAllCommandHandler(IGymUserService gymUserService) => _gymUserService = gymUserService;
 
-        public async Task<PageResult<GymUserGetResult>> Handle(GymUserGetAllCommand request, CancellationToken cancellationToken)
-        {
-            var gymUsersResult = await _gymUserService.GetAll(request.SearchString, request.Page, request.PageSize, request.SortOrder);
-            return gymUsersResult;
-        }
-
+        public async Task<PageResult<GymUserGetResult>> Handle(GymUserGetAllCommand request, CancellationToken cancellationToken) =>
+            await _gymUserService.GetAll(request.SearchString, request.Page, request.PageSize, request.SortOrder, request.SortParam);
     }
 }
