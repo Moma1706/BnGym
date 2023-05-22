@@ -38,7 +38,8 @@ export class ViewDayliUserComponent implements OnInit {
       lastname: ['', Validators.required],
       mberOfArrivalsCurrentMonth: ['', Validators.required],
       mberOfArrivalsLastMonth: ['', Validators.required],
-      dateOfBirth: ['', Validators.required]
+      dateOfBirth: ['', Validators.required],
+      lastCheckIn: ['', Validators.required]
     });
   }
 
@@ -48,6 +49,17 @@ export class ViewDayliUserComponent implements OnInit {
   {
     this.dayliService.getTraining(id).subscribe((response:any) =>{
       this.model = response;
+
+      let newBirthDate = new Date(this.model.dateOfBirth);
+      this.model.dateOfBirth = newBirthDate.toLocaleDateString();
+
+      let newDate = new Date(this.model.lastCheckIn);
+      const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
+      const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
+      let isoDateString = adjustedDate.toLocaleString();
+
+      this.model.lastCheckIn = isoDateString;
+
       console.log(this.model);
     })
   }
@@ -70,17 +82,14 @@ export class ViewDayliUserComponent implements OnInit {
   }
 
   addArrival(){
-    // this.dayliService.addArrival(this.model.id).subscribe((response:any) =>{
-    //   console.log(response);
-    //   window.location.reload();
-    //   this.alertservice.success("Dodat novi dolazak!")
-    // })
 
     this.dayliService.addArrival(this.model.id)
     .pipe(first())
       .subscribe({
         next: (response: any) => {
           console.log(response);
+          const returnUrl ='/checkIn-history/view-checkins-by-date';
+          this.router.navigateByUrl(returnUrl)
           this.alertservice.success('Evidentiran dolazak za korisnika:' + this.model.firstname +'!');
 
         },

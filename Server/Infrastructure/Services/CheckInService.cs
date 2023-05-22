@@ -24,6 +24,7 @@ namespace Infrastructure.Identity
             _dbContext = dbContext;
             _maintenanceService = maintenanceService;
         }
+
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
@@ -85,13 +86,12 @@ namespace Infrastructure.Identity
 
             var query = _dbContext.CheckInHistoryView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? "") && x.CheckInDate.Date == date.Date);
 
-
             if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
                 query = query.OrderBy(x => x.FirstName);
             else
                 query = query.OrderByDescending(x => x.FirstName);
 
-             var list = query.Skip(page * pageSize).Take(pageSize).ToList();
+            var list = query.Skip(page * pageSize).Take(pageSize).ToList();
 
             return new PageResult<CheckInGetResult>
             {

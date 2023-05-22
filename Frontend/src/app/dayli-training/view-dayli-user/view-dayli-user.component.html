@@ -65,6 +65,25 @@
     <div style="width: 700px">
       <div>
         <span
+          >Poslednje prijavljivanje</span
+        >
+      </div>
+      <input
+        formControlName="lastCheckIn"
+        type="text"
+        class="form-control"
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        value={{model.lastCheckIn}}
+        [ngClass]="{ 'is-invalid': submitted && f['lastCheckIn'].errors }"
+        required
+        readonly
+      />
+    </div>
+
+    <div style="width: 700px">
+      <div>
+        <span
           >Broj dolazaka ovog mjeseca</span
         >
       </div>
