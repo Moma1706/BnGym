@@ -102,9 +102,7 @@
   </form>
     <div style="width: 700px">
       <div>
-        <span
-          >Članarina ističe</span
-        >
+        <span>Članarina ističe</span >
       </div>
       <input
         type="text"
@@ -135,9 +133,7 @@
 
     <div style="width: 700px">
       <div>
-        <span
-          >Datum zamrzavanja</span
-        >
+        <span>Datum zamrzavanja</span>
       </div>
       <input
       
@@ -147,6 +143,7 @@
         aria-describedby="inputGroup-sizing-default"
         placeholder={{model.freezeDate}}
         readonly = true
+        value="{{model.freezeDate | date: 'dd/MM/yyyy'}}"
       />
     </div>
 
