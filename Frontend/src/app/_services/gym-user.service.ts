@@ -14,8 +14,8 @@ constructor(private http: HttpClient, private auth: AccountService) { }
     return this.http.post(this.baseUrl, model);
   }
 
-  getAllUsers(PageSize: number, Page: number, SearchString: string, sortDirect: number)  {
-    const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}&SortOrder=${sortDirect}`;
+  getAllUsers(PageSize: number, Page: number, SearchString: string, sortDirect: number, sortParam: string)  {
+    const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}&SortOrder=${sortDirect}&?SortParam=${sortParam}`;
     return this.http.get(this.baseUrl + queryParams);
   }
 

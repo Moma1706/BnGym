@@ -1,22 +1,20 @@
-﻿using System;
-using Application.App.Dtos;
-using Application.Common.Models.Auth;
+﻿using Application.App.Dtos;
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.GymUser;
 using Application.Enums;
-using Application.GymUser;
 using Application.GymUser.Dtos;
 using Microsoft.Data.SqlClient;
 
 namespace Application.Common.Interfaces
 {
-	public interface IGymUserService
-	{
+    public interface IGymUserService
+    {
         Task<GymUserGetResult> Create(string firstName, string lastName, string email, string address, GymUserType type);
 
-        Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder);
+        Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder, string sortParam = "");
 
         Task<GymUserGetResult> GetOne(int id);
+
         Task<GymUserGetResult> GetRegularOne(Guid id);
 
         Task<GymUserResult> Update(Guid id, UpdateGymUserDto data);

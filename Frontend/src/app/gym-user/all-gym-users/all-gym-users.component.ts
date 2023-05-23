@@ -53,22 +53,21 @@ export class AllGymUsersComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort = new MatSort();
 
 
-  constructor(private gymUserService: GymUserService) { 
+  constructor(private gymUserService: GymUserService) {
   }
 
   ngOnInit() {
   }
 
-  getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
-    return this.gymUserService.getAllUsers(pageSize, pageNumber, searchText, sortDirect);
+  getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number, sortParam: string) {
+    return this.gymUserService.getAllUsers(pageSize, pageNumber, searchText, sortDirect, sortParam);
   }
 
   ngAfterViewInit() {
-
     if(this.sort.direction !== "desc")
-      this.getData('', 0);
+      this.getData('', 0, '');
     else
-      this.getData('', 1);
+      this.getData('', 1, '');
   }
 
   applyFilter(event: Event) {
@@ -76,12 +75,12 @@ export class AllGymUsersComponent implements OnInit {
     this.filterValue = this.filterValue.trim(); // Remove whitespace
     this.filterValue = this.filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     if(this.sort.direction !== "desc")
-      this.getData(this.filterValue, 0);
+      this.getData(this.filterValue, 0, '');
     else
-      this.getData(this.filterValue, 1);
+      this.getData(this.filterValue, 1, '');
   }
 
-  getData(filter: string, sortDirect: number){
+  getData(filter: string, sortDirect: number, sortParam: string){
     this.dataSource.paginator = this.paginator!;
     if(this.paginator){
     this.paginator!.page
@@ -91,14 +90,14 @@ export class AllGymUsersComponent implements OnInit {
           this.loading = true;
           return this.getTableData$(
             this.paginator!.pageIndex + 1,
-            this.paginator!.pageSize, 
+            this.paginator!.pageSize,
             filter,
-            sortDirect
+            sortDirect, sortParam
           ).pipe(catchError(() => observableOf(null)));
         }),
         map((empData) => {
           if (empData == null) return [];
-          
+
           this.totalUsers = (<EmployeeTable>empData).count;
           this.loading = false;
           return (empData as EmployeeTable).items;
@@ -112,11 +111,11 @@ export class AllGymUsersComponent implements OnInit {
       });
     }
   }
-  getRecord(){
+  getRecord(sortParam: string){
     if(this.sort.direction !== "desc")
-      this.getData(this.filterValue, 0);
+      this.getData(this.filterValue, 0, sortParam);
     else
-      this.getData(this.filterValue, 1);
+      this.getData(this.filterValue, 1, sortParam);
   }
 }
 function observableOf(arg0: null): any {

@@ -24,8 +24,8 @@ using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Services
 {
-	public class GymUserService : IGymUserService
-	{
+    public class GymUserService : IGymUserService
+    {
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<User> _userManager;
@@ -34,7 +34,7 @@ namespace Infrastructure.Services
         private readonly IEmailService _emailService;
 
         public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IMaintenanceService maintenanceService, IEmailService emailService, UserManager<User> userManager)
-		{
+        {
             _dateTimeService = dateTimeService;
             _dbContext = applicationDbContext;
             _identityService = identityService;
@@ -52,15 +52,19 @@ namespace Infrastructure.Services
                 case GymUserType.HalfMonth:
                     expiresOn = currentDate.AddDays(15);
                     break;
+
                 case GymUserType.Month:
                     expiresOn = currentDate.AddMonths(1);
                     break;
+
                 case GymUserType.ThreeMonts:
                     expiresOn = currentDate.AddMonths(3);
                     break;
+
                 case GymUserType.HalfYear:
                     expiresOn = currentDate.AddMonths(6);
                     break;
+
                 case GymUserType.Year:
                     expiresOn = currentDate.AddYears(1);
                     break;
@@ -115,7 +119,7 @@ namespace Infrastructure.Services
             catch (Exception exc)
             {
                 transaction.Rollback();
-                return GymUserGetResult.Failure( new Error { Code = ExceptionType.UnableToCreate, Message = "Nije moguće sačuvati korisnika. " + exc.Message });
+                return GymUserGetResult.Failure(new Error { Code = ExceptionType.UnableToCreate, Message = "Nije moguće sačuvati korisnika. " + exc.Message });
             }
         }
 
@@ -136,7 +140,8 @@ namespace Infrastructure.Services
             if (expiresOn < currentDate)
             {
                 days = (expiresOn - gymUser.FreezeDate.Date).Days;
-            } else
+            }
+            else
             {
                 days = (currentDate - gymUser.FreezeDate.Date).Days;
             }
@@ -155,7 +160,7 @@ namespace Infrastructure.Services
         {
             // samo aktiviramo, pa on neka se cekira
             var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == true).ToListAsync();
-            if (gymUsers.Count() == 0)
+            if (gymUsers.Count == 0)
                 return GymUserResult.Sucessfull();
 
             // izracunati koliko dana im je ostalo
@@ -194,7 +199,6 @@ namespace Infrastructure.Services
             if (gymUser.IsFrozen)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Nije moguće produžiti članarinu. Korisnikov status: ZALEDJEN" });
 
-
             var expiresOn = _dateTimeService.Now;
             if (gymUser.ExpiresOn > expiresOn)
                 expiresOn = gymUser.ExpiresOn;
@@ -204,15 +208,19 @@ namespace Infrastructure.Services
                 case GymUserType.HalfMonth:
                     expiresOn = expiresOn.AddDays(15);
                     break;
+
                 case GymUserType.Month:
                     expiresOn = expiresOn.AddMonths(1);
                     break;
+
                 case GymUserType.ThreeMonts:
                     expiresOn = expiresOn.AddMonths(3);
                     break;
+
                 case GymUserType.HalfYear:
                     expiresOn = expiresOn.AddMonths(6);
                     break;
+
                 case GymUserType.Year:
                     expiresOn = expiresOn.AddYears(1);
                     break;
@@ -249,7 +257,6 @@ namespace Infrastructure.Services
             _dbContext.Update(gymUser);
             await _dbContext.SaveChangesAsync();
             return GymUserResult.Sucessfull();
-
         }
 
         public async Task<GymUserResult> FreezAllMemberships()
@@ -258,7 +265,7 @@ namespace Infrastructure.Services
             var maintenanceResult = await _maintenanceService.CheckExpirationDate();
 
             var gymUsers = await _dbContext.GymUsers.Where(x => x.IsFrozen == false && x.IsInActive == false && x.ExpiresOn > _dateTimeService.Now).ToListAsync();
-            if (gymUsers.Count() == 0)
+            if (gymUsers.Count == 0)
                 return GymUserResult.Sucessfull();
 
             foreach (GymUser gymUser in gymUsers)
@@ -270,29 +277,43 @@ namespace Infrastructure.Services
             _dbContext.GymUsers.UpdateRange(gymUsers);
             await _dbContext.SaveChangesAsync();
 
-
             return GymUserResult.Sucessfull();
         }
 
-        public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder)
+        public async Task<PageResult<GymUserGetResult>> GetAll(string searchString, int page, int pageSize, SortOrder sortOrder, string sortParam = "")
         {
             page -= 1;
             if (page <= 0)
                 page = 0;
-
             var query = _dbContext.GymUserView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
 
-            if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
-                query = query.OrderBy(x => x.ExpiresOn)
-                    .ThenByDescending(x => x.NumberOfArrivalsLastMonth)
-                    .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth);
+            if (sortParam == "NumberOfArrivalsLastMonth")
+            {
+                if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                    query = query.OrderBy(x => x.NumberOfArrivalsLastMonth);
+                else
+                    query = query.OrderByDescending(x => x.NumberOfArrivalsLastMonth);
+            }
+            else if (sortParam == "NumberOfArrivalsCurrentMonth")
+            {
+                if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                    query = query.OrderBy(x => x.NumberOfArrivalsCurrentMonth);
+                else
+                    query = query.OrderByDescending(x => x.NumberOfArrivalsCurrentMonth);
+            }
             else
-                query = query.OrderByDescending(x => x.ExpiresOn)
-                    .ThenByDescending(x => x.NumberOfArrivalsLastMonth)
-                    .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth);
+            {
+                if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
+                    query = query.OrderBy(x => x.ExpiresOn)
+                        .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth)
+                        .ThenByDescending(x => x.NumberOfArrivalsLastMonth);
+                else
+                    query = query.OrderByDescending(x => x.ExpiresOn)
+                        .ThenByDescending(x => x.NumberOfArrivalsCurrentMonth)
+                        .ThenByDescending(x => x.NumberOfArrivalsLastMonth);
+            }
 
             var list = query.ToList().Skip(page * pageSize).Take(pageSize).ToList();
-
 
             return new PageResult<GymUserGetResult>
             {
@@ -368,7 +389,7 @@ namespace Infrastructure.Services
             // Check expiration date
             var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
 
-            if (data.Email is string && data.Email.ToLower() != user.Email)
+            if (data.Email is not null && data.Email.ToLower() != user.Email)
             {
                 var email = data.Email.ToLower();
                 if (await _userManager.FindByEmailAsync(email) != null)
@@ -396,15 +417,19 @@ namespace Infrastructure.Services
                     case GymUserType.HalfMonth:
                         dateOfPayment = gymUserExpiresOn.AddDays(-15);
                         break;
+
                     case GymUserType.Month:
                         dateOfPayment = gymUserExpiresOn.AddMonths(-1);
                         break;
+
                     case GymUserType.ThreeMonts:
                         dateOfPayment = gymUserExpiresOn.AddMonths(-3);
                         break;
+
                     case GymUserType.HalfYear:
                         dateOfPayment = gymUserExpiresOn.AddMonths(-6);
                         break;
+
                     case GymUserType.Year:
                         dateOfPayment = gymUserExpiresOn.AddYears(-1);
                         break;
@@ -417,22 +442,27 @@ namespace Infrastructure.Services
                         gymUser.Type = GymUserType.HalfMonth;
                         expiresOn = dateOfPayment.AddDays(15);
                         break;
+
                     case GymUserType.Month:
                         gymUser.Type = GymUserType.Month;
                         expiresOn = dateOfPayment.AddMonths(1);
                         break;
+
                     case GymUserType.ThreeMonts:
                         gymUser.Type = GymUserType.ThreeMonts;
                         expiresOn = dateOfPayment.AddMonths(3);
                         break;
+
                     case GymUserType.HalfYear:
                         gymUser.Type = GymUserType.HalfYear;
                         expiresOn = dateOfPayment.AddMonths(6);
                         break;
+
                     case GymUserType.Year:
                         gymUser.Type = GymUserType.Year;
                         expiresOn = dateOfPayment.AddYears(1);
                         break;
+
                     default:
                         expiresOn = gymUser.ExpiresOn;
                         break;
@@ -478,7 +508,7 @@ namespace Infrastructure.Services
             if (user == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
 
-            if (data.Email is string && data.Email.ToLower() != user.Email)
+            if (data.Email is not null && data.Email.ToLower() != user.Email)
             {
                 var email = data.Email.ToLower();
                 if (await _userManager.FindByEmailAsync(email) != null)
@@ -504,4 +534,3 @@ namespace Infrastructure.Services
         }
     }
 }
-
