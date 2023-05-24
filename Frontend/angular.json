@@ -28,6 +28,9 @@
               "src/styles.css",
               "src/assets/scss/now-ui-dashboard.scss",
               "src/assets/demo/demo.css",
+              "src/assets/css/bootstrap.min.css",
+              "src/assets/css/font-awesome.css",
+              "src/assets/css/templatemo-training-studio.css",
               "./node_modules/swiper/swiper-bundle.css"
             ],
             "scripts": []
