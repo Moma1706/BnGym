@@ -114,6 +114,13 @@ export class ViewGymUserComponent implements OnInit {
         this.index = 4;
       }
 
+      const newDate = new Date(this.model.lastCheckIn);
+      const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
+      const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
+      let isoDateString = adjustedDate.toLocaleString();
+
+      this.model.lastCheckIn = isoDateString;
+
       console.log(this.model);
     })
   }
@@ -196,11 +203,6 @@ export class ViewGymUserComponent implements OnInit {
       this.model.type = 4
     }
 
-    // this.gymUserService.Update(this.model.id?? '', this.model).subscribe((response:any)=>{
-    //   console.log(response);
-    //   window.location.reload();
-    // });
-
     this.gymUserService.Update(this.model.id?? '', this.model)
     .pipe(first())
       .subscribe({
@@ -217,12 +219,6 @@ export class ViewGymUserComponent implements OnInit {
   }
 
   checkIn(){
-
-  // this.checkInService.checkIn(this.model.id).subscribe((response:any)=>{
-  //   console.log(response);
-  //   window.location.reload();
-  // });
-
   this.checkInService.checkIn(this.model.id)
     .pipe(first())
       .subscribe({
