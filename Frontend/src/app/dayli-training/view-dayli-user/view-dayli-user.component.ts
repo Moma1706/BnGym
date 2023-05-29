@@ -76,14 +76,13 @@ export class ViewDayliUserComponent implements OnInit {
     }
     if(this.f['dateOfBirth'].value != ''){
       this.model.dateOfBirth=this.f['dateOfBirth'].value;
-      }
+    }
     
     this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
-      
       const returnUrl ='/dayli-training/view-all-dayli';
       this.router.navigateByUrl(returnUrl);
       this.alertservice.success("Profil korisnika promenjen!");
-    })
+    });
   }
 
   addArrival(){
@@ -92,9 +91,8 @@ export class ViewDayliUserComponent implements OnInit {
     .pipe(first())
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           const returnUrl ='/checkIn-history/view-checkins-by-date';
-          this.router.navigateByUrl(returnUrl)
+          this.router.navigateByUrl(returnUrl);
           this.alertservice.success('Evidentiran dolazak za korisnika:' + this.model.firstname +'!');
 
         },
