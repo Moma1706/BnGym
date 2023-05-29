@@ -81,3 +81,8 @@
     showFirstLastButtons
   ></mat-paginator>
 
+  <div>
+    <button *ngIf="this.isAllFrozen == false" type=button class="btn btn-secondary"  (click)="clickMethodFreez()">Zamrzni sve korisnike</button>
+    <button *ngIf="this.isAllFrozen == true" type=button class="btn btn-secondary"  (click)="clickMethodActivate()">Aktiviraj sve korisnike</button>
+  </div>
+

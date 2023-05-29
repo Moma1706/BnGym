@@ -4,7 +4,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { catchError, map, startWith, switchMap } from 'rxjs';
+import { catchError, first, map, startWith, switchMap } from 'rxjs';
+import { AlertService } from 'src/app/_services/alert.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 
 export interface gymUser {
@@ -39,6 +42,7 @@ export class AllGymUsersComponent implements OnInit {
   EmpData: gymUser[] = [];
   empTable?: EmployeeTable;
   filterValue = '';
+  isAllFrozen: boolean = false;
 
   model: any= {};
   submitted = false;
@@ -53,7 +57,7 @@ export class AllGymUsersComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort = new MatSort();
 
 
-  constructor(private gymUserService: GymUserService) {
+  constructor(private gymUserService: GymUserService, private alertService: AlertService, private router: Router) {
   }
 
   ngOnInit() {
@@ -68,6 +72,13 @@ export class AllGymUsersComponent implements OnInit {
       this.getData('', 0, '');
     else
       this.getData('', 1, '');
+
+    if(localStorage.getItem(('isAllFrozen')) == 'false')  
+      this.isAllFrozen = false;
+    else
+      this.isAllFrozen = true;
+    
+      console.log(this.isAllFrozen);
   }
 
   applyFilter(event: Event) {
@@ -116,6 +127,65 @@ export class AllGymUsersComponent implements OnInit {
       this.getData(this.filterValue, 0, sortParam);
     else
       this.getData(this.filterValue, 1, sortParam);
+  }
+
+  freezAll(){
+    this.gymUserService.freezAll()
+    .pipe(first())
+    .subscribe({
+        next: () => {
+            this.isAllFrozen = true;
+            localStorage.setItem('isAllFrozen', this.isAllFrozen.toString());
+
+            const returnUrl ='/gym-user/all-gym-users';
+            this.router.navigateByUrl(returnUrl);
+            this.alertService.success('Svi korisnici zamrznuti!');
+
+            if(this.sort.direction !== "desc")
+              this.getData('', 0, '');
+            else
+              this.getData('', 1, '');
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertService.error(error.error.message);
+          this.loading = false;
+        }
+    });
+  }
+
+  activateAll(){
+    this.gymUserService.activateAll()
+    .pipe(first())
+    .subscribe({
+        next: () => {
+            this.isAllFrozen = false;
+            localStorage.setItem('isAllFrozen', this.isAllFrozen.toString());
+
+            const returnUrl ='/gym-user/all-gym-users';
+            this.router.navigateByUrl(returnUrl);
+            this.alertService.success('Svi korisnici aktivirani!');
+            
+            if(this.sort.direction !== "desc")
+              this.getData('', 0, '');
+            else
+              this.getData('', 1, '');
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertService.error(error.error.message);
+          this.loading = false;
+        }
+    });
+  }
+
+  clickMethodFreez() {
+    if(confirm("Da li ste sigurni da želite sve da zamrznete? ")) {
+      this.freezAll();
+    }
+  }
+  clickMethodActivate() {
+    if(confirm("Da li ste sigurni da želite sve da aktivirate? ")) {
+      this.activateAll();
+    }
   }
 }
 function observableOf(arg0: null): any {

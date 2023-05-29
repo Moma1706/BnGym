@@ -50,8 +50,9 @@ export class ViewDayliUserComponent implements OnInit {
     this.dayliService.getTraining(id).subscribe((response:any) =>{
       this.model = response;
 
-      let newBirthDate = new Date(this.model.dateOfBirth);
-      this.model.dateOfBirth = newBirthDate.toLocaleDateString();
+      let birthDate: string = this.model.dateOfBirth.toString();
+      this.splited = birthDate.split("T",2);
+      this.model.dateOfBirth = this.splited[0];
 
       let newDate = new Date(this.model.lastCheckIn);
       const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds

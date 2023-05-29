@@ -38,4 +38,12 @@ constructor(private http: HttpClient, private auth: AccountService) { }
   Update(id: string, model:any){
     return this.http.put(this.baseUrl + '/' + id, model);
   }
+
+  freezAll(){
+    return this.http.put(this.baseUrl + '/' + 'freez-all', undefined);
+  }
+
+  activateAll(){
+    return this.http.put(this.baseUrl + '/' + 'activate-all', undefined);
+  }
 }
