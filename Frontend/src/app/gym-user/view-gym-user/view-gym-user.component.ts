@@ -76,6 +76,13 @@ export class ViewGymUserComponent implements OnInit {
       if(this.model.lastCheckIn == "0001-01-01" || this.model.lastCheckIn === "null"){
         this.model.lastCheckIn = "Nema ni jedan dolazak..."
       }
+      else{
+        const newDate = new Date(this.model.lastCheckIn);
+        const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
+        const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
+        let isoDateString = adjustedDate.toLocaleString();
+        this.model.lastCheckIn = isoDateString;
+      }
 
       if(this.model.isFrozen == false){
         this.model.isFrozen = 'Ne';
@@ -114,12 +121,7 @@ export class ViewGymUserComponent implements OnInit {
         this.index = 4;
       }
 
-      const newDate = new Date(this.model.lastCheckIn);
-      const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
-      const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
-      let isoDateString = adjustedDate.toLocaleString();
-
-      this.model.lastCheckIn = isoDateString;
+      
 
       console.log(this.model);
     })

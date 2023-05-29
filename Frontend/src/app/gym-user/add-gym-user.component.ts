@@ -81,7 +81,6 @@ export class AddGymUserComponent implements OnInit {
             this.alertService.error(error.error.message);
             this.loading = false;
           }
-          
       });
   }
 }
