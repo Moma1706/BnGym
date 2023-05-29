@@ -172,7 +172,7 @@ export class ViewGymUserComponent implements OnInit {
       console.log(response);
       const returnUrl ='/gym-user/all-gym-users';
       this.router.navigateByUrl(returnUrl);
-      this.alertService.success('Produzena clanarina!')
+      this.alertService.success('Uspiješno produžena članarina za člana: ' + this.model.firstName + ' ' + this.model.lastName);
     });;
   }
 

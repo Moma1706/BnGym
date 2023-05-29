@@ -73,12 +73,14 @@ export class AllGymUsersComponent implements OnInit {
     else
       this.getData('', 1, '');
 
-    if(localStorage.getItem(('isAllFrozen')) == 'false')  
+    if (localStorage.getItem(('isAllFrozen')) == null || localStorage.getItem(('isAllFrozen')) == 'false') 
       this.isAllFrozen = false;
     else
       this.isAllFrozen = true;
+
+    localStorage.setItem('isAllFrozen', this.isAllFrozen.toString());
     
-      console.log(this.isAllFrozen);
+    console.log(this.isAllFrozen);
   }
 
   applyFilter(event: Event) {
