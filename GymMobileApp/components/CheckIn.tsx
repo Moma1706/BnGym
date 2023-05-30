@@ -15,16 +15,16 @@ const CheckIn = ({ navigation }: CheckInProps) => {
   const device = devices.back;
 
 
-  const frameProcessor = useFrameProcessor((frame) => {
-    console.log(frame);
-    const scannedQRCode = frame.toString();
-    const expectedQRCode = 'check-in-process'; // Replace with your expected QR code
-    if (scannedQRCode !== expectedQRCode) {
-      Alert.alert('Error', 'Invalid QR code.');
-      return;
-    }
+  // const frameProcessor = useFrameProcessor((frame) => {
+  //   console.log(frame);
+  //   const scannedQRCode = frame.toString();
+  //   const expectedQRCode = 'check-in-process'; // Replace with your expected QR code
+  //   if (scannedQRCode !== expectedQRCode) {
+  //     Alert.alert('Error', 'Invalid QR code.');
+  //     return;
+  //   }
 
-    Alert.alert('Dobar code');
+  //   Alert.alert('Dobar code');
     // const gymUserId = 'YOUR_ENCRYPTED_STORAGE_ID';
     // const url = `/api/App/check-in/${gymUserId}`;
     // fetch(url, {
@@ -37,6 +37,14 @@ const CheckIn = ({ navigation }: CheckInProps) => {
     //   .catch(error => {
     //     Alert.alert('Error', 'An error occurred while checking in.');
     //   });
+  // }, [])
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet'
+    console.log(frame);
+    // const qrCodes = scanQRCodes(frame)
+    // if (qrCodes.length > 0) {
+    //   runOnJS(onQRCodeDetected)(qrCodes[0])
+    // }
   }, [])
 
   if (device == null)
@@ -55,7 +63,7 @@ const CheckIn = ({ navigation }: CheckInProps) => {
           device={device}
           isActive={true}
           frameProcessor={frameProcessor}
-          frameProcessorFps={5}
+          // frameProcessorFps={5}
           video = {true}
           audio = {true}
         />
