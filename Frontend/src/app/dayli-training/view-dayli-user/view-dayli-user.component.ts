@@ -72,7 +72,10 @@ export class ViewDayliUserComponent implements OnInit {
       this.model.firstName = this.f['firstname'].value;
     }
     if(this.f['lastname'].value != ''){
-    this.model.lastName=this.f['lastname'].value;
+      this.model.lastName=this.f['lastname'].value;
+    }
+    if(this.f['dateOfBirth'].value != ''){
+      this.model.dateOfBirth=this.f['dateOfBirth'].value;
     }
     
     this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
