@@ -6,6 +6,6 @@ module.exports = {
       {
         globals: ['__scanCodes'],
       },
-    ]
-  ]
+    ],
+  ],
 };
