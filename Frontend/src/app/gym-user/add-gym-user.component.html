@@ -2,7 +2,7 @@
 <hr />
 <br />
 
-<div style="margin-left: 10%">
+<div style="margin: auto; width: 750px;">
   <form [formGroup]="form" (ngSubmit)="add()" ngNativeValidate>
     <!--Label Name and input Enter name-->
     <div style="width: 700px">
@@ -100,8 +100,8 @@
     </div>
 
     <!--Button Reposrt-->
-    <div class="form-group">
-      <button [disabled]="loading" class="btn btn-primary">
+    <div class="form-group" style="margin-left: 38%;">
+      <button [disabled]="loading" class="btn btn-primary" style="margin-top: 2%">
           <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
           Dodaj
       </button>

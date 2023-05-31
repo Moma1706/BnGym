@@ -78,11 +78,26 @@ export class ViewDayliUserComponent implements OnInit {
       this.model.dateOfBirth=this.f['dateOfBirth'].value;
     }
     
-    this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
-      const returnUrl ='/dayli-training/view-all-dayli';
-      this.router.navigateByUrl(returnUrl);
-      this.alertservice.success("Profil korisnika promenjen!");
-    });
+    // this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
+    //   const returnUrl ='/dayli-training/view-all-dayli';
+    //   this.router.navigateByUrl(returnUrl);
+    //   this.alertservice.success("Profil korisnika promenjen!");
+    // });
+
+    this.dayliService.update(this.model.id, this.model)
+    .pipe(first())
+      .subscribe({
+        next: (response: any) => {
+          const returnUrl ='/dayli-training/view-all-dayli';
+          this.router.navigateByUrl(returnUrl);
+          this.alertservice.success("Profil korisnika promenjen!");
+
+        },
+        error: (error : HttpErrorResponse) => {
+          this.alertservice.error(error.error.message);
+          this.loading = false;
+        }
+      })
   }
 
   addArrival(){
