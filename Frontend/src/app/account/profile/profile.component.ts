@@ -2,8 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { JwtHelperService, JWT_OPTIONS} from '@auth0/angular-jwt';
-import jwt_decode from 'jwt-decode';
 import { first } from 'rxjs';
 import { AccountService } from 'src/app/_services/account.service';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -21,7 +19,7 @@ export class ProfileComponent implements OnInit {
   userid: number = 0;
   model: any = {};
   changePasswordModel: any = {};
-  
+
   form: FormGroup = new FormGroup({
     firstName: new FormControl('', Validators.required),
     lastName: new FormControl('', Validators.required),
@@ -41,8 +39,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService, 
-    private formBuilder: FormBuilder,
+    private userService: UserService,
     private gymWorkerService: GymWorkerService,
     private alertService: AlertService,
     private accountService: AccountService) {
@@ -83,10 +80,6 @@ export class ProfileComponent implements OnInit {
     if(this.f['email'].value != ''){
     this.model.email=this.f['email'].value;
     }
-    
-    // this.gymWorkerService.update(this.model.id, this.model).subscribe((response:any) =>{
-    //   console.log(response);
-    // })
 
     this.gymWorkerService.update(this.model.id, this.model)
     .pipe(first())

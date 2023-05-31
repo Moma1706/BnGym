@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using System.Security.Policy;
 using Application.Common.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
@@ -44,7 +45,6 @@ namespace Infrastructure.Services
 
         public async Task SendResetPasswordAsync(string email, string token)
         {
-            
             // var url = _configuration["SendGrid:PasswordResetUrl"].Replace("*email*", email).Replace("*token*", token);
 
             //var sendGridMessage = new SendGridMessage();
@@ -59,13 +59,24 @@ namespace Infrastructure.Services
             //{
             //    var message = await emailResponse.Body.ReadAsStringAsync();
             //}
+            var url = _configuration["SendGrid:PasswordResetUrl"].Replace("*email*", email).Replace("*token*", token);
 
-
-            System.Diagnostics.Debug.WriteLine("");
-            System.Diagnostics.Debug.WriteLine("Reset Password Message");
-            System.Diagnostics.Debug.WriteLine("--------------------------");
-            System.Diagnostics.Debug.WriteLine($"TO: {email}");
-            System.Diagnostics.Debug.WriteLine($"TOKEN: {token}");
+            string mailFrom = "testmilanmilica@​yahoo.com";
+            var lnkHref = "<a href='" + new UriBuilder(url) + "'>Reset Password</a>";
+            string subject = "Your changed password";
+            string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
+            var mailMessage = new MailMessage();
+            var fromAddress = new MailAddress(mailFrom, "BN gym");
+            mailMessage.From = fromAddress;
+            mailMessage.To.Add(email);
+            mailMessage.Body = body;
+            mailMessage.IsBodyHtml = true;
+            mailMessage.Subject = subject;
+            var smtpClient = new SmtpClient();
+            smtpClient.Host = "localhost";
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+            smtpClient.PickupDirectoryLocation = "C:\\Mail";
+            smtpClient.Send(mailMessage);
         }
     }
 }

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout.component';
 import { LoginComponent } from './login.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ForgotPassComponent } from './forgot-password/forgot-pass/forgot-pass.component';
 
 const routes: Routes = [
     {
@@ -10,6 +11,7 @@ const routes: Routes = [
         children: [
             { path: 'login', component: LoginComponent },
             { path: 'profile/:id', component: ProfileComponent },
+            { path: 'forgot-password', component: ForgotPassComponent },
         ]
     }
 ];

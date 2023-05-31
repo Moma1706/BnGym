@@ -24,7 +24,7 @@ export class AccountService {
     let loginModel = new LoginModel();
     loginModel.email = email;
     loginModel.password = password;
-    
+
     return this.http.post(this.baseUrlLogin, loginModel).pipe(
       map((response: any) => {
         const user = response;
@@ -45,6 +45,10 @@ export class AccountService {
 
   changePassword(model: any){
     return this.http.post(this.baseUrl + '/change-password', model);
+  }
+
+  resetPassword(model: any){
+    return this.http.post(this.baseUrl + '/reset-password', model);
   }
 
 }

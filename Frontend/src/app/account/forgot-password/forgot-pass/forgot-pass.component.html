@@ -1,0 +1,29 @@
+<div class="card" style="width: 740px;">
+  <h4 class="card-header">Nova lozinka</h4>
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="newPassword()">
+      <div class="form-group" style="width: 700px;">
+        <label for="password">Lozinka</label>
+        <input type="password" formControlName="password" class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Lozinka je obavezna</div>
+        </div>
+      </div>
+      <div class="form-group" style="width: 700px;">
+      <label for="confirmPassword">Ponovi Lozinka</label>
+      <input type="password" formControlName="confirmPassword" class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }" />
+      <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+        <div *ngIf="f['confirmedPassword'].errors['required']">Lozinke moraju biti iste</div>
+      </div>
+      </div>
+      <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Promeni lozinku
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
