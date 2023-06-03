@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Alert, ActivityIndicator, View, Text } from 'react-native';
-import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
+import { StyleSheet, Alert, ActivityIndicator, View, Text, StatusBar } from 'react-native';
+import { Camera, Frame, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
 import Layout from './Layout';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import axios from "axios";
+import { BarcodeFormat, useScanBarcodes } from 'vision-camera-code-scanner';
 
 type CheckInProps = {
   navigation: NavigationProp<ParamListBase>;
@@ -13,7 +14,12 @@ const CheckIn = ({ navigation }: CheckInProps) => {
   const camera = useRef<Camera>(null);
   const devices = useCameraDevices('wide-angle-camera');
   const device = devices.back;
+  const [frameProcessor, barcodes] = useScanBarcodes([
+    BarcodeFormat.ALL_FORMATS, // You can only specify a particular format
+  ]);
 
+const [barcode, setBarcode] = React.useState('');
+const [isScanned, setIsScanned] = React.useState(false);
 
   // const frameProcessor = useFrameProcessor((frame) => {
   //   console.log(frame);
@@ -38,14 +44,43 @@ const CheckIn = ({ navigation }: CheckInProps) => {
     //     Alert.alert('Error', 'An error occurred while checking in.');
     //   });
   // }, [])
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet'
-    console.log(frame);
-    // const qrCodes = scanQRCodes(frame)
-    // if (qrCodes.length > 0) {
-    //   runOnJS(onQRCodeDetected)(qrCodes[0])
-    // }
-  }, [])
+
+  // function scanQRCodes(frame: Frame): string[] {
+  //   'worklet'
+  //   return __scanCodes(frame)
+  // }
+
+  // const frameProcessor = useFrameProcessor((frame) => {
+  //   'worklet'
+  //   console.log(frame);
+  //   const qrCodes = scanQRCodes(frame)
+  //   if (qrCodes.length > 0) {
+  //     console.log('codeee: ', qrCodes);
+  //     // runOnJS(onQRCodeDetected)(qrCodes[0])
+  //   //  console.log(qrCodes[0]);
+  //   }
+  // }, [])
+
+  React.useEffect(() => {
+    toggleActiveState();
+    return () => {
+      barcodes;
+    };
+  }, [barcodes]);
+
+const toggleActiveState = async () => {
+    if (barcodes && barcodes.length > 0 && isScanned === false) {
+      setIsScanned(true);
+      // setBarcode('');
+      barcodes.forEach(async (scannedBarcode: any) => {
+        if (scannedBarcode.rawValue !== '') {
+          console.log('Ima li te: ',scannedBarcode.rawValue )
+          setBarcode(scannedBarcode.rawValue);
+          Alert.alert(barcode);
+        }
+      });
+    }
+  };
 
   if (device == null)
     return ( 
@@ -57,17 +92,40 @@ const CheckIn = ({ navigation }: CheckInProps) => {
 
   return (
     <Layout navigation={navigation}>
-      <View style={styles.box}>
+      {/* <View style={styles.box}>
       <Camera
           style={StyleSheet.absoluteFill}
           device={device}
           isActive={true}
           frameProcessor={frameProcessor}
-          // frameProcessorFps={5}
+           frameProcessorFps={5}
           video = {true}
           audio = {true}
         />
-      </View>
+      </View> */}
+        <>
+        <StatusBar barStyle="light-content" backgroundColor="#000000" />
+        <Camera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={!isScanned}
+          frameProcessor={frameProcessor}
+          frameProcessorFps={5}
+          audio={false}
+        />
+       {/* <RNHoleView
+            holes={[
+              {
+                x: widthToDp('8.5%'),
+                y: heightToDp('36%'),
+                width: widthToDp('83%'),
+                height: heightToDp('20%'),
+                borderRadius: 10,
+              },
+            ]}
+            style={styles.rnholeView}
+          /> */}
+      </>
     </Layout>
   );
 }
