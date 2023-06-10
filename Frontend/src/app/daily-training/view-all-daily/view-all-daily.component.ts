@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, map, startWith, switchMap } from 'rxjs';
-import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
+import { DailyTrainingService } from 'src/app/_services/daily-training.service';
 
 export interface User {
   id: number;
@@ -21,11 +21,11 @@ export interface UsersTable {
 }
 
 @Component({
-  selector: 'app-view-all-dayli',
-  templateUrl: './view-all-dayli.component.html',
-  styleUrls: ['./view-all-dayli.component.css']
+  selector: 'app-view-all-daily',
+  templateUrl: './view-all-daily.component.html',
+  styleUrls: ['./view-all-daily.component.css']
 })
-export class ViewAllDayliComponent implements OnInit {
+export class ViewAllDailyComponent implements OnInit {
 
   visible: boolean = true;
   id : string = '';
@@ -51,7 +51,7 @@ export class ViewAllDayliComponent implements OnInit {
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort: MatSort = new MatSort();
 
-  constructor(private dayliService: DayliTrainingService) {
+  constructor(private dailyService: DailyTrainingService) {
   }
 
   ngOnInit() {
@@ -65,7 +65,7 @@ export class ViewAllDayliComponent implements OnInit {
   }
 
   getTableData$(pageNumber: number, pageSize: number, searchText: string, sortDirect : number) {
-    return this.dayliService.getAllDayliTrainings(pageSize, pageNumber, searchText, sortDirect);
+    return this.dailyService.getAllDailyTrainings(pageSize, pageNumber, searchText, sortDirect);
   }
   
   applyFilter(event: Event) {

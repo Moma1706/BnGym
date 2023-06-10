@@ -1,13 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AccountService } from './account.service';
+import { BASE_URL } from '../config/api-url.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GymUserService {
 
-  baseUrl = 'https://localhost:7085/api/GymUser';
+  baseUrl = `${BASE_URL}/GymUser`;
 
 constructor(private http: HttpClient, private auth: AccountService) { }
   addGymUser(model: any)  {

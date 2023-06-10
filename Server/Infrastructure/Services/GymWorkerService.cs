@@ -24,14 +24,12 @@ namespace Infrastructure.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly IIdentityService _identityService;
         private readonly UserManager<User> _userManager;
-        private readonly IEmailService _emailService;
 
-        public GymWorkerService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IEmailService emailService, UserManager<User> userManager)
+        public GymWorkerService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, UserManager<User> userManager)
         {
             _dateTimeService = dateTimeService;
             _dbContext = applicationDbContext;
             _identityService = identityService;
-            _emailService = emailService;
             _userManager = userManager;
         }
 
@@ -141,7 +139,6 @@ namespace Infrastructure.Services
 
         public async Task<GymWorkerResult> Update(int id, UpdateGymWorkerDto data)
         {
-            var sendMail = false;
             var user = await _dbContext.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (user == null)
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji!" });
@@ -155,7 +152,6 @@ namespace Infrastructure.Services
                 user.Email = email;
                 user.UserName = email;
                 user.EmailConfirmed = true;
-                sendMail = true;
             }
 
             user.FirstName = data.FirstName ?? user.FirstName;
@@ -166,8 +162,6 @@ namespace Infrastructure.Services
             if (!registerResult.Succeeded)
                 return GymWorkerResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nije moguće ažurirati korisnika. " + registerResult.Errors });
 
-            if (sendMail)
-                _emailService.SendConfirmationEmailAsync(user.Email);
             return GymWorkerResult.Sucessfull();
         }
 

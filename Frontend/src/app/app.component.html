@@ -11,7 +11,7 @@
       <!-- <a class="nav-item nav-link" *ngIf="this.token != '' && this.role =='Admin'" routerLink="/gym-worker/all-gym-workers" routerLinkActive="active">Svi radnici</a> -->
       <a class="nav-item nav-link" *ngIf="this.token != ''" routerLink="/gym-user/all-gym-users" routerLinkActive="active">Svi članovi</a>
       <a class="nav-item nav-link" *ngIf="this.token != ''" [routerLink]="['/account/profile', userId]" routerLinkActive="active">Profil</a>
-      <a class="nav-item nav-link" *ngIf="this.token != ''" routerLink="/dayli-training/view-all-dayli" routerLinkActive="active">Dnevni korisnici</a>
+      <a class="nav-item nav-link" *ngIf="this.token != ''" routerLink="/daily-training/view-all-daily" routerLinkActive="active">Dnevni korisnici</a>
       <a class="nav-item nav-link" *ngIf="this.token != ''" routerLink="/checkIn-history/view-checkins-by-date" routerLinkActive="active">Istorija treninga po danu</a>
       <a class="nav-item nav-link" *ngIf="this.token != ''" routerLinkActive="active" (click)="logOut()">Odjavi se</a>  
     </div>

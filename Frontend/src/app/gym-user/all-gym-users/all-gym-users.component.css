@@ -1,0 +1,7 @@
+.mat-column-Buttons {
+    flex: 0 0 15%;
+}
+
+.inactive-row {
+    background-color: lightgray;
+}

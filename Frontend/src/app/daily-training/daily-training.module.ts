@@ -1,21 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DayliTrainingComponent } from './dayli-training.component';
-import { DayliTrainingRoutingModule } from './dayli-training-routing.module';
+import { DailyTrainingComponent } from './daily-training.component';
+import { DailyTrainingRoutingModule } from './daily-training-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AddDayliTrainingComponent } from './add-dayli-training/add-dayli-training.component';
-import { ViewAllDayliComponent } from './view-all-dayli/view-all-dayli.component';
+import { AddDailyTrainingComponent } from './add-daily-training/add-daily-training.component';
+import { ViewAllDailyComponent } from './view-all-daily/view-all-daily.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from '@angular/material/sort';
-import { ViewDayliUserComponent } from './view-dayli-user/view-dayli-user.component';
+import { ViewDailyUserComponent } from './view-daily-user/view-daily-user.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    DayliTrainingRoutingModule,
+    DailyTrainingRoutingModule,
     ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
@@ -24,10 +24,10 @@ import { ViewDayliUserComponent } from './view-dayli-user/view-dayli-user.compon
     MatSortModule
   ],
   declarations: 
-  [ DayliTrainingComponent,
-    AddDayliTrainingComponent,
-    ViewAllDayliComponent,
-    ViewDayliUserComponent
+  [ DailyTrainingComponent,
+    AddDailyTrainingComponent,
+    ViewAllDailyComponent,
+    ViewDailyUserComponent
   ]
 })
-export class DayliTrainingModule { }
+export class DailyTrainingModule { }

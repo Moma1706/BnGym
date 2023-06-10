@@ -112,7 +112,7 @@ public class AuthController : ApiBaseController
             if (result.Success)
                 return Ok();
 
-            return BadRequest(result.Error);
+            return BadRequest(new Error { Message = result.Error, Code = ExceptionType.Validation });
         }
         catch (Exception exception)
         {

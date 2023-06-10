@@ -20,42 +20,42 @@
 
     <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef> Ime </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.firstName}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.firstName}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="lastName">
       <mat-header-cell *matHeaderCellDef> Prezime </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.lastName}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.lastName}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="email">
       <mat-header-cell *matHeaderCellDef > Email </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.email}} </mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="isInactive">
+    <ng-container matColumnDef="isInActive">
       <mat-header-cell *matHeaderCellDef> Aktivan </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.isInactive ? 'Ne' : 'Da'}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.isInActive ? 'Ne' : 'Da'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="isFrozen">
       <mat-header-cell *matHeaderCellDef> Zamrznut </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.isFrozen ? 'Da' : 'Ne'}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.isFrozen ? 'Da' : 'Ne'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="expiresOn">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('')"> Članarina Ističe </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.expiresOn | date: 'dd/MM/yyyy'}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.expiresOn | date: 'dd/MM/yyyy'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsCurrentMonth">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsCurrentMonth')"> Broj dolazaka ovog meseca </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.numberOfArrivalsCurrentMonth}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.numberOfArrivalsCurrentMonth}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsLastMonth">
       <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsLastMonth')"> Broj dolazaka proslog meseca </mat-header-cell>
-      <<mat-cell *matCellDef="let row"> {{row.numberOfArrivalsLastMonth}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.numberOfArrivalsLastMonth}} </mat-cell>
     </ng-container>
 
     <!-- Edit buttom Column -->

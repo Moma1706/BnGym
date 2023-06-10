@@ -5,7 +5,7 @@ import { HomeComponent } from './home/home.component';
 const accountModule = () => import('./account/account-module').then(x => x.AccountModule);
 const gymWorkerModule = () => import('./gym-worker/gym-worker.module').then(x => x.GymWorkerModule);
 const gymUserModule = () => import('./gym-user/gym-user.module').then(x => x.GymUserModule);
-const dayliTrainingModule = () => import('./dayli-training/dayli-training.module').then(x => x.DayliTrainingModule);
+const dailyTrainingModule = () => import('./daily-training/daily-training.module').then(x => x.DailyTrainingModule);
 const checkInHistoryModule = () => import('./checkIn-history/checkIn-history.module').then(x => x.CheckInHistoryModule);
 
 const routes: Routes = [
@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'account', loadChildren: accountModule },
   { path: 'gym-worker', loadChildren: gymWorkerModule },
   { path: 'gym-user', loadChildren: gymUserModule },
-  { path: 'dayli-training', loadChildren: dayliTrainingModule },
+  { path: 'daily-training', loadChildren: dailyTrainingModule },
   { path: 'checkIn-history', loadChildren: checkInHistoryModule },
   // otherwise redirect to home
   { path: '**', redirectTo: '' }

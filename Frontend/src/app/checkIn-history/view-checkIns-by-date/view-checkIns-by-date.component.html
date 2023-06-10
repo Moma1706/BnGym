@@ -36,7 +36,7 @@
         <button *ngIf="element.email != 'null'" [routerLink]="['/gym-user/view-gym-user', element.userId]" class="btn btn-primary">
           Pogledaj
         </button>
-        <button *ngIf="element.email == 'null'" [routerLink]="['/dayli-training/view-daily-user', element.gymUserId]" class="btn btn-secondary">
+        <button *ngIf="element.email == 'null'" [routerLink]="['/daily-training/view-daily-user', element.gymUserId]" class="btn btn-secondary">
           Pogledaj
         </button>
       </mat-cell>

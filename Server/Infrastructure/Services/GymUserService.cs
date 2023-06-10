@@ -21,6 +21,7 @@ using Application.App.Dtos;
 using MediatR;
 using Microsoft.Data.SqlClient;
 using SendGrid.Helpers.Mail;
+using Application.Common.Models.Maintenance;
 
 namespace Infrastructure.Services
 {
@@ -31,7 +32,6 @@ namespace Infrastructure.Services
         private readonly UserManager<User> _userManager;
         private readonly IIdentityService _identityService;
         private readonly IMaintenanceService _maintenanceService;
-        private readonly IEmailService _emailService;
 
         public GymUserService(IDateTimeService dateTimeService, ApplicationDbContext applicationDbContext, IIdentityService identityService, IMaintenanceService maintenanceService, IEmailService emailService, UserManager<User> userManager)
         {
@@ -39,7 +39,6 @@ namespace Infrastructure.Services
             _dbContext = applicationDbContext;
             _identityService = identityService;
             _maintenanceService = maintenanceService;
-            _emailService = emailService;
             _userManager = userManager;
         }
 
@@ -228,6 +227,7 @@ namespace Infrastructure.Services
 
             gymUser.ExpiresOn = expiresOn;
             gymUser.Type = data.Type;
+            gymUser.IsInActive = false;
 
             _dbContext.Update(gymUser);
             await _dbContext.SaveChangesAsync();
@@ -377,7 +377,6 @@ namespace Infrastructure.Services
 
         public async Task<GymUserResult> Update(Guid id, UpdateGymUserDto data)
         {
-            var sendMail = false;
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
@@ -385,9 +384,6 @@ namespace Infrastructure.Services
             var user = await _dbContext.Users.Where(x => x.Id == gymUser.UserId).FirstOrDefaultAsync();
             if (user == null)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik ne postoji" });
-
-            // Check expiration date
-            var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
 
             if (data.Email is not null && data.Email.ToLower() != user.Email)
             {
@@ -398,18 +394,28 @@ namespace Infrastructure.Services
                 user.Email = email;
                 user.UserName = email;
                 user.EmailConfirmed = true;
-                sendMail = true;
             }
 
             user.FirstName = data.FirstName ?? user.FirstName;
             user.LastName = data.LastName ?? user.LastName;
             user.Address = data.Address ?? user.Address;
 
+            // Check expiration date
             if (data.Type != gymUser.Type)
             {
+                if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date && gymUser.IsInActive == false)
+                {
+                    gymUser.IsInActive = true;
+                    _dbContext.Update(gymUser);
+                    _dbContext.SaveChanges();
+                    return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Korisniku je istekla članarina" });
+                }
+
                 if (gymUser.IsInActive || gymUser.IsFrozen)
                     return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Korisnik je zaledjen ili mu je istekla članarina" });
 
+                // racunamo kada je user uplatio teretanu
+                // od expires_on oduzmemo koji je tip uplacen
                 var dateOfPayment = _dateTimeService.Now;
                 var gymUserExpiresOn = gymUser.ExpiresOn;
                 switch (gymUser.Type)
@@ -485,9 +491,6 @@ namespace Infrastructure.Services
                 await _dbContext.SaveChangesAsync();
                 transaction.Commit();
 
-                if (sendMail)
-                    _emailService.SendConfirmationEmailAsync(user.Email);
-
                 return GymUserResult.Sucessfull();
             }
             catch (Exception exc)
@@ -499,7 +502,6 @@ namespace Infrastructure.Services
 
         public async Task<GymUserResult> UpdateRegularUser(Guid id, UpdateRegularUserDto data)
         {
-            var sendMail = false;
             var gymUser = await _dbContext.GymUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (gymUser == null)
                 GymUserResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Korisnik sa proslijedjenim id ne postoji" });
@@ -517,7 +519,6 @@ namespace Infrastructure.Services
                 user.Email = email;
                 user.UserName = email;
                 user.EmailConfirmed = true;
-                sendMail = true;
             }
 
             user.FirstName = data.FirstName ?? user.FirstName;
@@ -528,8 +529,6 @@ namespace Infrastructure.Services
             if (!updateResult.Succeeded)
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UnableToUpdate, Message = "Nije moguće ažurirati korisnika" });
 
-            if (sendMail)
-                _emailService.SendConfirmationEmailAsync(user.Email);
             return GymUserResult.Sucessfull();
         }
     }

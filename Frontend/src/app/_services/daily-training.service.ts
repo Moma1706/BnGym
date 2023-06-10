@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BASE_URL } from '../config/api-url.config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DayliTrainingService {
+export class DailyTrainingService {
 
-  baseUrl = 'https://localhost:7085/api/DailyUser';
+  baseUrl = `${BASE_URL}/DailyUser`;
 
 constructor(private http: HttpClient) { }
 
@@ -14,7 +15,7 @@ addTraining(model: any){
   return this.http.post(this.baseUrl, model);
 }
 
-getAllDayliTrainings(PageSize: number, Page: number, SearchString: string, sortDirect: number)
+getAllDailyTrainings(PageSize: number, Page: number, SearchString: string, sortDirect: number)
 {
   const queryParams = `?PageSize=${PageSize}&Page=${Page}&SearchString=${SearchString}&SortOrder=${sortDirect}`;
   return this.http.get(this.baseUrl + '/users/' + queryParams);

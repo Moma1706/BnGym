@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BASE_URL } from '../config/api-url.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CheckInService {
 
-  baseUrl = 'https://localhost:7085/api/CheckIn';
+  baseUrl = `${BASE_URL}/CheckIn`;
 
 constructor(private http: HttpClient) { }
 

@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Form, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs';
 import { AccountService } from 'src/app/_services/account.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { GymWorkerService } from 'src/app/_services/gym-worker.service';
 import { UserService } from 'src/app/_services/user.service';
+
 
 @Component({
   selector: 'app-profile',
@@ -39,7 +40,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private userService: UserService, 
     private gymWorkerService: GymWorkerService,
     private alertService: AlertService,
     private accountService: AccountService) {
@@ -85,7 +86,7 @@ export class ProfileComponent implements OnInit {
     .pipe(first())
       .subscribe({
         next: (response: any) => {
-          console.log(response);
+          this.alertService.success("Profil korisnika uspiješno ažuriran!");
         },
         error: (error : HttpErrorResponse) => {
           this.alertService.error(error.error.message);

@@ -1,7 +1,6 @@
 import { AlertService } from './../_services/alert.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { AccountService } from '../_services/account.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -15,10 +14,10 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
   loading = false;
   submitted = false;
+  previousEmail: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router,
     private accountService: AccountService,
     private alertService: AlertService)   
   {
@@ -28,14 +27,19 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    const storedEmail = localStorage.getItem('previousEmail');
+    if (storedEmail) {
+      this.previousEmail = storedEmail;
+    };
+
     this.form = this.formBuilder.group({
-      username: ['', Validators.required],
+      username: [this.previousEmail ?? '', Validators.required],
       password: ['', Validators.required]
     });
+
   }
   
   get f() { return this.form.controls; }
-
   
   onSubmit() {
     this.submitted = true;
@@ -45,13 +49,16 @@ export class LoginComponent implements OnInit {
       return;
   }
 
-  login(){
+  login() {
     if(this.form.valid){
       this.loading = true;
-      this.accountService.login(this.f['username'].value,this.f['password'].value,)
+      this.accountService.login(this.f['username'].value, this.f['password'].value,)
       .pipe(first()).subscribe({
         next: () => {
           window.location.href="/checkIn-history/view-checkins-by-date"
+          // Call the saveEmail() function to save the entered email
+          const email = this.f['username'].value;
+          this.saveEmail(email);
         },
         error: (error : HttpErrorResponse) => {
           this.alertService.error(error.error.error);
@@ -59,5 +66,10 @@ export class LoginComponent implements OnInit {
       }});
 
     }
+  }
+
+  saveEmail(email: string) {
+      this.previousEmail = email;
+      localStorage.setItem('previousEmail', this.previousEmail);
   }
 }

@@ -56,7 +56,7 @@ namespace Infrastructure.Identity
 
             var userRole = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             if (userRole.RoleId != Convert.ToInt32(UserRole.Admin))
-                return Result.Failure("Nevalida rola");
+                return Result.Failure("Pristup onemogućen. Nije vam dozvoljeno prijavljivanje na ovaj sajt");
 
             if (user.IsBlocked)
                 return Result.Failure("Korisnik je blokiran");
@@ -87,14 +87,7 @@ namespace Infrastructure.Identity
 
             var role = _dbContext.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             if (role.RoleId != Convert.ToInt32(UserRole.RegularUser))
-                return Result.Failure("Nevalidna rola");
-
-            //var role1 = _dbContext.Roles.Where(x => x.Id == role.RoleId).FirstOrDefault();
-
-            //var claims = GetClaims(user);
-            //claims.Add(new Claim(ClaimTypes.Role, role1.Name));
-
-            //var token = GenerateJwtForUser(user, claims);
+                return Result.Failure("Pristup onemogućen. Nije vam dozvoljeno prijavljivanje na aplikaciju");
 
 
             var regularUser = _dbContext.GymUsers.Where(x => x.UserId == user.Id).FirstOrDefault();
@@ -216,7 +209,16 @@ namespace Infrastructure.Identity
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (!result.Succeeded)
-                return Result.Failure("Nije moguće promijeniti šifru. " + result.Errors);
+            {
+                var message = "";
+                var item = result.Errors.ElementAt(0);
+
+                if (item.Code == "PasswordMismatch")
+                    message = "Pogrešno ste unijeli trenutnu loziku";
+
+                return Result.Failure("Nije moguće promijeniti šifru. " + message);
+            }
+
 
             return Result.Successful();
         }

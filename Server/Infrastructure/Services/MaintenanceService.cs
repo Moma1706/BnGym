@@ -68,10 +68,13 @@ namespace Infrastructure.Identity
 
             try {
                 var data = await _dbContext.CheckIns.Where(x => x.TimeStamp.Date < dateForDelete.Date).ToListAsync();
-                if (data.Count() == 0)
-                    return MaintenanceResult.Sucessfull();
+                var dailyData = await _dbContext.DailyHistory.Where(x => x.CheckInDate.Date < dateForDelete.Date).ToListAsync();
+                if (data.Count() != 0)
+                    _dbContext.CheckIns.RemoveRange(data);
 
-                _dbContext.CheckIns.RemoveRange(data);
+                if (dailyData.Count() != 0)
+                    _dbContext.DailyHistory.RemoveRange(dailyData);
+
                 await _dbContext.SaveChangesAsync();
                 return MaintenanceResult.Sucessfull();
             } catch (Exception)

@@ -17,11 +17,9 @@ namespace Application.GymUser
     public class GymUserCreateCommandHandler : IRequestHandler<GymUserCreateCommand, GymUserGetResult>
     {
         private readonly IGymUserService _gymUserService;
-        private readonly IEmailService _emailService;
 
-        public GymUserCreateCommandHandler(IEmailService emailService, IGymUserService gymUserService)
+        public GymUserCreateCommandHandler(IGymUserService gymUserService)
         {
-            _emailService = emailService;
             _gymUserService = gymUserService;
         }
 
@@ -31,7 +29,6 @@ namespace Application.GymUser
             if (gymUserResult.Error.Code != 0)
                 return gymUserResult;
 
-            _ = _emailService.SendConfirmationEmailAsync(gymUserResult.Email);
             return gymUserResult;
         }
     }

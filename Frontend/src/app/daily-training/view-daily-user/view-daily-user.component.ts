@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
+import { DailyTrainingService } from 'src/app/_services/daily-training.service';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
 import { first } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-view-dayli-user',
-  templateUrl: './view-dayli-user.component.html',
-  styleUrls: ['./view-dayli-user.component.css']
+  selector: 'app-view-daily-user',
+  templateUrl: './view-daily-user.component.html',
+  styleUrls: ['./view-daily-user.component.css']
 })
-export class ViewDayliUserComponent implements OnInit {
+export class ViewDailyUserComponent implements OnInit {
 
   model:any = {};
   id: string | null = '' ;
@@ -23,7 +23,7 @@ export class ViewDayliUserComponent implements OnInit {
   submitted: boolean = false;
   loading: boolean = false;
 
-  constructor(private route: ActivatedRoute, private dayliService: DayliTrainingService, private formBuilder: FormBuilder, private router: Router, private alertservice: AlertService) { 
+  constructor(private route: ActivatedRoute, private dailyService: DailyTrainingService, private formBuilder: FormBuilder, private router: Router, private alertservice: AlertService) { 
     this.form = this.formBuilder.group({
       title: this.formBuilder.control('initial value', Validators.required)
     });
@@ -47,7 +47,7 @@ export class ViewDayliUserComponent implements OnInit {
 
   getUser(id : string)
   {
-    this.dayliService.getTraining(id).subscribe((response:any) =>{
+    this.dailyService.getTraining(id).subscribe((response:any) =>{
       this.model = response;
 
       let birthDate: string = this.model.dateOfBirth.toString();
@@ -78,17 +78,17 @@ export class ViewDayliUserComponent implements OnInit {
       this.model.dateOfBirth=this.f['dateOfBirth'].value;
     }
     
-    // this.dayliService.update(this.model.id, this.model).subscribe((response:any) =>{
-    //   const returnUrl ='/dayli-training/view-all-dayli';
+    // this.dailyService.update(this.model.id, this.model).subscribe((response:any) =>{
+    //   const returnUrl ='/daily-training/view-all-daily';
     //   this.router.navigateByUrl(returnUrl);
     //   this.alertservice.success("Profil korisnika promenjen!");
     // });
 
-    this.dayliService.update(this.model.id, this.model)
+    this.dailyService.update(this.model.id, this.model)
     .pipe(first())
       .subscribe({
         next: (response: any) => {
-          const returnUrl ='/dayli-training/view-all-dayli';
+          const returnUrl ='/daily-training/view-all-daily';
           this.router.navigateByUrl(returnUrl);
           this.alertservice.success("Profil korisnika promenjen!");
 
@@ -102,13 +102,13 @@ export class ViewDayliUserComponent implements OnInit {
 
   addArrival(){
 
-    this.dayliService.addArrival(this.model.id)
+    this.dailyService.addArrival(this.model.id)
     .pipe(first())
       .subscribe({
         next: (response: any) => {
           const returnUrl ='/checkIn-history/view-checkins-by-date';
           this.router.navigateByUrl(returnUrl);
-          this.alertservice.success('Evidentiran dolazak za korisnika:' + this.model.firstname +'!');
+          this.alertservice.success('Evidentiran dolazak za korisnika: ' + this.model.firstname +'!');
 
         },
         error: (error : HttpErrorResponse) => {

@@ -47,7 +47,7 @@ export class AllGymUsersComponent implements OnInit {
   model: any= {};
   submitted = false;
 
-  displayedColumns: string[] = ['firstName','lastName','email','isInactive','isFrozen',
+  displayedColumns: string[] = ['firstName','lastName','email','isInActive','isFrozen',
   'expiresOn', 'numberOfArrivalsCurrentMonth','numberOfArrivalsLastMonth','Buttons'];
 
   dataSource: MatTableDataSource<gymUser> = new MatTableDataSource();

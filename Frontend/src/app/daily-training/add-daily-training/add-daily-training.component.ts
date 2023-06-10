@@ -5,16 +5,16 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AlertService } from 'src/app/_services/alert.service';
-import { DayliTrainingService } from 'src/app/_services/dayli-training.service';
+import { DailyTrainingService } from 'src/app/_services/daily-training.service';
 import {formatDate} from '@angular/common'
 
 @Component({
-  selector: 'app-add-dayli-training',
-  templateUrl: './add-dayli-training.component.html',
-  styleUrls: ['./add-dayli-training.component.css']
+  selector: 'app-add-daily-training',
+  templateUrl: './add-daily-training.component.html',
+  styleUrls: ['./add-daily-training.component.css']
   
 })
-export class AddDayliTrainingComponent implements OnInit {
+export class AddDailyTrainingComponent implements OnInit {
 
   model: any= {};
   form: FormGroup;
@@ -24,7 +24,7 @@ export class AddDayliTrainingComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private dayliTrainingService: DayliTrainingService,
+    private dailyTrainingService: DailyTrainingService,
     private alertService: AlertService 
   ) 
   {
@@ -59,12 +59,12 @@ export class AddDayliTrainingComponent implements OnInit {
    
     console.log(this.model);
 
-    this.dayliTrainingService.addTraining(this.model)
+    this.dailyTrainingService.addTraining(this.model)
     .pipe(first())
             .subscribe({
                 next: () => {
                     // get return url from query parameters or default to home page
-                    const returnUrl ='/dayli-training/view-all-dayli';
+                    const returnUrl ='/daily-training/view-all-daily';
                     this.router.navigateByUrl(returnUrl);
                     this.alertService.success('Dodat dnevni korisnik!')
                 },

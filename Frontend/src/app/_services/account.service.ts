@@ -4,6 +4,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { BASE_URL } from '../config/api-url.config';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,8 @@ export class AccountService {
   userToken: any;
   jwtHelper = new JwtHelperService();
 
-  baseUrlLogin = 'https://localhost:7085/api/Auth/login';
-  baseUrl = 'https://localhost:7085/api/Auth';
+  baseUrlLogin = `${BASE_URL}/Auth/login`;
+  baseUrl = `${BASE_URL}/Auth`;
 
   constructor(private http: HttpClient) { }
 

@@ -21,21 +21,15 @@ public record RegisterCommand() : IRequest<RegisterResult>
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
 {
     private readonly IIdentityService _identityService;
-    private readonly IEmailService _emailService;
 
-    public RegisterCommandHandler(IIdentityService identityService, IEmailService emailService)
+    public RegisterCommandHandler(IIdentityService identityService)
     {
         _identityService = identityService;
-        _emailService = emailService;
     }
 
     public async Task<RegisterResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var registerResult = await _identityService.Register(request.Email, request.FirstName, request.LastName, request.Address);
-
-        if (registerResult.Success)
-            _emailService.SendConfirmationEmailAsync(request.Email);
-
         return registerResult;
     }
 }

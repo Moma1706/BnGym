@@ -95,11 +95,11 @@ export class ViewGymUserComponent implements OnInit {
         this.model.freezeDate = this.splited[0];
       }
       
-      if(this.model.isInactive){
-        this.model.isInactive = 'Da';
+      if(this.model.isInActive){
+        this.model.isInActive = 'Da';
       }
       else{
-        this.model.isInactive = 'Ne';
+        this.model.isInActive = 'Ne';
       }
 
       console.log(this.model.userType);
@@ -132,7 +132,7 @@ export class ViewGymUserComponent implements OnInit {
         console.log(response);
         const returnUrl ='/gym-user/all-gym-users';
         this.router.navigateByUrl(returnUrl);
-        this.alertService.success('Korisnik zamrznut!');
+        this.alertService.success(`Članarina korisnika ${this.model.firstName} je zamrznuta!`);
         
       });
   }
@@ -142,9 +142,7 @@ export class ViewGymUserComponent implements OnInit {
       console.log(response);
       const returnUrl ='/gym-user/all-gym-users';
       this.router.navigateByUrl(returnUrl);
-      this.alertService.success('Korisnik Aktiviran');
-      // window.location.reload();
-      
+      this.alertService.success(`Korisnika ${this.model.firstName} aktiviran`);
     });;
   }
 
@@ -172,7 +170,7 @@ export class ViewGymUserComponent implements OnInit {
       console.log(response);
       const returnUrl ='/gym-user/all-gym-users';
       this.router.navigateByUrl(returnUrl);
-      this.alertService.success('Uspiješno produžena članarina za člana: ' + this.model.firstName + ' ' + this.model.lastName);
+      this.alertService.success(`Uspiješno produžena članarina za člana: ${this.model.firstName} ${this.model.lastName}`);
     });;
   }
 
@@ -227,7 +225,7 @@ export class ViewGymUserComponent implements OnInit {
           next: () => {
               const returnUrl ='/checkIn-history/view-checkins-by-date';
               this.router.navigateByUrl(returnUrl);
-              this.alertService.success('Korisnik' + this.model.firstName +'evidentiran!')
+              this.alertService.success(`Korisnik ${this.model.firstName} evidentiran!`)
           },
           error: (error : HttpErrorResponse) => {
             this.alertService.error(error.error.message);
