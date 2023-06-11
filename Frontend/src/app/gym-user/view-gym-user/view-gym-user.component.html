@@ -149,7 +149,7 @@
     <div style="width: 700px">
       <div>
         <span
-          >Neaktivan</span
+          >Aktivan</span
         >
       </div>
       <input
@@ -157,7 +157,7 @@
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        placeholder={{model.isInActive}}
+        [placeholder]="model.isInActive ? 'Ne' : 'Da'"
         readonly = true
       />
     </div>

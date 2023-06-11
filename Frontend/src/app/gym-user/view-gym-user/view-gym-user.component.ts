@@ -63,7 +63,6 @@ export class ViewGymUserComponent implements OnInit {
     this.gymUserService.getUser(id).subscribe((response:any) =>{
 
       this.model = response;
-      console.log(this.model);
 
       let ExpiresOn: string = this.model.expiresOn.toString();
       this.splited = ExpiresOn.split("T",2);
@@ -73,10 +72,10 @@ export class ViewGymUserComponent implements OnInit {
       this.splited = lastCheckin.split("T",2);
       this.model.lastCheckIn = this.splited[0];
 
-      if(this.model.lastCheckIn == "0001-01-01" || this.model.lastCheckIn === "null"){
+      if (this.model.lastCheckIn == "0001-01-01" || this.model.lastCheckIn === "null"){
         this.model.lastCheckIn = "Nema ni jedan dolazak..."
       }
-      else{
+      else {
         const newDate = new Date(this.model.lastCheckIn);
         const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
         const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
@@ -84,25 +83,23 @@ export class ViewGymUserComponent implements OnInit {
         this.model.lastCheckIn = isoDateString;
       }
 
-      if(this.model.isFrozen == false){
+      if (this.model.isFrozen == false){
         this.model.isFrozen = 'Ne';
         this.model.freezeDate = '';
       }
-      else{
+      else {
         this.model.isFrozen = 'Da';
         let freezDate: string = this.model.freezeDate.toString();
         this.splited = freezDate.split("T",2);
-        this.model.freezeDate = this.splited[0];
-      }
-      
-      if(this.model.isInActive){
-        this.model.isInActive = 'Da';
-      }
-      else{
-        this.model.isInActive = 'Ne';
-      }
 
-      console.log(this.model.userType);
+        let date = this.splited[0];
+        const newDate = new Date(date);
+        const timeZoneOffsetMs = newDate.getTimezoneOffset() * 60 * 1000; // Convert minutes to milliseconds
+        const adjustedDate = new Date(newDate.getTime() - timeZoneOffsetMs);
+        let isoDateString = adjustedDate.toLocaleString();
+
+        this.model.freezeDate = isoDateString;
+      }
 
       if(this.model.type == 0){
         this.model.type = 'Pola mjeseca';
@@ -120,16 +117,11 @@ export class ViewGymUserComponent implements OnInit {
         this.model.type = 'Godinu dana';
         this.index = 4;
       }
-
-      
-
-      console.log(this.model);
     })
   }
 
   Freez(){
       this.gymUserService.freeze(this.model.id ?? '').subscribe((response:any) =>{
-        console.log(response);
         const returnUrl ='/gym-user/all-gym-users';
         this.router.navigateByUrl(returnUrl);
         this.alertService.success(`Članarina korisnika ${this.model.firstName} je zamrznuta!`);
@@ -139,7 +131,6 @@ export class ViewGymUserComponent implements OnInit {
 
   Activate(){
     this.gymUserService.Activate(this.model.id ?? '').subscribe((response:any) =>{
-      console.log(response);
       const returnUrl ='/gym-user/all-gym-users';
       this.router.navigateByUrl(returnUrl);
       this.alertService.success(`Korisnika ${this.model.firstName} aktiviran`);
@@ -167,7 +158,6 @@ export class ViewGymUserComponent implements OnInit {
     }
 
     this.gymUserService.Extend(this.model.id ?? '', {'Type':type}).subscribe((response:any) =>{
-      console.log(response);
       const returnUrl ='/gym-user/all-gym-users';
       this.router.navigateByUrl(returnUrl);
       this.alertService.success(`Uspiješno produžena članarina za člana: ${this.model.firstName} ${this.model.lastName}`);

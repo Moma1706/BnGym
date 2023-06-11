@@ -120,7 +120,6 @@ export class ViewCheckInsByDateComponent implements OnInit {
       )
       .subscribe((empData) => {
         this.EmpData = empData;
-        console.log(empData);
         this.dataSource = new MatTableDataSource(this.EmpData);
         this.dataSource.sort = this.sort;
       });

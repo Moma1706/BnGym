@@ -30,7 +30,6 @@ export class AccountService {
     return this.http.post(this.baseUrlLogin, loginModel).pipe(
       map((response: any) => {
         const user = response;
-        console.log(user);
         if (user) {
           localStorage.setItem('token', user.token);
           this.decodedToken = this.jwtHelper.decodeToken(user.token);

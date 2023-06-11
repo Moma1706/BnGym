@@ -60,8 +60,6 @@ export class ViewDailyUserComponent implements OnInit {
       let isoDateString = adjustedDate.toLocaleString();
 
       this.model.lastCheckIn = isoDateString;
-
-      console.log(this.model);
     })
   }
 
@@ -77,12 +75,6 @@ export class ViewDailyUserComponent implements OnInit {
     if(this.f['dateOfBirth'].value != ''){
       this.model.dateOfBirth=this.f['dateOfBirth'].value;
     }
-    
-    // this.dailyService.update(this.model.id, this.model).subscribe((response:any) =>{
-    //   const returnUrl ='/daily-training/view-all-daily';
-    //   this.router.navigateByUrl(returnUrl);
-    //   this.alertservice.success("Profil korisnika promenjen!");
-    // });
 
     this.dailyService.update(this.model.id, this.model)
     .pipe(first())

@@ -56,8 +56,6 @@ export class AddDailyTrainingComponent implements OnInit {
     this.model.firstName=this.f['firstname'].value;
     this.model.lastName=this.f['lastname'].value;
     this.model.dateOfBirth=this.f['dateOfBirth'].value;
-   
-    console.log(this.model);
 
     this.dailyTrainingService.addTraining(this.model)
     .pipe(first())

@@ -53,7 +53,6 @@ export class ProfileComponent implements OnInit {
 
   getUserInfo() {
     this.userService.getUserData(+this.userId).subscribe((response:any) =>{
-      console.log(response);
       this.model = response;
     });
   }
@@ -116,7 +115,6 @@ export class ProfileComponent implements OnInit {
     .pipe(first())
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.alertService.success('Promijenjna lozinka!');
           this.changePasswordVisible = false;
 

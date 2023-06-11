@@ -133,19 +133,23 @@ namespace Infrastructure.Services
                 return GymUserResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je već aktivan" });
 
             // izracunati koliko dana mu je ostalo
-            var currentDate = _dateTimeService.Now.Date;
+            var currentDateTime = _dateTimeService.Now;
+            var currentDate = currentDateTime.Date;
             var expiresOn = gymUser.ExpiresOn.Date;
             var days = 0;
+            // clanarina istekla
             if (expiresOn < currentDate)
             {
                 days = (expiresOn - gymUser.FreezeDate.Date).Days;
+                gymUser.ExpiresOn = currentDateTime.AddDays(days);
             }
             else
             {
                 days = (currentDate - gymUser.FreezeDate.Date).Days;
+                gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
             }
 
-            gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
+            gymUser.IsInActive = false;
             gymUser.FreezeDate = DateTime.MinValue;
             gymUser.IsFrozen = false;
 
@@ -163,7 +167,8 @@ namespace Infrastructure.Services
                 return GymUserResult.Sucessfull();
 
             // izracunati koliko dana im je ostalo
-            var currentDate = _dateTimeService.Now.Date;
+            var currentDateTime = _dateTimeService.Now;
+            var currentDate = currentDateTime.Date;
             foreach (GymUser gymUser in gymUsers)
             {
                 var expiresOn = gymUser.ExpiresOn.Date;
@@ -171,15 +176,17 @@ namespace Infrastructure.Services
                 if (expiresOn < currentDate)
                 {
                     days = (expiresOn - gymUser.FreezeDate.Date).Days;
+                    gymUser.ExpiresOn = currentDateTime.AddDays(days);
                 }
                 else
                 {
                     days = (currentDate - gymUser.FreezeDate.Date).Days;
+                    gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
                 }
 
-                gymUser.ExpiresOn = gymUser.ExpiresOn.AddDays(days);
                 gymUser.FreezeDate = DateTime.MinValue;
                 gymUser.IsFrozen = false;
+                gymUser.IsInActive = false;
             }
 
             _dbContext.GymUsers.UpdateRange(gymUsers);
