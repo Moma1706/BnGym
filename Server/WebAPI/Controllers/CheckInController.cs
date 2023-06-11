@@ -2,6 +2,7 @@
 using Application.CheckIn;
 using Application.CheckIn.CheckIn;
 using Application.Common.Exceptions;
+using Application.Common.Models.Auth;
 using Application.Common.Models.BaseResult;
 using Application.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,7 @@ namespace WebApi.Controllers
                 if (checkInResult.Success)
                     return Ok();
 
-                return BadRequest(checkInResult.Error);
+               return BadRequest(new Error { Message = checkInResult.Error.Message, Code = checkInResult.Error.Code });
             }
             catch (Exception exception)
             {

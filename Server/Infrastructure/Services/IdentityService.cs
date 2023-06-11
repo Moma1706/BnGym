@@ -215,6 +215,8 @@ namespace Infrastructure.Identity
 
                 if (item.Code == "PasswordMismatch")
                     message = "Pogrešno ste unijeli trenutnu loziku";
+                else if (item.Code == "PasswordRequiresLower")
+                    message = "Nova lozinka mora sadržati barem jedno malo slovo";
 
                 return Result.Failure("Nije moguće promijeniti šifru. " + message);
             }
