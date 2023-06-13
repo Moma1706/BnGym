@@ -4,13 +4,15 @@ import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import Layout from './Layout';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import axios from "axios";
-import { panHandlerName } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { BASE_URL } from '../config/api-url.config';
 
 type ChangePasswordProps = {
     navigation: NavigationProp<ParamListBase>;
 };
 
 const ChangePassword = ({ navigation }: ChangePasswordProps) => {
+  const changePassUrl = `${BASE_URL}/Auth/change-password`;
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -28,64 +30,57 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
   };
 
   const handleSubmit = async () => {
-    navigation.navigate('Profile');
-    // Handle password change
-    // const fetchData = async () => {
-    //   try {
-    //     const userId = await EncryptedStorage.getItem('user_id');
-    //     // android:
-    //     // const response = await axios.post(`http://10.0.2.2:42068/api/Auth/change-password`, {
-    //     const response = await axios.post(`http://localhost:42068/api/Auth/change-password`, {
-    //       id: userId,
-    //       currentPassword: currentPassword,
-    //       newPassword: newPassword,
-    //       confirmNewPassword: confirmNewPassword
-    //     });
+    if (currentPassword.trim()  === "") {
+      // One of the fields is empty
+      Alert.alert("Trenutna lozinka se mora unijeti");
+      return;
+    }
+    if (newPassword.trim()  === "") {
+      // One of the fields is empty
+      Alert.alert("Nova lozinka se mora unijeti");
+      return;
+    }
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      Alert.alert('Nova lozinka mora sadržati barem 8 znakova, jedno veliko slovo i jedan broj');
+      return;
+    }
+    if (confirmNewPassword.trim()  === "") {
+      // One of the fields is empty
+      Alert.alert("Potvrda nove lozinke se mora unijeti");
+      return;
+    }
+    if (newPassword !== confirmNewPassword){
+      Alert.alert("Ne podudaraju se lozinke");
+      return;
+    }
+    
+    try {
+      const userId = await EncryptedStorage.getItem('user_id');
+      const response = await axios.post(changePassUrl, JSON.stringify({
+        id: userId,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmNewPassword: confirmNewPassword
+      }), { headers: {"content-type": "application/json" }});
 
-    //     if (response.status === 200) {
-    //       navigation.navigate('Profile');
-    //       Alert.alert("Lozinka je uspijesno promijenjena");
-    //     } else {
-    //       Alert.alert(response.data);
-    //     }
-    //   } catch (error: any) {
-    //     if (error.response && error.response.status === 400) {
-    //       Alert.alert(error.response.data);
-    //     } else {
-    //       Alert.alert("Došlo je do pogreške prilikom promjene lozinke.");
-    //     }
-    //   }
-    // };
-
-    // if (currentPassword.trim()  === "") {
-    //   // One of the fields is empty
-    //   Alert.alert("Trenutna lozinka se mora unijeti");
-    //   return;
-    // }
-    // if (newPassword.trim()  === "") {
-    //   // One of the fields is empty
-    //   Alert.alert("Nova lozinka se mora unijeti");
-    //   return;
-    // }
-    // const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    // if (!passwordRegex.test(newPassword)) {
-    //   Alert.alert('Nova lozinka mora sadržati barem 8 znakova, jedno veliko slovo i jedan broj');
-    //   return;
-    // }
-    // if (confirmNewPassword.trim()  === "") {
-    //   // One of the fields is empty
-    //   Alert.alert("Potvrda nove lozinke se mora unijeti");
-    //   return;
-    // }
-    // if (newPassword !== confirmNewPassword){
-    //   Alert.alert("Ne podudaraju se lozinke");
-    //   return;
-    // }
-    // await fetchData();
+      if (response.status === 200) {
+        navigation.navigate('Profile');
+        Alert.alert("Lozinka je uspijesno promijenjena");
+      } else {
+        Alert.alert(response.data.message);
+      }
+    } catch (error: any) {
+      if (error.response && (error.response.status === 400))
+        Alert.alert(error.response.data.message);
+      else
+        Alert.alert("Došlo je do greške prilikom promjene lozinke");
+    }
   };
 
   return (
     <Layout navigation={navigation}>
+      <KeyboardAwareScrollView>
       <View style={styles.container}>
         <Text style={styles.label}>Trenutna lozinka</Text>
         <TextInput
@@ -113,6 +108,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
         <Text style={styles.buttonText}>Promijeni</Text>
       </TouchableOpacity>
       </View>
+      </KeyboardAwareScrollView>
     </Layout>
   );
 };
@@ -122,13 +118,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
+    paddingTop: 100,
+    paddingLeft: 30,
+    paddingRight: 30
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: 'black'
   },
   input: {
     width: '100%',
@@ -138,6 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 8,
     marginBottom: 16,
+    color: 'black'
   },
   helperText: {
     fontSize: 12,

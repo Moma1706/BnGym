@@ -1,163 +1,185 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Alert, ActivityIndicator, View, Text, StatusBar } from 'react-native';
-import { Camera, Frame, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Alert, View, Text, Dimensions } from 'react-native';
+import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import Layout from './Layout';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import axios from "axios";
 import { BarcodeFormat, useScanBarcodes } from 'vision-camera-code-scanner';
+import { RNHoleView } from 'react-native-hole-view';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { Platform } from 'react-native';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import axios from 'axios';
+import { BASE_URL } from '../config/api-url.config';
 
 type CheckInProps = {
   navigation: NavigationProp<ParamListBase>;
 };
 
+const Constants = {
+  CHECK_IN_MESSAGE: 'Čekiranje uspiješno završeno!',
+  CHECK_IN_MESSAGE_FAILED: 'QR kod nije validan. Molimo Vas, pokušajte ponovo.',
+  CHECK_IN_PROCESS: 'check in process',
+
+  VIEW_HEIGHT: Dimensions.get('window').height - 180,
+  RN_HOLE_HEIGHT: 500,
+  RN_HOLE_WIDTH: 300
+}
+
 const CheckIn = ({ navigation }: CheckInProps) => {
-  const camera = useRef<Camera>(null);
+  const checkInUrl = `${BASE_URL}/CheckIn`;
   const devices = useCameraDevices('wide-angle-camera');
   const device = devices.back;
+
+  const [isCodeInvalid, setIsCodeInvalid] = useState<any>(null);
+  const [isPermissionGranted, setIsPermissionGranted] = useState<any>(false);
+  const [isRequestSent, setIsRequestSent] = useState<any>(false);
+
   const [frameProcessor, barcodes] = useScanBarcodes([
-    BarcodeFormat.ALL_FORMATS, // You can only specify a particular format
+    BarcodeFormat.QR_CODE,
   ]);
+  const checkCameraPermission =  useCallback(() => {
+    request(Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA).then((result) => {
+        if (result === RESULTS.GRANTED) {
+          setIsPermissionGranted(true)
+        } else {
+          setIsPermissionGranted(false)
+        }
+    });
+  }, [])
+  
+  useEffect(() => {
+    checkCameraPermission();
+  }, [checkCameraPermission]);
 
-const [barcode, setBarcode] = React.useState('');
-const [isScanned, setIsScanned] = React.useState(false);
-
-  // const frameProcessor = useFrameProcessor((frame) => {
-  //   console.log(frame);
-  //   const scannedQRCode = frame.toString();
-  //   const expectedQRCode = 'check-in-process'; // Replace with your expected QR code
-  //   if (scannedQRCode !== expectedQRCode) {
-  //     Alert.alert('Error', 'Invalid QR code.');
-  //     return;
-  //   }
-
-  //   Alert.alert('Dobar code');
-    // const gymUserId = 'YOUR_ENCRYPTED_STORAGE_ID';
-    // const url = `/api/App/check-in/${gymUserId}`;
-    // fetch(url, {
-    //   method: 'POST',
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     Alert.alert('Success', 'Successfully checked in.');
-    //   })
-    //   .catch(error => {
-    //     Alert.alert('Error', 'An error occurred while checking in.');
-    //   });
-  // }, [])
-
-  // function scanQRCodes(frame: Frame): string[] {
-  //   'worklet'
-  //   return __scanCodes(frame)
-  // }
-
-  // const frameProcessor = useFrameProcessor((frame) => {
-  //   'worklet'
-  //   console.log(frame);
-  //   const qrCodes = scanQRCodes(frame)
-  //   if (qrCodes.length > 0) {
-  //     console.log('codeee: ', qrCodes);
-  //     // runOnJS(onQRCodeDetected)(qrCodes[0])
-  //   //  console.log(qrCodes[0]);
-  //   }
-  // }, [])
-
-  React.useEffect(() => {
+  useEffect(() => {
     toggleActiveState();
     return () => {
       barcodes;
     };
   }, [barcodes]);
 
+  const showAlert = (message: string) => {
+    Alert.alert(
+      message,
+      'Da biste ponovo skenirali pritisnite OK',
+      [
+        {
+          text: 'Nazad',
+          onPress: () => {
+            setIsCodeInvalid(null);
+            navigation.navigate('Profile');
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            setIsCodeInvalid(null);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
 const toggleActiveState = async () => {
-    if (barcodes && barcodes.length > 0 && isScanned === false) {
-      setIsScanned(true);
-      // setBarcode('');
+  if (isCodeInvalid) {
+    return;
+  }
+
+    if (barcodes && barcodes.length > 0) {
+      console.log('je l udjes tuuuu')
       barcodes.forEach(async (scannedBarcode: any) => {
-        if (scannedBarcode.rawValue !== '') {
-          console.log('Ima li te: ',scannedBarcode.rawValue )
-          setBarcode(scannedBarcode.rawValue);
-          Alert.alert(barcode);
+        if (scannedBarcode.rawValue !== '' && scannedBarcode.rawValue === Constants.CHECK_IN_PROCESS) {
+          if (!isRequestSent) {
+            console.log('if not sent')
+            setIsRequestSent(true);
+            try {
+              const gymUserId = await EncryptedStorage.getItem('gym_user_id');
+              const response = await axios.post(checkInUrl, JSON.stringify({
+                GymUserId: gymUserId
+              }), { headers: {"content-type": "application/json" }});
+  
+              if (response.status === 200) {
+                navigation.navigate('Profile');
+                Alert.alert(Constants.CHECK_IN_MESSAGE);
+              } else {
+                Alert.alert(response.data.message);
+              }
+              setIsRequestSent(false);
+            } catch (error: any) {
+              setIsRequestSent(false);
+              navigation.navigate('Profile');
+              if (error.response && (error.response.status === 400))
+                Alert.alert(error.response.data.message);
+              else
+                Alert.alert("Došlo je do greške prilikom čekiranja");
+            }
+          } else {
+            console.log('ipak ovaj')
+          }
+        
+        } else {
+          console.log('invalid else...')
+          setIsCodeInvalid(true);
+          showAlert(Constants.CHECK_IN_MESSAGE_FAILED)
         }
       });
     }
   };
 
-  if (device == null)
-    return ( 
-    // <Layout navigation={navigation}>
-    //   <ActivityIndicator size='large'/>
-    // </Layout>
-    <View style={styles.box1}/>
-    );
-
   return (
     <Layout navigation={navigation}>
-      {/* <View style={styles.box}>
-      <Camera
-          style={StyleSheet.absoluteFill}
-          device={device}
-          isActive={true}
-          frameProcessor={frameProcessor}
-           frameProcessorFps={5}
-          video = {true}
-          audio = {true}
-        />
-      </View> */}
-        <>
-        <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    {
+    (device == null || !isPermissionGranted) ?
+    ( 
+      <View style={styles.container}>
+        <Text>Go to setting and allow camera</Text>
+      </View>
+    ) :
+    <>
+      <View style={styles.container}>
         <Camera
           style={StyleSheet.absoluteFill}
           device={device}
-          isActive={!isScanned}
+          isActive={true} 
           frameProcessor={frameProcessor}
           frameProcessorFps={5}
           audio={false}
         />
-       {/* <RNHoleView
-            holes={[
-              {
-                x: widthToDp('8.5%'),
-                y: heightToDp('36%'),
-                width: widthToDp('83%'),
-                height: heightToDp('20%'),
-                borderRadius: 10,
-              },
-            ]}
-            style={styles.rnholeView}
-          /> */}
-      </>
+       <RNHoleView
+          holes={[
+            {
+              x:  Dimensions.get('window').width / 2 - Constants.RN_HOLE_WIDTH / 2,
+              y: Constants.VIEW_HEIGHT / 2 - Constants.RN_HOLE_HEIGHT / 2,
+              width: Constants.RN_HOLE_WIDTH,
+              height: Constants.RN_HOLE_HEIGHT,
+              borderRadius: 10,
+             
+            },
+          ]}
+          style={styles.rnholeView}
+        />
+      </View>
+    </>
+    }
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  box: {
+  container: {
+    height: Constants.VIEW_HEIGHT,
+  },
+  rnholeView: {
+    position: 'absolute',
     width: '100%',
     height: '100%',
-  },
-
-  box1: {
-    width: 300,
-    height: 200,
-    backgroundColor: 'green'
-  },
-  barcodeTextURL: {
-    fontSize: 20,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  button: {
-    backgroundColor: 'blue',
-    padding: 10,
-    borderRadius: 5,
+    alignSelf: 'center',
     alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  camera: {
-    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+   
   },
 });
 

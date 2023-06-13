@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions } from 'react-native';
 import axios from "axios";
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { BASE_URL } from '../config/api-url.config';
 
 type LoginProps = {
   navigation: NavigationProp<ParamListBase>;
@@ -12,10 +13,12 @@ type LoginProps = {
 const Login = ({ navigation }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
+
+  const loginUrl = `${BASE_URL}/Auth/login-app`;
+
 
   useEffect(() => {
-    // if user_id present in local storage, it means that user is login and show profile screen. Otherwise shoe login screen
+    // if user_id present in local storage, it means that user is login and show profile screen. Otherwise show login screen
     EncryptedStorage.getItem('user_id')
       .then(userId => {
         if (userId)
@@ -28,76 +31,70 @@ const Login = ({ navigation }: LoginProps) => {
       });
   });
 
-  const toggleSecureEntry = () => {
-    setSecureTextEntry(!secureTextEntry);
-  };
-
   const handleLogin = async () => {
-    // navigate to profile screen
-    navigation.navigate('Profile');
-    
-    // if (email.trim() === "" || password.trim() === "") {
-    //   // One of the fields is empty
-    //   Alert.alert("Email i lozinka ne mogu biti prazni");
-    //   return;
-    // }
+    if (email.trim() === "" || password.trim() === "") {
+      // One of the fields is empty
+      Alert.alert("Email i lozinka ne mogu biti prazni");
+      return;
+    }
   
-    // const emailRegex = /\S+@\S+\.\S+/;
-    // if (!emailRegex.test(email)) {
-    //   // Invalid email format
-    //   Alert.alert("Email nije validan");
-    //   return;
-    // }
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      // Invalid email format
+      Alert.alert("Email nije validan");
+      return;
+    }
 
-    // try {
-    //   // send API request
-    //   // za android: 
-    //   // const response = await axios.post(`http://10.0.2.2:42068/api/Auth/login-app`, JSON.stringify({
-    //   const response = await axios.post(`http://localhost:42068/api/Auth/login-app`, JSON.stringify({
-    //     Email: email,
-    //     Password: password
-    //   }), { headers: {"content-type": "application/json" }});
+    try {
+      // send API request
+      const response = await axios.post(loginUrl, JSON.stringify({
+        Email: email,
+        Password: password
+      }), { headers: {"content-type": "application/json" }});
 
-    //   // API returns 200 OK
-    //   if (response.status === 200) {
-    //     // reset email and password values
-    //     setPassword('');
-    //     setEmail('');
+      // API returns 200 OK
+      if (response.status === 200) {
+        // reset email and password values
+        setPassword('');
+        setEmail('');
 
-    //     // save ids to local storage
-    //     await EncryptedStorage.setItem(
-    //       "gym_user_id", response.data.gymUserId
-    //     );
-    //     await EncryptedStorage.setItem(
-    //       "user_id", response.data.userId.toString()
-    //     );
+        // save ids to local storage
+        await EncryptedStorage.setItem(
+          "gym_user_id", response.data.gymUserId
+        );
+        await EncryptedStorage.setItem(
+          "user_id", response.data.userId.toString()
+        );
 
-    //     // navigate to profile screen
-    //     navigation.navigate('Profile');
-    //   } else
-    //     Alert.alert(response.data.message);
+        // navigate to profile screen
+        navigation.navigate('Profile');
+      } else
+        Alert.alert(response.data.message);
 
-    // } catch (error: any) {
-    //   if (error.response && (error.response.status === 400 || error.response.status === 401))
-    //     Alert.alert(error.response.data.error);
-    //   else
-    //     Alert.alert("Došlo je do greške prilikom prijavljivanja");
-    // }
+    } catch (error: any) {
+      console.log(error.response)
+      if (error.response && (error.response.status === 400 || error.response.status === 401))
+        Alert.alert(error.response.data.error);
+      else
+        Alert.alert("Došlo je do greške prilikom prijavljivanja");
+    }
   };
 
   return (
-    // <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView>
     <View style={styles.container}>
-      <Image source={require('../assets/black_image.jpeg')} style={styles.logo} />
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor={"black"}
         value={email}
         onChangeText={text => setEmail(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Lozinka"
+        placeholderTextColor={"black"}
         value={password}
         onChangeText={text => setPassword(text)}
         secureTextEntry={true}
@@ -106,7 +103,7 @@ const Login = ({ navigation }: LoginProps) => {
         <Text style={styles.buttonText}>Prijavi se</Text>
       </TouchableOpacity>
     </View>
-    // </KeyboardAwareScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -115,11 +112,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    height: Dimensions.get('window').height,
   },
   logo: {
-    width: '80%',
-    height: 300,
-    borderRadius: 200
+    width: 350,
+    height: 350,
+    borderRadius: 300
   },
   input: {
     width: '80%',
@@ -129,6 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
+    color: 'black'
   },
   button: {
     width: '80%',

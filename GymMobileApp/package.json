@@ -21,12 +21,15 @@
     "react-native-elements": "^3.4.3",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-gesture-handler": "^2.10.0",
+    "react-native-hole-view": "^2.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal": "^13.0.1",
+    "react-native-permissions": "^3.8.0",
     "react-native-qrcode-scanner": "^1.5.5",
     "react-native-reanimated": "^2.14.4",
     "react-native-safe-area-context": "^4.5.2",
     "react-native-screens": "^3.20.0",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-vision-camera": "^2.15.4",
     "vision-camera-code-scanner": "^0.2.0"
@@ -51,5 +54,26 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "reactNativePermissionsIOS": [
+    "AppTrackingTransparency",
+    "BluetoothPeripheral",
+    "Calendars",
+    "Camera",
+    "Contacts",
+    "FaceID",
+    "LocationAccuracy",
+    "LocationAlways",
+    "LocationWhenInUse",
+    "MediaLibrary",
+    "Microphone",
+    "Motion",
+    "Notifications",
+    "PhotoLibrary",
+    "PhotoLibraryAddOnly",
+    "Reminders",
+    "Siri",
+    "SpeechRecognition",
+    "StoreKit"
+  ]
 }
