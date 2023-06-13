@@ -40,14 +40,17 @@ export class ForgotPassComponent {
     if(!this.form.valid)
       return;
     this.loading = true;
-    var email = this.route.snapshot.queryParamMap.get('email')?.split('?')[0];
-    var token = this.route.snapshot.queryParamMap.get('email')?.split('token=')[1];
+    const email = this.route.snapshot.queryParamMap.get('email');
+    const token = this.route.snapshot.queryParamMap.get('token');
+
+    // var email = this.route.snapshot.queryParamMap.get('email')?.split('?')[0];
+    // var token = this.route.snapshot.queryParamMap.get('email')?.split('token=')[1];
 
     let model = {
       "password": this.f['password'].value,
       "confirmPassword": this.f['confirmPassword'].value,
-      "token": email,
-      "email": token
+      "token": token,
+      "email": email
     }
       this.accountService.resetPassword(model)
       .pipe(first()).subscribe({
