@@ -88,11 +88,9 @@ const toggleActiveState = async () => {
   }
 
     if (barcodes && barcodes.length > 0) {
-      console.log('je l udjes tuuuu')
       barcodes.forEach(async (scannedBarcode: any) => {
         if (scannedBarcode.rawValue !== '' && scannedBarcode.rawValue === Constants.CHECK_IN_PROCESS) {
           if (!isRequestSent) {
-            console.log('if not sent')
             setIsRequestSent(true);
             try {
               const gymUserId = await EncryptedStorage.getItem('gym_user_id');
@@ -115,12 +113,9 @@ const toggleActiveState = async () => {
               else
                 Alert.alert("Došlo je do greške prilikom čekiranja");
             }
-          } else {
-            console.log('ipak ovaj')
           }
         
         } else {
-          console.log('invalid else...')
           setIsCodeInvalid(true);
           showAlert(Constants.CHECK_IN_MESSAGE_FAILED)
         }
