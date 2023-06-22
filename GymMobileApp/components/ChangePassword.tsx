@@ -97,7 +97,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
           value={newPassword}
           onChangeText={handleNewPasswordChange}
         />
-        <Text style={styles.label}>Potvrdi trenutnu lozinku</Text>
+        <Text style={styles.label}>Potvrdite novu lozinku</Text>
         <TextInput
           style={styles.input}
           secureTextEntry={true}
