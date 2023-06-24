@@ -80,7 +80,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
 
   return (
     <Layout navigation={navigation}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView enableOnAndroid={true}>
       <View style={styles.container}>
         <Text style={styles.label}>Trenutna lozinka</Text>
         <TextInput

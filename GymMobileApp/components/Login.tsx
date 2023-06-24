@@ -81,7 +81,7 @@ const Login = ({ navigation }: LoginProps) => {
   };
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView enableOnAndroid={true}>
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <TextInput
@@ -89,6 +89,8 @@ const Login = ({ navigation }: LoginProps) => {
         placeholder="Email"
         placeholderTextColor={"black"}
         value={email}
+        keyboardType='email-address'
+        autoCapitalize='none'
         onChangeText={text => setEmail(text)}
       />
       <TextInput

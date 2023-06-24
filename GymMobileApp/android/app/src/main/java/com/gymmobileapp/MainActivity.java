@@ -1,5 +1,8 @@
 package com.gymmobileapp;
 
+import android.content.res.Configuration;
+import android.widget.Toast;
+
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
@@ -31,5 +34,24 @@ public class MainActivity extends ReactActivity {
         // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
         DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
         );
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+
+    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+      // Handle landscape orientation
+      return;
+    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+      // Handle portrait orientation
+    }
+
+    // Checks whether a keyboard is available
+    if (newConfig.keyboardHidden == Configuration.KEYBOARDHIDDEN_YES) {
+      Toast.makeText(this, "Keyboard available", Toast.LENGTH_SHORT).show();
+    } else if (newConfig.keyboardHidden == Configuration.KEYBOARDHIDDEN_NO){
+      Toast.makeText(this, "No keyboard", Toast.LENGTH_SHORT).show();
+    }
   }
 }

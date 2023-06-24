@@ -88,7 +88,7 @@ const UpdateProfile = ({ navigation }: UpdateProfileProps) => {
 
   return (
     <Layout navigation={navigation}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView enableOnAndroid={true}>
         <View style={styles.container}>
           <Text style={styles.label}>Ime</Text>
           <TextInput
