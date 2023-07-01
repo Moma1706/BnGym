@@ -6,6 +6,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import axios from "axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { BASE_URL } from '../config/api-url.config';
+import CustomSpinner from './CustomSpinner';
 
 type UpdateProfileProps = {
     navigation: NavigationProp<ParamListBase>;
@@ -19,15 +20,19 @@ const UpdateProfile = ({ navigation }: UpdateProfileProps) => {
     email: '',
     address: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const gymUserId = await EncryptedStorage.getItem('gym_user_id');
       const response = await axios.get(`${profileUrl}/${gymUserId}`);
 
       if (response.status === 200) {
+        setIsLoading(false);
         setUserData(response.data);
       } else {
+        setIsLoading(false);
         Alert.alert(response.data.message);
       }
     };
@@ -38,6 +43,7 @@ const UpdateProfile = ({ navigation }: UpdateProfileProps) => {
   const handleUpdateUserData = () => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const gymUserId = await EncryptedStorage.getItem('gym_user_id');
         const response = await axios.put(`${profileUrl}/${gymUserId}`, {
           email: userData.email,
@@ -47,12 +53,15 @@ const UpdateProfile = ({ navigation }: UpdateProfileProps) => {
         });
   
         if (response.status === 200) {
+            setIsLoading(false);
             navigation.navigate('Profile');
             Alert.alert("Profil je uspiješno ažuriran");
         } else {
+          setIsLoading(false);
           Alert.alert(response.data.message);
         }
       } catch (error: any) {
+        setIsLoading(false);
         if (error.response && (error.response.status === 400))
           Alert.alert(error.response.data.message);
         else
@@ -131,6 +140,7 @@ const UpdateProfile = ({ navigation }: UpdateProfileProps) => {
               <Text style={styles.buttonText}>Promijeni</Text>
             </View>
           </TouchableOpacity>
+          <CustomSpinner visible={isLoading}/>
         </View>
       </KeyboardAwareScrollView>
     </Layout>

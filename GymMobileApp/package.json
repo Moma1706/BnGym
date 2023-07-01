@@ -23,6 +23,7 @@
     "react-native-gesture-handler": "^2.10.0",
     "react-native-hole-view": "^2.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-modal": "^13.0.1",
     "react-native-permissions": "^3.8.0",
     "react-native-qrcode-scanner": "^1.5.5",

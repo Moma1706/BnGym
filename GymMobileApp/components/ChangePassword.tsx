@@ -6,6 +6,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import axios from "axios";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { BASE_URL } from '../config/api-url.config';
+import CustomSpinner from './CustomSpinner';
 
 type ChangePasswordProps = {
     navigation: NavigationProp<ParamListBase>;
@@ -16,6 +17,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCurrentPasswordChange = (text: string) => {
     setCurrentPassword(text);
@@ -56,6 +58,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
     }
     
     try {
+      setIsLoading(true);
       const userId = await EncryptedStorage.getItem('user_id');
       const response = await axios.post(changePassUrl, JSON.stringify({
         id: userId,
@@ -65,12 +68,15 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
       }), { headers: {"content-type": "application/json" }});
 
       if (response.status === 200) {
+        setIsLoading(false);
         navigation.navigate('Profile');
         Alert.alert("Lozinka je uspijesno promijenjena");
       } else {
+        setIsLoading(false);
         Alert.alert(response.data.message);
       }
     } catch (error: any) {
+      setIsLoading(false);
       if (error.response && (error.response.status === 400))
         Alert.alert(error.response.data.message);
       else
@@ -107,6 +113,7 @@ const ChangePassword = ({ navigation }: ChangePasswordProps) => {
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Promijeni</Text>
       </TouchableOpacity>
+      <CustomSpinner visible={isLoading}/>
       </View>
       </KeyboardAwareScrollView>
     </Layout>

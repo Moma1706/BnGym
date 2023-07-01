@@ -5,6 +5,7 @@ import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { BASE_URL } from '../config/api-url.config';
+import CustomSpinner from './CustomSpinner';
 
 type LoginProps = {
   navigation: NavigationProp<ParamListBase>;
@@ -13,6 +14,7 @@ type LoginProps = {
 const Login = ({ navigation }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginUrl = `${BASE_URL}/Auth/login-app`;
 
@@ -47,6 +49,7 @@ const Login = ({ navigation }: LoginProps) => {
 
     try {
       // send API request
+      setIsLoading(true);
       const response = await axios.post(loginUrl, JSON.stringify({
         Email: email,
         Password: password
@@ -54,6 +57,7 @@ const Login = ({ navigation }: LoginProps) => {
 
       // API returns 200 OK
       if (response.status === 200) {
+        setIsLoading(false);
         // reset email and password values
         setPassword('');
         setEmail('');
@@ -68,11 +72,13 @@ const Login = ({ navigation }: LoginProps) => {
 
         // navigate to profile screen
         navigation.navigate('Profile');
-      } else
+      } else {
+        setIsLoading(false);
         Alert.alert(response.data.message);
+      }
 
     } catch (error: any) {
-      console.log(error.response)
+      setIsLoading(false);
       if (error.response && (error.response.status === 400 || error.response.status === 401))
         Alert.alert(error.response.data.error);
       else
@@ -104,6 +110,7 @@ const Login = ({ navigation }: LoginProps) => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Prijavi se</Text>
       </TouchableOpacity>
+      <CustomSpinner visible={isLoading}/>
     </View>
     </KeyboardAwareScrollView>
   );

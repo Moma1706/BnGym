@@ -6,6 +6,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import axios from "axios";
 import { useFocusEffect } from '@react-navigation/native';
 import { BASE_URL } from '../config/api-url.config';
+import CustomSpinner from './CustomSpinner';
 
 type ProfileProps = {
   navigation: NavigationProp<ParamListBase>;
@@ -23,10 +24,12 @@ const Profile = ({ navigation }: ProfileProps) => {
     isFrozen: '',
     isInActive: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
+        setIsLoading(true);
         const gymUserId = await EncryptedStorage.getItem('gym_user_id');
         // send API request
         try {
@@ -34,12 +37,15 @@ const Profile = ({ navigation }: ProfileProps) => {
   
           // API return 200 OK
           if (response.status === 200) {
+            setIsLoading(false);
             setUserData(response.data);
             userData.status = getStatusText();
-          } else
+          } else {
+            setIsLoading(false);
             Alert.alert(response.data.message)
+          }
         } catch (error: any) {
-          console.log(error.response)
+          setIsLoading(false);
           if (error.response && (error.response.status === 400 || error.response.status === 401))
             Alert.alert(error.response.data.error);
           else
@@ -138,6 +144,7 @@ const Profile = ({ navigation }: ProfileProps) => {
             <Text style={{ color: 'white', fontSize: 16, textAlign: 'center' }}>Odjavi se</Text>
           </View>
         </TouchableOpacity>
+        <CustomSpinner visible={isLoading}/>
       </View>
     </Layout>
     );
