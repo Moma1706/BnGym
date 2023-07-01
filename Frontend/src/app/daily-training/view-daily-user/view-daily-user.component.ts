@@ -100,7 +100,7 @@ export class ViewDailyUserComponent implements OnInit {
         next: (response: any) => {
           const returnUrl ='/checkIn-history/view-checkins-by-date';
           this.router.navigateByUrl(returnUrl);
-          this.alertservice.success('Evidentiran dolazak za korisnika: ' + this.model.firstname +'!');
+          this.alertservice.success('Evidentiran dolazak za korisnika: ' + this.model.firstName +'!');
 
         },
         error: (error : HttpErrorResponse) => {
