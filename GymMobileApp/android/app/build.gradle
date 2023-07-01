@@ -93,15 +93,14 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.gymmobileapp"
+   namespace "com.gymmobileapp"
     defaultConfig {
         applicationId "org.bngym"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
-
 
     splits {
         abi {
@@ -124,6 +123,7 @@ android {
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+
             }
         }
     }
@@ -136,8 +136,10 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             // signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
+            // minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            shrinkResources false
+            minifyEnabled false
         }
     }
 
