@@ -292,7 +292,7 @@ namespace Infrastructure.Services
             page -= 1;
             if (page <= 0)
                 page = 0;
-            var query = _dbContext.GymUserView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
+            var query = _dbContext.GymUserView.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? ""));
 
             if (sortParam == "NumberOfArrivalsLastMonth")
             {

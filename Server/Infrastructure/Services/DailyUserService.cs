@@ -79,7 +79,7 @@ namespace Infrastructure.Identity
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.DailyUserView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? ""));
+            var query = _dbContext.DailyUserView.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? ""));
 
             if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
                 query = query.OrderBy(x => x.FirstName);
@@ -207,11 +207,11 @@ namespace Infrastructure.Identity
 
                 transaction.Commit();
                 return DailyUserResult.Sucessfull();
-
-            } catch (Exception exc)
+            }
+            catch (Exception exc)
             {
                 transaction.Rollback();
-                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Nije moguće evidentirati dolazak. " + exc.Message});
+                return DailyUserResult.Failure(new Error { Code = ExceptionType.UnableToCheckIn, Message = "Nije moguće evidentirati dolazak. " + exc.Message });
             }
         }
 

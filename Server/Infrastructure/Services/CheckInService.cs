@@ -84,7 +84,7 @@ namespace Infrastructure.Identity
             if (page <= 0)
                 page = 0;
 
-            var query = _dbContext.CheckInHistoryView.Where(x => (x.FirstName + "" + x.LastName).Contains(searchString ?? "") && x.CheckInDate.Date == date.Date);
+            var query = _dbContext.CheckInHistoryView.Where(x => (x.FirstName + " " + x.LastName).Contains(searchString ?? "") && x.CheckInDate.Date == date.Date);
 
             if (sortOrder == SortOrder.Ascending || sortOrder == SortOrder.Unspecified)
                 query = query.OrderBy(x => x.FirstName);
