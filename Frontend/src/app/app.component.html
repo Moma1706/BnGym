@@ -6,8 +6,8 @@
 
 <nav class="navbar navbar-expand navbar-dark bg-dark">
   <div class="navbar-nav">
+      <a class="nav-item nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Početna strana</a>
       <a class="nav-item nav-link" *ngIf="this.token == ''" routerLink="/account/login" routerLinkActive="active">Prijavi se</a>
-      <a class="nav-item nav-link" *ngIf="this.token != ''"routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Početna strana</a>
       <!-- <a class="nav-item nav-link" *ngIf="this.token != '' && this.role =='Admin'" routerLink="/gym-worker/all-gym-workers" routerLinkActive="active">Svi radnici</a> -->
       <a class="nav-item nav-link" *ngIf="this.token != ''" routerLink="/gym-user/all-gym-users" routerLinkActive="active">Svi članovi</a>
       <a class="nav-item nav-link" *ngIf="this.token != ''" [routerLink]="['/account/profile', userId]" routerLinkActive="active">Profil</a>
