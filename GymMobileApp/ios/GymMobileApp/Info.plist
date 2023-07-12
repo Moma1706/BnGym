@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs to access your camera.</string>
+	<string>BN GYM needs to access your camera to scan the QR code. By scanning the QR code, your arrival will be recorded.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>SplashScreenDuration</key>
