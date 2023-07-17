@@ -13,15 +13,20 @@ namespace Application.User
     public class UserGetCommandHandler : IRequestHandler<UserGetCommand, UserGetResult>
     {
         private readonly IGymWorkerService _gymWorkerService;
+        private readonly IEmailService _emailService;
 
-        public UserGetCommandHandler(IGymWorkerService gymWorkerService) => _gymWorkerService = gymWorkerService;
+        public UserGetCommandHandler(IGymWorkerService gymWorkerService, IEmailService emailService)
+        {
+            _gymWorkerService = gymWorkerService;
+            _emailService = emailService;
+        }
 
         public async Task<UserGetResult> Handle(UserGetCommand request, CancellationToken cancellationToken)
         {
             var userResult = await _gymWorkerService.GetUser(request.Id);
+            await _emailService.SendEmailSubscriptionexpires("", "");
 
             return userResult;
         }
-
     }
 }

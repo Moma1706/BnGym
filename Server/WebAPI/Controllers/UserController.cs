@@ -42,7 +42,7 @@ namespace WebApi.Controllers
 
         protected int GetUserId()
         {
-           return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
+            return int.Parse(this.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value);
         }
     }
 }
