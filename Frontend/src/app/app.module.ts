@@ -1,7 +1,7 @@
 import { AlertComponent } from './_components/alert/alert.component';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
@@ -14,6 +14,9 @@ import { AuthInterceptor } from './_services/auth-interceptor';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { OpenLayersMapComponent } from './home/map/open-layers-map/open-layers-map.component';
 import { NgImageSliderModule } from 'ng-image-slider';
+import { NotificationComponent } from './notification/notification.component';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
 
 // called on every request to retrieve the token
 export function jwtOptionsFactory(tokenService: AccountService) {
@@ -27,14 +30,18 @@ export function jwtOptionsFactory(tokenService: AccountService) {
     ReactiveFormsModule,
     HttpClientModule,
     MatFormFieldModule,
-    NgImageSliderModule
+    NgImageSliderModule,
+    MatListModule,
+    MatButtonModule
   ],
-  declarations: [
+  declarations: [		
     AppComponent,
     HomeComponent,
     AlertComponent,
     OpenLayersMapComponent,
+    NotificationComponent
    ],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}, JwtHelperService],
   bootstrap: [AppComponent]
 })

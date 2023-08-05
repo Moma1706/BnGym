@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { AlertService } from './_services/alert.service';
+import {v4 as uuid} from 'uuid'
 
 @Component({
   selector: 'app',
@@ -16,6 +17,8 @@ export class AppComponent {
   userId: number = 0;
   token: string = '';
   role: string = '';
+  notifications = new Map<string, string>();
+  showNotifications = false;
  
   constructor(private router: Router, private alertService: AlertService) {
     this.getUserInfo();
@@ -57,12 +60,17 @@ export class AppComponent {
     connection.on("messageSent", (response) => { 
       
       this.alertService.info(response);
+      this.notifications.set(uuid(),response);
 
       console.log(response);
     });
-
   }
 
-  
+  ShowNotifications(){
+    
+    if(this.showNotifications == false)
+      this.showNotifications = true;
+    else
+      this.showNotifications = false;
+  }
 }
-

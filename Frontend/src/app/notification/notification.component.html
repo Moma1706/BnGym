@@ -1,0 +1,16 @@
+
+<div class="container" style="background-color: gray; width: auto; right: 3%; position: absolute;">
+  <div class="row">
+    <div class="col-sm">
+      <mat-list>  
+        <mat-list-item *ngFor="let link of notifications | keyvalue">  
+          {{link.value }} 
+          <button mat-icon-button (click)="clearOne(link.key)">  
+              <mat-icon>X</mat-icon>  
+          </button>  
+        </mat-list-item>  
+      </mat-list>  
+    </div>
+  </div>
+</div>
+ 
