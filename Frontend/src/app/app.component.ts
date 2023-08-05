@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { User } from './_models/user';
-import { AccountService } from './_services/account.service';
 import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
+import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
+import { AlertService } from './_services/alert.service';
 
 @Component({
   selector: 'app',
@@ -17,7 +17,7 @@ export class AppComponent {
   token: string = '';
   role: string = '';
  
-  constructor(private router: Router) {
+  constructor(private router: Router, private alertService: AlertService) {
     this.getUserInfo();
   }
 
@@ -42,5 +42,27 @@ export class AppComponent {
     this.token = '';
     this.router.navigate(['login']);
   }
+
+  ngOnInit(): void {
+    const connection = new HubConnectionBuilder()
+    .withUrl('https://localhost:7085/hub/notification', {skipNegotiation:true, transport: HttpTransportType.WebSockets})
+    .build();
+    
+    connection.start().then(function(){
+      console.log("Connected!");
+    }).catch(function(err){
+      return console.error(err.toString());
+    });
+
+    connection.on("messageSent", (response) => { 
+      
+      this.alertService.info(response);
+
+      console.log(response);
+    });
+
+  }
+
+  
 }
 

@@ -1,6 +1,7 @@
 using Application;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Hubs;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
     {
@@ -45,14 +48,27 @@ if (app.Environment.IsDevelopment())
     await initializer.SeedAsync();
 }
 
-app.UseHttpsRedirection();
-
-//app.UseExceptionHandler();
-
 app.UseAuthentication();
+
+app.UseRouting();
+
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(60),
+});
 
 app.UseAuthorization();
 
-app.MapControllers();
+// Than register your hubs here with a url.
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<NotificationHub>("/hub/notification");
+});
+
+app.UseHttpsRedirection();
+
+//app.UseExceptionHandler();
+//app.MapControllers();
 
 app.Run();

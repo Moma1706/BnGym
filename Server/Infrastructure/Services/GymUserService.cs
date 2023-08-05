@@ -327,6 +327,7 @@ namespace Infrastructure.Services
                 Count = query.ToList().Count,
                 PageIndex = page,
                 PageSize = pageSize,
+                ActiveCount = list.Where(x => x.IsInActive == false).Count(),
                 Items = list.Select(x => new GymUserGetResult()
                 {
                     Id = x.Id,

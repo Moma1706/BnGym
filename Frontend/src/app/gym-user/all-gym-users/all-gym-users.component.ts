@@ -21,6 +21,7 @@ export interface EmployeeTable {
   pageIndex: number;
   pageSize: number;
   count: number;
+  activeCount: number;
 }
 
 @Component({
@@ -43,6 +44,7 @@ export class AllGymUsersComponent implements OnInit {
   empTable?: EmployeeTable;
   filterValue = '';
   isAllFrozen: boolean = false;
+  numberOfActiveUsers: number = 0;
 
   model: any= {};
   submitted = false;
@@ -110,6 +112,7 @@ export class AllGymUsersComponent implements OnInit {
           if (empData == null) return [];
 
           this.totalUsers = (<EmployeeTable>empData).count;
+          this.numberOfActiveUsers = (<EmployeeTable>empData).activeCount;
           this.loading = false;
           return (empData as EmployeeTable).items;
         })

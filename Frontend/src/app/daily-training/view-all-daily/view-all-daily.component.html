@@ -1,5 +1,8 @@
 <h2 style="padding-top: 3%">Dnevni Korisnici</h2>
 <br>
+<h5> Ukupan broj dolazaka u toku tekućeg mjeseca : {{numberOfDayliArrivalsCurrentMonth}}</h5>
+<h5> Ukupan broj dolazaka u toku prošlog mjeseca : {{numberOfDayliArrivalsLastMonth}}</h5>
+<br>
 <!--New Consumer-->
 <div *ngIf="visible">
   <button type="button" class="btn btn-primary" [routerLink]="['/daily-training/add-daily-training']">

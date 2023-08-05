@@ -53,12 +53,16 @@ namespace Application.Common.Models.GymUser
             NumberOfArrivalsLastMonth = numberOfArrivalsLastMonth;
         }
 
-        public GymUserGetResult() {}
-        public GymUserGetResult(Error error) {
+        public GymUserGetResult()
+        { }
+
+        public GymUserGetResult(Error error)
+        {
             Error = error;
         }
 
         public static GymUserGetResult Sucessfull(Guid id, int userId, string firstName, string lastName, string email, DateTime expiresOn, bool isBlocked, bool isFrozen, string freezeDate, bool isInActive, string lastCheckIn, GymUserType type, string address, int numberOfArrivalsLastMonth, int numberOfArrivalsCurrentMonth) => new(true, new Error { Code = 0, Message = string.Empty }, id, userId, firstName, lastName, email, expiresOn, isBlocked, isFrozen, freezeDate, isInActive, lastCheckIn, type, address, numberOfArrivalsLastMonth, numberOfArrivalsCurrentMonth);
+
         public static GymUserGetResult Failure(Error error) => new(false, error, Guid.Empty, 0, string.Empty, string.Empty, string.Empty, DateTime.MinValue, false, false, string.Empty, false, string.Empty, 0, string.Empty, 0, 0);
     }
 }

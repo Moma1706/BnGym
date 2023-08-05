@@ -3,7 +3,9 @@ using Application.Common.Models.BaseResult;
 using Application.Common.Models.CheckIn;
 using Application.Enums;
 using Infrastructure.Data;
+using Infrastructure.Hubs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,17 +18,21 @@ namespace Infrastructure.Identity
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IMaintenanceService _maintenanceService;
+        private readonly IHubContext<NotificationHub> _hub;
 
-        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService, UserManager<User> userManager, IMaintenanceService maintenanceService)
+        public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService,
+            UserManager<User> userManager, IMaintenanceService maintenanceService, IHubContext<NotificationHub> hub)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
             _maintenanceService = maintenanceService;
+            _hub = hub;
         }
 
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
         {
+            string message = "";
             var gymUser = await _dbContext.GymUsers.FirstOrDefaultAsync(x => x.Id == gymUserId);
             if (gymUser == null)
                 return CheckInResult.Failure(new Error { Code = ExceptionType.EntityNotExist, Message = "Gym korisnik sa proslijedjenim id ne postoji" });
@@ -39,19 +45,44 @@ namespace Infrastructure.Identity
             var maintenanceResult = await _maintenanceService.CheckExpirationDate(user.Id);
 
             if (gymUser.IsFrozen)
+            {
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Zaleđen.";
+                await _hub.Clients.All.SendAsync("messageSent", message);
+
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je zaledjen" });
+            }
 
             if (gymUser.IsInActive)
+            {
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine:  Istekla članarina!.";
+                await _hub.Clients.All.SendAsync("messageSent", message);
+
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnik je neaktivan" });
+            }
 
             if (user.IsBlocked)
+            {
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Blokiran.";
+                await _hub.Clients.All.SendAsync("messageSent", message);
+
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "Korisnik je blokiran" });
+            }
 
             if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
+            {
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Korisnik je već jednom čekiran u toku današenjeg dana!";
+                await _hub.Clients.All.SendAsync("messageSent", message);
+
                 return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
+            }
 
             if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
+            {
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Istekla članarina!";
+                await _hub.Clients.All.SendAsync("messageSent", message);
+
                 return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisniku je istekla članarina" });
+            }
 
             var checkIn = new CheckInHistory { GymUserId = gymUserId, Id = Guid.NewGuid(), TimeStamp = _dateTimeService.Now };
 
@@ -68,6 +99,9 @@ namespace Infrastructure.Identity
                 _dbContext.SaveChanges();
 
                 transaction.Commit();
+
+                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Aktivan!";
+                await _hub.Clients.All.SendAsync("messageSent", message);
             }
             catch (Exception exc)
             {
@@ -98,6 +132,7 @@ namespace Infrastructure.Identity
                 Count = query.ToList().Count,
                 PageIndex = page,
                 PageSize = pageSize,
+                ActiveCount = 0,
                 Items = list.Select(x => new CheckInGetResult()
                 {
                     Id = x.Id,
