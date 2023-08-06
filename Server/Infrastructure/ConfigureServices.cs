@@ -36,7 +36,7 @@ public static class ConfigureServices
         {
             options.ApiKey = configuration["SendGrid:ApiKey"];
         });
-        
+
         services.AddTransient<IDateTimeService, DateTimeService>();
         services.AddTransient<IIdentityService, IdentityService>();
         services.AddTransient<IApplicationDbContext, ApplicationDbContext>();
@@ -46,6 +46,7 @@ public static class ConfigureServices
         services.AddTransient<IGymWorkerService, GymWorkerService>();
         services.AddTransient<IDailyUserService, DailyUserService>();
         services.AddTransient<IMaintenanceService, MaintenanceService>();
+        services.AddTransient<INotificationService, NotificationService>();
         services.AddScoped<DatabaseInitializer>();
 
         services.AddAuthentication();

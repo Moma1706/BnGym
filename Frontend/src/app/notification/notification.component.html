@@ -4,7 +4,7 @@
     <div class="col-sm">
       <mat-list>  
         <mat-list-item *ngFor="let link of notifications | keyvalue">  
-          {{link.value }} 
+          <span>{{link.value}}</span>
           <button mat-icon-button (click)="clearOne(link.key)">  
               <mat-icon>X</mat-icon>  
           </button>  

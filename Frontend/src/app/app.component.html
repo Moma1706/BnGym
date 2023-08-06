@@ -21,9 +21,9 @@
       
     </div>
 </nav>
-<app-notification style="right: 3%;" *ngIf="showNotifications == true" [notifications]="notifications"></app-notification>
+<app-notification *ngIf="showNotifications == true" [notifications]="notifications"></app-notification>
 <!-- main app container -->
 <div class="app-container">
-  <alert></alert>
+  <alert style="left: 3%; position: absolute;"></alert>
   <router-outlet></router-outlet>
 </div>

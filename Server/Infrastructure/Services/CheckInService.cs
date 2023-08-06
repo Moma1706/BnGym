@@ -19,15 +19,17 @@ namespace Infrastructure.Identity
         private readonly ApplicationDbContext _dbContext;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IHubContext<NotificationHub> _hub;
+        private readonly INotificationService _notificationService;
 
         public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService,
-            UserManager<User> userManager, IMaintenanceService maintenanceService, IHubContext<NotificationHub> hub)
+            UserManager<User> userManager, IMaintenanceService maintenanceService, IHubContext<NotificationHub> hub, INotificationService notificationService)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
             _maintenanceService = maintenanceService;
             _hub = hub;
+            _notificationService = notificationService;
         }
 
         public async Task<CheckInResult> CheckIn(Guid gymUserId)
@@ -48,6 +50,7 @@ namespace Infrastructure.Identity
             {
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Zaleđen.";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je zaledjen" });
             }
@@ -56,6 +59,7 @@ namespace Infrastructure.Identity
             {
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine:  Istekla članarina!.";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnik je neaktivan" });
             }
@@ -64,6 +68,7 @@ namespace Infrastructure.Identity
             {
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Blokiran.";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "Korisnik je blokiran" });
             }
@@ -72,6 +77,7 @@ namespace Infrastructure.Identity
             {
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Korisnik je već jednom čekiran u toku današenjeg dana!";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
             }
@@ -80,6 +86,7 @@ namespace Infrastructure.Identity
             {
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Istekla članarina!";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisniku je istekla članarina" });
             }
@@ -102,6 +109,7 @@ namespace Infrastructure.Identity
 
                 message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Aktivan!";
                 await _hub.Clients.All.SendAsync("messageSent", message);
+                _notificationService.Add(message);
             }
             catch (Exception exc)
             {

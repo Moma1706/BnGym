@@ -1,27 +1,14 @@
-﻿using System;
-using System.Linq.Expressions;
-using Application.Common.Exceptions;
-using System.Net;
-using Application.Common.Interfaces;
-using Application.Common.Models.Auth;
+﻿using Application.Common.Interfaces;
 using Application.Common.Models.BaseResult;
-using Application.Common.Models.CheckIn;
 using Application.Common.Models.GymUser;
-using Application.Common.Models.GymWorker;
 using Application.Enums;
-using Application.GymUser;
 using Application.GymUser.Dtos;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Application.Common.Models.User;
 using Application.App.Dtos;
-using MediatR;
 using Microsoft.Data.SqlClient;
-using SendGrid.Helpers.Mail;
-using Application.Common.Models.Maintenance;
 
 namespace Infrastructure.Services
 {
