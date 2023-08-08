@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NotificationService } from '../_services/notification.service';
 
 @Component({
   selector: 'app-notification',
@@ -7,13 +8,23 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class NotificationComponent implements OnInit {
 
-  
+  @Input() notifications: Notification[] = [];
+  @Input() notificationsExist: boolean = false;
+  @Output() clearOneEvent = new EventEmitter<string>();
 
-  @Input()  notifications = new Map<string, string>();
-
-  constructor() { }
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit() {
   }
 
+  ClearOne(id: string) {
+    this.notificationService.deleteOne(id)
+      .subscribe(() => {
+        this.clearOneEvent.emit("clearOne");
+      });
+  }
+  ClearAll() {
+    this.notificationService.deleteAll()
+      .subscribe(() => {});
+  }
 }

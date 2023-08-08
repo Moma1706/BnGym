@@ -1,6 +1,6 @@
 import { GymUserService } from './../../_services/gym-user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CheckInService } from 'src/app/_services/check-in.service';
 import { first } from 'rxjs';
@@ -180,14 +180,14 @@ export class ViewGymUserComponent implements OnInit {
     if(this.f['userType'].value !=''){
       this.model.type = this.f['userType'].value;
     }
-
-    if(this.model.type == 'HalfMonth'){
+    
+    if(this.model.type == 'HalfMonth' || this.model.type == 'Pola mjeseca'){
       this.model.type = 0
-    }else if(this.model.type == 'Month'){
+    }else if(this.model.type == 'Month' || this.model.type == 'Mjesec dana'){
       this.model.type = 1
-    }else if(this.model.type == 'ThreeMonts'){
+    }else if(this.model.type == 'ThreeMonts' || this.model.type == 'Tri mjeseca'){
       this.model.type = 2
-    }else if(this.model.type == 'HalfYear'){
+    }else if(this.model.type == 'HalfYear' || this.model.type == 'Pola godine'){
       this.model.type = 3
     }else {
       this.model.type = 4
@@ -208,20 +208,19 @@ export class ViewGymUserComponent implements OnInit {
       });
   }
 
-  checkIn(){
-  this.checkInService.checkIn(this.model.id)
-    .pipe(first())
-      .subscribe({
-          next: () => {
-              const returnUrl ='/checkIn-history/view-checkins-by-date';
-              this.router.navigateByUrl(returnUrl);
-              this.alertService.success(`Korisnik ${this.model.firstName} evidentiran!`)
-          },
-          error: (error : HttpErrorResponse) => {
-            this.alertService.error(error.error.message);
-            this.loading = false;
-        }
-      });
-    
-  }
+  checkIn() {
+    this.checkInService.checkIn(this.model.id)
+      .pipe(first())
+        .subscribe({
+            next: () => {
+                const returnUrl ='/checkIn-history/view-checkins-by-date';
+                this.router.navigateByUrl(returnUrl);
+                this.alertService.success(`Korisnik ${this.model.firstName} evidentiran!`)
+            },
+            error: (error : HttpErrorResponse) => {
+              this.alertService.error(error.error.message);
+              this.loading = false;
+          }
+        });
+    }
 }

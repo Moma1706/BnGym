@@ -3,7 +3,10 @@ import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { AlertService } from './_services/alert.service';
-import {v4 as uuid} from 'uuid'
+import { first } from 'rxjs';
+import { BASE_HUB_URL } from './config/api-hub-url.config';
+import { NotificationService } from './_services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app',
@@ -17,10 +20,11 @@ export class AppComponent {
   userId: number = 0;
   token: string = '';
   role: string = '';
-  notifications = new Map<string, string>();
+  notifications: Notification[] = [];
   showNotifications = false;
+  notificationsExist = false;
  
-  constructor(private router: Router, private alertService: AlertService) {
+  constructor(private router: Router, private alertService: AlertService, private notificationService: NotificationService) {
     this.getUserInfo();
   }
 
@@ -47,8 +51,16 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
+    // check if notification exists
+    this.notificationService.getAll()
+    .subscribe((response:any) => {
+      this.notifications = response['notifications'];
+      if (this.notifications.length !== 0)
+        this.notificationsExist = true;
+    });
+
     const connection = new HubConnectionBuilder()
-    .withUrl('https://localhost:7085/hub/notification', {skipNegotiation:true, transport: HttpTransportType.WebSockets})
+    .withUrl(`${BASE_HUB_URL}/notification`, {skipNegotiation:true, transport: HttpTransportType.WebSockets})
     .build();
     
     connection.start().then(function(){
@@ -57,20 +69,40 @@ export class AppComponent {
       return console.error(err.toString());
     });
 
+    // receives notifications from API
     connection.on("messageSent", (response) => { 
-      
+      this.notificationsExist = true;
       this.alertService.info(response);
-      this.notifications.set(uuid(),response);
 
-      console.log(response);
+      this.notificationService.getAll()
+        .subscribe((response:any) => {
+          this.showNotifications = true;
+          this.notifications = response['notifications'];
+        });
+    });
+
+    // ovo sluzi samo za mijenjanje slike za bell
+    connection.on("noNotifications", (response) => {
+      this.notificationsExist = false;
     });
   }
 
-  ShowNotifications(){
-    
-    if(this.showNotifications == false)
-      this.showNotifications = true;
+  ShowNotifications() {
+    if (this.showNotifications == false) {
+      this.notificationService.getAll()
+        .subscribe((response:any) => {
+          this.showNotifications = true;
+          this.notifications = response['notifications'];
+        });
+    }
     else
       this.showNotifications = false;
+  }
+
+  refreshNotification(){
+    this.notificationService.getAll()
+    .subscribe((response:any) => {
+      this.notifications = response['notifications'];
+    });
   }
 }

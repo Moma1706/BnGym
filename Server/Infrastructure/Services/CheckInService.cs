@@ -3,7 +3,6 @@ using Application.Common.Models.BaseResult;
 using Application.Common.Models.CheckIn;
 using Application.Enums;
 using Infrastructure.Data;
-using Infrastructure.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
@@ -18,17 +17,15 @@ namespace Infrastructure.Identity
         private readonly IDateTimeService _dateTimeService;
         private readonly ApplicationDbContext _dbContext;
         private readonly IMaintenanceService _maintenanceService;
-        private readonly IHubContext<NotificationHub> _hub;
         private readonly INotificationService _notificationService;
 
         public CheckInService(IConfiguration configuration, ApplicationDbContext dbContext, IDateTimeService dateTimeService,
-            UserManager<User> userManager, IMaintenanceService maintenanceService, IHubContext<NotificationHub> hub, INotificationService notificationService)
+            UserManager<User> userManager, IMaintenanceService maintenanceService, INotificationService notificationService)
         {
             _configuration = configuration;
             _dateTimeService = dateTimeService;
             _dbContext = dbContext;
             _maintenanceService = maintenanceService;
-            _hub = hub;
             _notificationService = notificationService;
         }
 
@@ -48,45 +45,40 @@ namespace Infrastructure.Identity
 
             if (gymUser.IsFrozen)
             {
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Zaleđen.";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Zaleđen. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je zaledjen" });
             }
 
             if (gymUser.IsInActive)
             {
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine:  Istekla članarina!.";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Neaktivan. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnik je neaktivan" });
             }
 
             if (user.IsBlocked)
             {
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status članarine: Blokiran.";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Blokiran. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "Korisnik je blokiran" });
             }
 
             if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
             {
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Korisnik je već jednom čekiran u toku današenjeg dana!";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Korisnik je već jednom čekiran u toku današenjeg dana. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
             }
 
             if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
             {
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Istekla članarina!";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekirao/la. Status: Neaktivan. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisniku je istekla članarina" });
             }
@@ -107,9 +99,8 @@ namespace Infrastructure.Identity
 
                 transaction.Commit();
 
-                message = user.FirstName + " " + user.LastName + " je pokušao da se čekira. Status: Aktivan!";
-                await _hub.Clients.All.SendAsync("messageSent", message);
-                _notificationService.Add(message);
+                message = user.FirstName + " " + user.LastName + " se čekiro/la.. Status: Aktivan. Vrijeme: " + DateTime.Now.ToString();
+                await _notificationService.Add(message);
             }
             catch (Exception exc)
             {

@@ -1,0 +1,54 @@
+.window {
+    background-color: lightgray;
+    border: 2px solid gray;
+    border-radius: 20px;
+    padding: 0px 10px 10px 10px;
+    width: 500px;
+    height: 400px;
+    right: 3%;
+    position: absolute;
+    overflow: auto;
+    z-index: 1;
+  }
+  
+  .notification {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid gray;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 20px;
+  }
+  
+  .notification-content {
+    flex: 8; /* Takes up 80% of the available space */
+  }
+  
+  .notification-button {
+    flex: 2; /* Takes up 20% of the available space */
+    text-align: right;
+  }
+  
+  .notificationButton {
+    border-radius: 10px;
+    background-color: white;
+  }
+  
+  .noNotification {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 90px;
+  }
+  
+  .clear-all-button {
+    border-bottom: 2px solid gray;;
+    position: sticky;
+    top: -1px; /* Adjust this value to remove the small space */
+    z-index: 1;
+    background-color: lightgray;
+    padding: 10px 10px;
+    width: 100%;
+    text-align: center;
+  }
+  

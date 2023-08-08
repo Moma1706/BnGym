@@ -27,7 +27,7 @@ namespace WebApi.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteAll()
         {
-            var notificationGetResult = _notificationService.DeleteAll();
+            var notificationGetResult = await _notificationService.DeleteAll();
             return Ok(notificationGetResult);
         }
 
@@ -37,7 +37,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var notificationGetResult = _notificationService.DeleteOne(Id);
+                var notificationGetResult = await _notificationService.DeleteOne(Id);
                 if (notificationGetResult.Success)
                     return Ok();
 

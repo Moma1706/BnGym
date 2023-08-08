@@ -6,10 +6,10 @@ namespace Application.Common.Interfaces
     {
         GetNotificationResult GetAll();
 
-        NotificationResult Add(string message);
+        Task<NotificationResult> Add(string message);
 
-        NotificationDeleteAllResult DeleteOne(Guid id);
+        Task<NotificationDeleteAllResult> DeleteOne(Guid id);
 
-        NotificationDeleteAllResult DeleteAll();
+        Task<NotificationDeleteAllResult> DeleteAll();
     }
 }

@@ -2,18 +2,36 @@
 using Application.Common.Models.BaseResult;
 using Application.Common.Models.Notifications;
 using Application.Enums;
+using Google.Apis.Gmail.v1.Data;
+using Infrastructure.Data;
+using Infrastructure.Hubs;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services
 {
     internal class NotificationService : INotificationService
     {
-        private static Dictionary<Guid, string> notifications = new Dictionary<Guid, string>();
+        private static List<KeyValuePair<Guid, string>> notifications = new List<KeyValuePair<Guid, string>>();
+        //private static Dictionary<Guid, string> notifications = new Dictionary<Guid, string>();
 
-        public NotificationResult Add(string message)
+        private readonly IHubContext<NotificationHub> _hub;
+
+        public NotificationService(IHubContext<NotificationHub> hub)
+        {
+            _hub = hub;
+        }
+
+        public async Task<NotificationResult> Add(string message)
         {
             try
             {
-                notifications.Add(Guid.NewGuid(), message);
+                notifications.Add(new KeyValuePair<Guid, string>(Guid.NewGuid(), message));
+                // emit messageSent
+                await _hub.Clients.All.SendAsync("messageSent", message);
 
                 return NotificationResult.Sucessfull(message);
             }
@@ -23,11 +41,13 @@ namespace Infrastructure.Services
             }
         }
 
-        public NotificationDeleteAllResult DeleteAll()
+        public async Task<NotificationDeleteAllResult> DeleteAll()
         {
             try
             {
                 notifications.Clear();
+                // emit noNotifications
+                await _hub.Clients.All.SendAsync("noNotifications", "Nema notifikacija");
 
                 return NotificationDeleteAllResult.Sucessfull();
             }
@@ -37,16 +57,20 @@ namespace Infrastructure.Services
             }
         }
 
-        public NotificationDeleteAllResult DeleteOne(Guid id)
+        public async Task<NotificationDeleteAllResult> DeleteOne(Guid id)
         {
-            if (!notifications.ContainsKey(id))
+            bool containsKey = notifications.Any(item => item.Key == id);
+            if (!containsKey)
             {
                 return NotificationDeleteAllResult.Failure(new Error { Code = ExceptionType.UnableToDelete, Message = "Nije moguće obrisati notifikacije. " });
             }
 
             try
             {
-                notifications.Remove(id);
+                notifications.RemoveAll(item => item.Key == id);
+                // ako je dictionary prazan -> emit noNotifications
+                if (notifications.Count() == 0)
+                    await _hub.Clients.All.SendAsync("noNotifications", "Nema notifikacija");
 
                 return NotificationDeleteAllResult.Sucessfull();
             }
