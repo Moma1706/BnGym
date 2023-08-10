@@ -157,8 +157,9 @@
         class="form-control"
         aria-label="Default"
         aria-describedby="inputGroup-sizing-default"
-        [placeholder]="model.isInActive ? 'Ne' : 'Da'"
+        [placeholder]="model.isInActive ? 'Neaktivan' : 'Da'"
         readonly = true
+        [class.inactive-color]="model.isInActive"
       />
     </div>
 

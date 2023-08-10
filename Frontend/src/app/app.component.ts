@@ -3,10 +3,8 @@ import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { AlertService } from './_services/alert.service';
-import { first } from 'rxjs';
 import { BASE_HUB_URL } from './config/api-hub-url.config';
 import { NotificationService } from './_services/notification.service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app',
@@ -26,6 +24,17 @@ export class AppComponent {
  
   constructor(private router: Router, private alertService: AlertService, private notificationService: NotificationService) {
     this.getUserInfo();
+
+    // only logged in user can see notifications
+    if (this.token) {
+      // check if notification exists
+      this.notificationService.getAll()
+      .subscribe((response:any) => {
+        this.notifications = response['notifications'];
+        if (this.notifications.length !== 0)
+          this.notificationsExist = true;
+      });
+    }
   }
 
   getUserInfo() {
@@ -33,7 +42,7 @@ export class AppComponent {
     this.token = token;
     this.role = localStorage.getItem('role') ?? '';
 
-    if(token != ''){
+    if (token != ''){
       this.decodedToken = jwt_decode(token!);
       const userId = this.decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
       this.userId = userId;
@@ -48,17 +57,10 @@ export class AppComponent {
     localStorage.setItem('token', '');
     this.token = '';
     this.router.navigate(['login']);
+    this.showNotifications = false;
   }
 
   ngOnInit(): void {
-    // check if notification exists
-    this.notificationService.getAll()
-    .subscribe((response:any) => {
-      this.notifications = response['notifications'];
-      if (this.notifications.length !== 0)
-        this.notificationsExist = true;
-    });
-
     const connection = new HubConnectionBuilder()
     .withUrl(`${BASE_HUB_URL}/notification`, {skipNegotiation:true, transport: HttpTransportType.WebSockets})
     .build();
@@ -76,7 +78,6 @@ export class AppComponent {
 
       this.notificationService.getAll()
         .subscribe((response:any) => {
-          this.showNotifications = true;
           this.notifications = response['notifications'];
         });
     });
