@@ -99,7 +99,7 @@ namespace Infrastructure.Identity
 
                 transaction.Commit();
 
-                message = user.FirstName + " " + user.LastName + " se čekiro/la.. Status: Aktivan. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Aktivan. Vrijeme: " + DateTime.Now.ToString();
                 await _notificationService.Add(message);
             }
             catch (Exception exc)

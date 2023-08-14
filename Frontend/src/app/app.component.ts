@@ -5,6 +5,7 @@ import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr';
 import { AlertService } from './_services/alert.service';
 import { BASE_HUB_URL } from './config/api-hub-url.config';
 import { NotificationService } from './_services/notification.service';
+import { Notification } from './notification/interfaces/notification.interface';
 
 @Component({
   selector: 'app',

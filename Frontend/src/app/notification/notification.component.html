@@ -6,7 +6,12 @@
     </div>
     <div class="notification" *ngFor="let notification of notifications">
       <div class="notification-content">
-        {{notification.value}}
+        <div>{{ SplitValue(notification.value).message }}</div>
+        <div [ngClass]="{
+          'statusInactive': SplitValue(notification.value).status === 'Neaktivan.',
+          'status': SplitValue(notification.value).status !== 'Neaktivan.'
+        }"><b>Status:</b> {{ SplitValue(notification.value).status }}</div>
+        <div><b>Vrijeme:</b> {{ SplitValue(notification.value).dateTime }}</div>
       </div>
       <div class="notification-button">
         <button class="notificationButton" (click)="ClearOne(notification.key)">X</button> 

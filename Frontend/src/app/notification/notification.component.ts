@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NotificationService } from '../_services/notification.service';
+import { Notification } from './interfaces/notification.interface';
 
 @Component({
   selector: 'app-notification',
@@ -23,8 +24,24 @@ export class NotificationComponent implements OnInit {
         this.clearOneEvent.emit("clearOne");
       });
   }
+
   ClearAll() {
     this.notificationService.deleteAll()
       .subscribe(() => {});
+  }
+
+  SplitValue(value: string) {
+    const splitStatus = value.split('Status:');
+    const message: string = splitStatus[0].trim();
+
+    const splitVrijeme = splitStatus[1].split('Vrijeme:');
+    const status: string = splitVrijeme[0].trim();
+    const vrijeme: string = splitVrijeme[1].trim();
+
+    return {
+      message: message,
+      status: status,
+      dateTime: vrijeme
+    }
   }
 }

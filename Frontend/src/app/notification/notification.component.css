@@ -22,9 +22,17 @@
   }
   
   .notification-content {
-    flex: 8; /* Takes up 80% of the available space */
+    flex: 8;
   }
   
+  .statusInactive {
+    color: red; 
+  }
+
+  .status {
+    color: black;
+  }
+
   .notification-button {
     flex: 2; /* Takes up 20% of the available space */
     text-align: right;
