@@ -25,17 +25,6 @@ export class AppComponent {
  
   constructor(private router: Router, private alertService: AlertService, private notificationService: NotificationService) {
     this.getUserInfo();
-
-    // only logged in user can see notifications
-    if (this.token) {
-      // check if notification exists
-      this.notificationService.getAll()
-      .subscribe((response:any) => {
-        this.notifications = response['notifications'];
-        if (this.notifications.length !== 0)
-          this.notificationsExist = true;
-      });
-    }
   }
 
   getUserInfo() {
@@ -71,6 +60,17 @@ export class AppComponent {
     }).catch(function(err){
       return console.error(err.toString());
     });
+
+    // only logged in user can see notifications
+    if (this.token) {
+      // check if notification exists
+      this.notificationService.getAll()
+      .subscribe((response:any) => {
+        this.notifications = response['notifications'];
+        if (this.notifications.length !== 0)
+          this.notificationsExist = true;
+      });
+    }
 
     // receives notifications from API
     connection.on("messageSent", (response) => { 

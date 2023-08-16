@@ -45,7 +45,7 @@ namespace Infrastructure.Identity
 
             if (gymUser.IsFrozen)
             {
-                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Zaleđen. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Zaleđen. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsFrozen, Message = "Korisnik je zaledjen" });
@@ -53,7 +53,7 @@ namespace Infrastructure.Identity
 
             if (gymUser.IsInActive)
             {
-                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Neaktivan. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Neaktivan. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsInActive, Message = "Korisnik je neaktivan" });
@@ -61,7 +61,7 @@ namespace Infrastructure.Identity
 
             if (user.IsBlocked)
             {
-                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Blokiran. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Blokiran. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.UserIsBlocked, Message = "Korisnik je blokiran" });
@@ -69,7 +69,7 @@ namespace Infrastructure.Identity
 
             if (gymUser.LastCheckIn.Date == _dateTimeService.Now.Date)
             {
-                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Korisnik je već jednom čekiran u toku današenjeg dana. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Korisnik je već jednom čekiran u toku današenjeg dana. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.CanNotAccesTwice, Message = "Korisnik se ne može čekirati dva puta u toku dana" });
@@ -77,7 +77,7 @@ namespace Infrastructure.Identity
 
             if (gymUser.ExpiresOn.Date < _dateTimeService.Now.Date)
             {
-                message = user.FirstName + " " + user.LastName + " se čekirao/la. Status: Neaktivan. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekirao/la. Status: Neaktivan. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
 
                 return CheckInResult.Failure(new Error { Code = ExceptionType.ExpiredMembership, Message = "Korisniku je istekla članarina" });
@@ -99,7 +99,7 @@ namespace Infrastructure.Identity
 
                 transaction.Commit();
 
-                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Aktivan. Vrijeme: " + DateTime.Now.ToString();
+                message = user.FirstName + " " + user.LastName + " se čekiro/la. Status: Aktivan. Vrijeme: " + _dateTimeService.Now.ToString();
                 await _notificationService.Add(message);
             }
             catch (Exception exc)
