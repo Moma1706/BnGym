@@ -9,7 +9,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         // optionsBuilder.UseSqlServer(args[0]);
-        optionsBuilder.UseSqlServer("Server=DESKTOP-692HOEG;Database=GymDB;Trusted_Connection=True;MultipleActiveResultSets=True;");
+        optionsBuilder.UseSqlServer("Server=localhost;Database=GymDB;User=sa;password=Biznis2023.;Trusted_Connection=True;MultipleActiveResultSets=True;");
 
         return new ApplicationDbContext(optionsBuilder.Options);
     }

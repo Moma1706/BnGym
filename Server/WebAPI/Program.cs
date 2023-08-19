@@ -23,11 +23,15 @@ builder.Services.AddCors(options =>
         options.AddPolicy("AllowAngularOrigins",
         builder =>
         {
-            builder.WithOrigins(
-                                "http://localhost:4200"
-                                )
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
+            //builder.WithOrigins("http://localhost:4200",
+            //                    "http://bngym.org/",
+            //                    "http://38.242.149.163:5024/")
+            //                    .AllowAnyHeader()
+            //                    .AllowAnyMethod();
+
+            builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
         });
     });
 
@@ -35,6 +39,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.UseCors("AllowAngularOrigins");
+app.Urls.Add("http://38.242.149.163:5024");
+app.Urls.Add("http://localhost:5024");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -47,6 +53,13 @@ if (app.Environment.IsDevelopment())
     await initializer.InitializeDatabase();
     await initializer.SeedAsync();
 }
+//else if (!app.Environment.IsDevelopment())
+//{
+//    using var scope = app.Services.CreateScope();
+//    var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+//    await initializer.InitializeDatabase();
+//    await initializer.SeedAsync();
+//}
 
 app.UseAuthentication();
 

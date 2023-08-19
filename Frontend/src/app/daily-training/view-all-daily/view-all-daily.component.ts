@@ -31,7 +31,7 @@ export class ViewAllDailyComponent implements OnInit {
 
   visible: boolean = true;
   id : string = '';
-  pageSize: number = 5;
+  pageSize: number = 25;
   pageNumber: number = 1;
   searchText : string = '';
   loading: boolean = false;

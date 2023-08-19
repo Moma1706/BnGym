@@ -19,6 +19,7 @@ const Constants = {
   CHECK_IN_MESSAGE: 'Čekiranje uspiješno završeno!',
   CHECK_IN_MESSAGE_FAILED: 'QR kod nije validan. Molimo Vas, pokušajte ponovo.',
   CHECK_IN_PROCESS: 'check in process',
+  PERMISSION_DENIED: 'Dozvola za kameru nije omogućena.\nMolimo Vas, idite u podešavanja uređaja i dozvolite upotrebu kamere.',
 
   VIEW_HEIGHT: Dimensions.get('window').height - 180,
   RN_HOLE_HEIGHT: 500,
@@ -27,12 +28,13 @@ const Constants = {
 
 const CheckIn = ({ navigation }: CheckInProps) => {
   const checkInUrl = `${BASE_URL}/CheckIn`;
-  const devices = useCameraDevices('wide-angle-camera');
+  const devices = useCameraDevices();
   const device = devices.back;
 
   const [isCodeInvalid, setIsCodeInvalid] = useState<any>(null);
-  const [isPermissionGranted, setIsPermissionGranted] = useState<any>(false);
+  const [isPermissionGranted, setIsPermissionGranted] = useState<boolean | undefined>(undefined);
   const [isRequestSent, setIsRequestSent] = useState<any>(false);
+  const [isCamChecked, setIsCamChecked] = useState<boolean>(false);
 
   const [frameProcessor, barcodes] = useScanBarcodes([
     BarcodeFormat.QR_CODE,
@@ -44,7 +46,12 @@ const CheckIn = ({ navigation }: CheckInProps) => {
         } else {
           setIsPermissionGranted(false)
         }
-    });
+
+        setIsCamChecked(true);
+    }).catch(_ => {
+      setIsPermissionGranted(false)
+      setIsCamChecked(true)
+    })
   }, [])
   
   useEffect(() => {
@@ -123,29 +130,39 @@ const toggleActiveState = async () => {
     }
   };
 
+  if ((isPermissionGranted === false) && isCamChecked) {
+return   (
+  <Layout navigation={navigation}>
+  <View style={styles.container}>
+    <View style={styles.disabledCamContainer}>
+    <Text style={styles.text}>{Constants.PERMISSION_DENIED} {isPermissionGranted}</Text>
+    </View>
+  </View>
+</Layout>
+) 
+  }
+
   return (
     <Layout navigation={navigation}>
-    {
-    (device == null || !isPermissionGranted) ?
-    ( 
-      <View style={styles.container}>
-        <Text>Go to setting and allow camera</Text>
-      </View>
-    ) :
+
     <>
       <View style={styles.container}>
-        <Camera
-          style={StyleSheet.absoluteFill}
-          device={device}
-          isActive={true} 
-          frameProcessor={frameProcessor}
-          frameProcessorFps={5}
-          audio={false}
-        />
+       {
+        device ?  <Camera
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={true} 
+        frameProcessor={frameProcessor}
+        frameProcessorFps={5}
+        audio={false}
+      />
+      :
+      <View style={styles.disabledDevice}/>
+       }
        <RNHoleView
           holes={[
             {
-              x:  Dimensions.get('window').width / 2 - Constants.RN_HOLE_WIDTH / 2,
+              x: Dimensions.get('window').width / 2 - Constants.RN_HOLE_WIDTH / 2,
               y: Constants.VIEW_HEIGHT / 2 - Constants.RN_HOLE_HEIGHT / 2,
               width: Constants.RN_HOLE_WIDTH,
               height: Constants.RN_HOLE_HEIGHT,
@@ -157,7 +174,6 @@ const toggleActiveState = async () => {
         />
       </View>
     </>
-    }
     </Layout>
   );
 }
@@ -165,7 +181,32 @@ const toggleActiveState = async () => {
 const styles = StyleSheet.create({
   container: {
     height: Constants.VIEW_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
+
+  disabledCamContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    borderColor: '#2c3e50',
+    borderWidth: 2,
+    width: Constants.RN_HOLE_WIDTH,
+    height: 200,
+    padding: 10
+  },
+
+  disabledDevice: {
+    backgroundColor: 'black',
+    height: Constants.VIEW_HEIGHT,
+    width: '100%'
+  },
+
+  text: {
+    fontSize: 16,
+    color: '#2c3e50',
+  },
+
   rnholeView: {
     position: 'absolute',
     width: '100%',

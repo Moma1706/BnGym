@@ -50,12 +50,12 @@
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsCurrentMonth">
-      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsCurrentMonth')"> Broj dolazaka ovog meseca </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsCurrentMonth')"> Broj dolazaka ovog mjeseca </mat-header-cell>
       <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.numberOfArrivalsCurrentMonth}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="numberOfArrivalsLastMonth">
-      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsLastMonth')"> Broj dolazaka proslog meseca </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header (click)="getRecord('NumberOfArrivalsLastMonth')"> Broj dolazaka prošlog mjeseca </mat-header-cell>
       <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.numberOfArrivalsLastMonth}} </mat-cell>
     </ng-container>
 
@@ -78,8 +78,9 @@
   <mat-paginator
     #paginator
     [length]="totalUsers"
-    [pageSizeOptions]="[5,10,15,50,100]"
+    [pageSizeOptions]="[5,10,25,50,100]"
     showFirstLastButtons
+    [pageSize]="25"
   ></mat-paginator>
 
   <div>
