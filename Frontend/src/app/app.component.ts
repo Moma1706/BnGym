@@ -75,7 +75,8 @@ export class AppComponent {
     // receives notifications from API
     connection.on("messageSent", (response) => { 
       this.notificationsExist = true;
-      this.alertService.info(response);
+      const notif = this.SplitValue(response)
+      this.alertService.info(notif);
 
       this.notificationService.getAll()
         .subscribe((response:any) => {
@@ -106,5 +107,11 @@ export class AppComponent {
     .subscribe((response:any) => {
       this.notifications = response['notifications'];
     });
+  }
+
+  SplitValue(value: string): string {
+    const splitStatus = value.split('Vrijeme:');
+    const message: string = splitStatus[0].trim();
+    return message;
   }
 }

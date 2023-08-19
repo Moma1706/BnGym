@@ -29,6 +29,7 @@ export class NotificationComponent implements OnInit, OnChanges {
     this.notificationService.deleteOne(id)
       .subscribe(() => {
         this.clearOneEvent.emit("clearOne");
+        this.notificationsArray = this.notificationsArray.filter(item => item.key !== id);
       });
   }
 
@@ -54,7 +55,6 @@ export class NotificationComponent implements OnInit, OnChanges {
     const seconds = parseInt(parts[5]);
 
     const newDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds)).toLocaleString();
-    console.log('Notification');
     return {
       message: message,
       status: status,
