@@ -88,11 +88,20 @@ namespace Infrastructure.Identity
 
             var list = query.ToList().Skip(page * pageSize).Take(pageSize).ToList();
 
+            var currentMonth = DateTime.Now.Month.ToString();
+            var lastMonth = DateTime.Now.AddMonths(-1).Month.ToString();
+
+            var numberOfDayliArrivalsCurrentMonth = _dbContext.DailyHistoryView.Where(x => x.CheckInDate.Month.ToString() == currentMonth).Count();
+            var numberOfDayliArrivalsLastMonth = _dbContext.DailyHistoryView.Where(x => x.CheckInDate.Month.ToString() == lastMonth).Count();
+
             return new PageResult<DailyUserGetResult>
             {
                 Count = query.ToList().Count,
                 PageIndex = page,
                 PageSize = pageSize,
+                ActiveCount = query.ToList().Count,
+                NumberOfDayliArrivalsCurrentMonth = numberOfDayliArrivalsCurrentMonth,
+                NumberOfDayliArrivalsLastMonth = numberOfDayliArrivalsLastMonth,
                 Items = list.Select(x => new DailyUserGetResult()
                 {
                     Id = x.Id,
@@ -117,7 +126,8 @@ namespace Infrastructure.Identity
                 Count = countDetails,
                 PageIndex = page,
                 PageSize = pageSize,
-                Items = dailyList
+                Items = dailyList,
+                ActiveCount = 0
             };
 
             if (countDetails == 0)

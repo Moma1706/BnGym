@@ -18,6 +18,8 @@ export interface UsersTable {
   pageIndex: number;
   pageSize: number;
   count: number;
+  numberOfDayliArrivalsLastMonth: number;
+  numberOfDayliArrivalsCurrentMonth: number;
 }
 
 @Component({
@@ -38,6 +40,8 @@ export class ViewAllDailyComponent implements OnInit {
   EmpData: User[] = [];
   empTable!: UsersTable;
   filterValue = '';
+  numberOfDayliArrivalsCurrentMonth = 0;
+  numberOfDayliArrivalsLastMonth = 0;
 
   model: any= {};
   form!: FormGroup;
@@ -95,8 +99,9 @@ export class ViewAllDailyComponent implements OnInit {
         }),
         map((empData) => {
           if (empData == null) return [];
-          
           this.totalUsers = (<UsersTable>empData).count;
+          this.numberOfDayliArrivalsCurrentMonth = (<UsersTable>empData).numberOfDayliArrivalsCurrentMonth;
+          this.numberOfDayliArrivalsLastMonth = (<UsersTable>empData).numberOfDayliArrivalsLastMonth;
           this.loading = false;
           return (empData as UsersTable).items;
         })

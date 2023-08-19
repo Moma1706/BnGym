@@ -1,0 +1,23 @@
+<div class="window">
+  <div *ngIf="notificationsExist == true">
+    <div class="clear-all-button">
+      <button class="notificationButton" (click)="ClearAll()">Ukloni notifikacije</button>
+    </div>
+    <div class="notification" *ngFor="let notification of notificationsArray">
+      <div class="notification-content">
+
+        <div>{{ notification.message }}</div>
+        <div [ngClass]="{
+          'statusInactive': notification.status === 'Neaktivan.',
+          'status': notification.status !== 'Neaktivan.'
+        }"><b>Status:</b> {{ notification.status }}</div>
+        <div><b>Vrijeme:</b> {{ notification.dateTime }}</div>
+      </div>
+      <div class="notification-button">
+        <button class="notificationButton" (click)="ClearOne(notification.key)">X</button> 
+      </div>
+    </div> 
+  </div>
+  <div class="noNotification" *ngIf="notificationsExist == false">Nema notifikacija</div>
+</div>
+ 

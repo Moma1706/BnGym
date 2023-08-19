@@ -115,6 +115,7 @@ namespace Infrastructure.Services
                 Count = gymWorkers.ToList().Count,
                 PageIndex = page,
                 PageSize = pageSize,
+                ActiveCount = 0,
                 Items = gymWorkersList.Select(x => new GymWorkerGetResult()
                 {
                     Id = x.Id,

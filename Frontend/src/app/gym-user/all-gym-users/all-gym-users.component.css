@@ -5,3 +5,8 @@
 .inactive-row {
     background-color: lightgray;
 }
+
+/* For inactive background */
+.inactive-color {
+    color: red; /* Set the desired inactive background color */
+}

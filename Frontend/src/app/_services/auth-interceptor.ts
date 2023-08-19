@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
               if (err.status === 401 && !request.url.includes("login")) {
               // redirect user to the logout page
               localStorage.setItem('token', '');
-              window.location.href='/account/login'
+              window.location.href=''
            }
         }
         return throwError(err);

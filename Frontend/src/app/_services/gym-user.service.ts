@@ -11,7 +11,8 @@ export class GymUserService {
   baseUrl = `${BASE_URL}/GymUser`;
 
 constructor(private http: HttpClient, private auth: AccountService) { }
-  addGymUser(model: any)  {
+  
+addGymUser(model: any)  {
     return this.http.post(this.baseUrl, model);
   }
 

@@ -1,4 +1,5 @@
 <h2 style="padding-top: 3%">Svi Članovi</h2>
+<h5> Ukupan broj aktivnih članova : {{numberOfActiveUsers}}</h5>
 <br>
 <!--New Consumer-->
 <div *ngIf="visible">
@@ -35,7 +36,7 @@
 
     <ng-container matColumnDef="isInActive">
       <mat-header-cell *matHeaderCellDef> Aktivan </mat-header-cell>
-      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}"> {{row.isInActive ? 'Ne' : 'Da'}} </mat-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="{'inactive-row': row.isInActive}" [class.inactive-color]="row.isInActive"> {{row.isInActive ? 'Neaktivan' : 'Da'}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="isFrozen">
