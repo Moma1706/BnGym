@@ -106,7 +106,7 @@ namespace Infrastructure.Services
             ////smtpClient.PickupDirectoryLocation = "C:\\Mail";
             //smtpClient.Send(mailMessage);
 
-            SendEmail("tamara");
+            //SendEmail("tamara");
         }
 
         public void SendEmail(string body)

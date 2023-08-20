@@ -35,7 +35,10 @@ export class NotificationComponent implements OnInit, OnChanges {
 
   ClearAll() {
     this.notificationService.deleteAll()
-      .subscribe(() => {});
+      .subscribe(() => {
+        this.clearOneEvent.emit("clearOne");
+        this.notificationsArray = [];
+      });
   }
 
   SplitValue(value: Notification): { message: string; status: string; dateTime: string; key: string;} {
