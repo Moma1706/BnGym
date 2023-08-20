@@ -49,13 +49,17 @@ export class NotificationComponent implements OnInit, OnChanges {
     const status: string = splitVrijeme[0].trim();
     const vrijeme: string = splitVrijeme[1].trim();
 
-    const parts = vrijeme.split(/[ .:]/).filter(part => part.trim() !== '');
-    const year = parseInt(parts[2]);
-    const month = parseInt(parts[1]) - 1; // Month is 0-indexed in Date object
-    const day = parseInt(parts[0]);
-    const hours = parseInt(parts[3]);
-    const minutes = parseInt(parts[4]);
-    const seconds = parseInt(parts[5]);
+    let novoVreme = Date.parse(vrijeme);
+
+    var date = new Date(novoVreme);
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+
+
 
     const newDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds)).toLocaleString();
     return {
