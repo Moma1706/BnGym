@@ -53,13 +53,11 @@ export class NotificationComponent implements OnInit, OnChanges {
 
     var date = new Date(novoVreme);
     var year = date.getFullYear();
-    var month = date.getMonth() + 1;
+    var month = date.getMonth();
     var day = date.getDate();
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var seconds = date.getSeconds();
-
-
 
     const newDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds)).toLocaleString();
     return {
