@@ -1,4 +1,4 @@
-package com.gymmobileapp;
+package com.bngymmobileapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;

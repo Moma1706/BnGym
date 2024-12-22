@@ -1,4 +1,4 @@
-package com.gymmobileapp;
+package com.bngymmobileapp;
 
 import android.content.res.Configuration;
 import android.widget.Toast;

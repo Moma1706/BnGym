@@ -93,13 +93,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-   namespace "com.gymmobileapp"
+   namespace "com.bngymmobileapp"
     defaultConfig {
-        applicationId "org.bngym"
+        applicationId "com.bngymmobileapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1"
+        versionCode 7
+        versionName "1.7"
     }
 
     splits {
@@ -161,8 +161,8 @@ android {
     ext {
         buildToolsVersion = "30.0.2"
         minSdkVersion = 21
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         ndkVersion = "21.4.7075529"
     }
 }
